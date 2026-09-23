@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Krayaura — Artist · Creative Director · Graphic Designer</title>
+    <meta
+      name="description"
+      content="Krayaura — music and visual worlds from Pretoria. Artist, creative director, and graphic designer."
+    />
+    <meta name="theme-color" content="#0B0B21" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- Stand-ins until licensed Bolde / Black Pro / Proxima Nova files are added to /public/fonts -->
+    <link rel="preconnect" href="https://api.fontshare.com" crossorigin />
+    <link
+      href="https://api.fontshare.com/v2/css?f[]=clash-display@700&f[]=general-sans@500,600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="cursor" aria-hidden="true"></div>
+
+    <header class="site-header">
+      <div class="site-header__inner">
+        <a class="brand-mark" href="#top" aria-label="Krayaura home">
+          <img src="/logos/main-logo.svg" alt="" width="32" height="32" />
+          <span data-site-name>Krayaura</span>
+        </a>
+        <nav class="nav-links" aria-label="Primary">
+          <a href="#music">Music</a>
+          <a href="#design">Design</a>
+          <a href="#about">About</a>
+          <a href="#connect">Connect</a>
+        </nav>
+        <button class="nav-toggle" type="button" aria-label="Open menu" aria-expanded="false">
+          <span></span>
+        </button>
+      </div>
+    </header>
+
+    <div class="nav-drawer" aria-hidden="true">
+      <nav aria-label="Mobile">
+        <a href="#music">Music</a>
+        <a href="#design">Design</a>
+        <a href="#about">About</a>
+        <a href="#connect">Connect</a>
+      </nav>
+    </div>
+
+    <main id="top">
+      <section class="hero" aria-label="Introduction">
+        <canvas id="hero-canvas" class="hero__canvas" aria-hidden="true"></canvas>
+        <div class="hero__fallback" aria-hidden="true"></div>
+        <div class="hero__veil" aria-hidden="true"></div>
+        <img
+          class="hero__logo"
+          src="/logos/main-logo.svg"
+          alt=""
+          width="720"
+          height="700"
+          decoding="async"
+        />
+        <div class="hero__content">
+          <h1 class="hero__wordmark" data-site-name>Krayaura</h1>
+          <p class="hero__tagline" data-tagline>
+            Nostalgia, fun, and confidence — sound and visuals from Pretoria.
+          </p>
+          <div class="hero__cta">
+            <a class="btn btn--primary magnetic" href="#music">Listen</a>
+            <a class="btn btn--ghost magnetic" href="#design">View work</a>
+          </div>
+        </div>
+        <p class="hero__scroll">Scroll</p>
+      </section>
+
+      <section class="section music" id="music">
+        <div class="container music__head reveal">
+          <p class="section-label">Music</p>
+          <h2 class="section-title">Records that hit like a cartoon punchline</h2>
+          <p class="section-lede">
+            Singles and vibes for late nights, early rollouts, and everything between the drop and the
+            reaction.
+          </p>
+          <div class="music__platforms" data-platforms></div>
+        </div>
+        <div class="track-rail" data-track-rail></div>
+        <div class="container music__video reveal" data-video></div>
+      </section>
+
+      <section class="section design" id="design">
+        <div class="container design__head reveal">
+          <p class="section-label">Design</p>
+          <h2 class="section-title">Visual worlds with loud personality</h2>
+          <p class="section-lede">
+            Brand systems, cover art, motion, and campaign looks — nostalgia-forward, confidence-first.
+          </p>
+        </div>
+        <div class="container">
+          <ul class="project-list" data-project-list></ul>
+          <div class="design__cta reveal">
+            <a
+              class="btn btn--ghost magnetic"
+              href="https://www.behance.net/koketsoramogale1"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Full Behance →</a
+            >
+          </div>
+        </div>
+      </section>
+
+      <section class="section about" id="about">
+        <div class="container about__grid">
+          <div class="reveal">
+            <p class="section-label">About</p>
+            <h2 class="section-title">Built on joy &amp; imagination</h2>
+            <ul class="about__roles" data-roles></ul>
+            <div class="about__copy" data-bio></div>
+          </div>
+          <aside class="about__aside reveal">
+            <p class="about__aside-label">Based in</p>
+            <p data-location>Pretoria, South Africa</p>
+          </aside>
+        </div>
+      </section>
+
+      <section class="section connect" id="connect">
+        <div class="container">
+          <h2 class="connect__title reveal" data-site-name>Krayaura</h2>
+          <p class="connect__lede reveal" data-booking-note>
+            DM on Instagram for bookings &amp; collabs
+          </p>
+          <div class="reveal" style="margin-bottom: 2rem">
+            <a class="btn btn--primary magnetic" data-booking href="https://www.instagram.com/krayaura/"
+              >Book / collab</a
+            >
+          </div>
+          <div class="social-grid reveal" data-socials></div>
+          <footer class="site-footer">
+            <p>© <span data-year></span> Krayaura</p>
+            <a href="https://linktr.ee/krayaura" target="_blank" rel="noopener noreferrer">Linktree</a>
+          </footer>
+        </div>
+      </section>
+    </main>
+
+    <div class="lightbox" id="lightbox" aria-hidden="true" role="dialog" aria-modal="true">
+      <div class="lightbox__panel">
+        <button class="lightbox__close" type="button" data-lightbox-close aria-label="Close">×</button>
+        <div class="lightbox__media" data-lightbox-media></div>
+        <p class="lightbox__meta" data-lightbox-meta></p>
+        <h3 class="lightbox__title" data-lightbox-title></h3>
+        <p class="lightbox__body" data-lightbox-body></p>
+        <a
+          class="btn btn--primary"
+          data-lightbox-link
+          href="#"
+          target="_blank"
+          rel="noopener noreferrer"
+          >View project</a
+        >
+      </div>
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

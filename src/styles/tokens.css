@@ -1,0 +1,72 @@
+:root {
+  /* Primary — Colours-01 */
+  --c-void: #0b0b21;
+  --c-midnight: #0a0435;
+  --c-gold: #f2b705;
+  --c-cream: #efeddf;
+  --c-mist: #d7d7d9;
+
+  /* Secondary */
+  --c-royal: #04175b;
+  --c-blue: #103784;
+  --c-red: #ff1022;
+  --c-slate: #2d3951;
+
+  /* Surfaces */
+  --bg: var(--c-void);
+  --bg-elevated: var(--c-midnight);
+  --fg: var(--c-cream);
+  --fg-muted: var(--c-mist);
+  --accent: var(--c-gold);
+  --accent-hot: var(--c-red);
+  --line: color-mix(in srgb, var(--c-cream) 12%, transparent);
+
+  /*
+    Brand type (Fonts-01):
+    Bolde — headings | Black Pro — subheadings | Proxima Nova — paragraphs
+    Licensed files can drop into /src/assets/fonts/ with matching @font-face names.
+    Free stand-ins approximate the geometric energy until then.
+  */
+  /* Prefer brand names; Clash / General / Source Sans stand in until .woff2 land */
+  --font-heading: "Clash Display", "Bolde", system-ui, sans-serif;
+  --font-subhead: "General Sans", "Black Pro", system-ui, sans-serif;
+  --font-body: "Source Sans 3", "Proxima Nova", "Segoe UI", system-ui, sans-serif;
+
+  --space-xs: 0.5rem;
+  --space-sm: 1rem;
+  --space-md: 1.5rem;
+  --space-lg: 3rem;
+  --space-xl: 5rem;
+  --space-2xl: 8rem;
+
+  --nav-h: 4.5rem;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* When licensed files exist in /public/fonts, uncomment:
+@font-face {
+  font-family: "Bolde";
+  src: url("/fonts/Bolde.woff2") format("woff2");
+  font-weight: 700;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Black Pro";
+  src: url("/fonts/BlackPro.woff2") format("woff2");
+  font-weight: 500;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Proxima Nova";
+  src: url("/fonts/ProximaNova-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Proxima Nova";
+  src: url("/fonts/ProximaNova-Semibold.woff2") format("woff2");
+  font-weight: 600;
+  font-display: swap;
+}
+*/

@@ -1,0 +1,212 @@
+.design {
+  background: var(--c-void);
+}
+
+.design__head {
+  margin-bottom: var(--space-xl);
+  display: grid;
+  gap: 1rem;
+  max-width: 40rem;
+}
+
+.project-list {
+  border-top: 1px solid var(--line);
+}
+
+.project-item {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
+  padding-block: 1.75rem;
+  border-bottom: 1px solid var(--line);
+  cursor: pointer;
+}
+
+.project-item__row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 1rem;
+  align-items: baseline;
+}
+
+.project-item__num {
+  font-family: var(--font-subhead);
+  font-size: 0.75rem;
+  letter-spacing: 0.16em;
+  color: var(--accent);
+}
+
+.project-item__title {
+  font-family: var(--font-heading);
+  font-size: clamp(1.6rem, 5vw, 3.2rem);
+  text-transform: uppercase;
+  transition: color 0.25s;
+}
+
+.project-item:hover .project-item__title,
+.project-item:focus-within .project-item__title {
+  color: var(--accent);
+}
+
+.project-item__tag {
+  font-family: var(--font-subhead);
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  justify-self: end;
+}
+
+.project-item__desc {
+  grid-column: 1 / -1;
+  max-width: 42ch;
+  color: var(--fg-muted);
+  font-size: 0.98rem;
+  padding-left: 0;
+}
+
+.project-item__preview {
+  position: absolute;
+  right: 8%;
+  top: 50%;
+  width: min(280px, 32vw);
+  aspect-ratio: 4 / 5;
+  pointer-events: none;
+  opacity: 0;
+  transform: translate(10%, -40%) rotate(4deg) scale(0.92);
+  transition:
+    opacity 0.35s var(--ease-out),
+    transform 0.45s var(--ease-out);
+  z-index: 2;
+  background:
+    linear-gradient(145deg, var(--c-blue), var(--c-midnight) 60%, var(--c-royal));
+  overflow: hidden;
+}
+
+.project-item__preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.project-item__preview-fallback {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-heading);
+  font-size: 3rem;
+  color: color-mix(in srgb, var(--c-cream) 35%, transparent);
+  background:
+    radial-gradient(circle at 30% 30%, color-mix(in srgb, var(--accent) 40%, transparent), transparent 50%),
+    linear-gradient(145deg, var(--c-blue), var(--c-midnight));
+}
+
+.project-item:hover .project-item__preview,
+.project-item.is-active .project-item__preview {
+  opacity: 1;
+  transform: translate(0, -50%) rotate(-2deg) scale(1);
+}
+
+.design__cta {
+  margin-top: var(--space-lg);
+}
+
+@media (min-width: 900px) {
+  .project-item__desc {
+    padding-left: 3.2rem;
+  }
+}
+
+@media (max-width: 720px) {
+  .project-item__preview {
+    display: none;
+  }
+
+  .project-item__row {
+    grid-template-columns: auto 1fr;
+  }
+
+  .project-item__tag {
+    grid-column: 2;
+    justify-self: start;
+  }
+}
+
+/* Lightbox */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: color-mix(in srgb, var(--c-void) 92%, transparent);
+  backdrop-filter: blur(16px);
+  display: grid;
+  place-items: center;
+  padding: 1.5rem;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.3s,
+    visibility 0.3s;
+}
+
+.lightbox.is-open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.lightbox__panel {
+  width: min(640px, 100%);
+  background: var(--c-midnight);
+  border: 1px solid var(--line);
+  padding: 1.75rem;
+  position: relative;
+}
+
+.lightbox__close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.lightbox__title {
+  font-family: var(--font-heading);
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+  padding-right: 2rem;
+}
+
+.lightbox__meta {
+  font-family: var(--font-subhead);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 1rem;
+}
+
+.lightbox__body {
+  color: var(--fg-muted);
+  margin-bottom: 1.5rem;
+}
+
+.lightbox__media {
+  aspect-ratio: 16 / 10;
+  margin-bottom: 1.25rem;
+  background: var(--c-royal);
+  overflow: hidden;
+}
+
+.lightbox__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
