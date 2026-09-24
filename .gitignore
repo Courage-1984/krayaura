@@ -4,3 +4,12 @@ dist
 *.local
 .firecrawl
 .vite
+# Generated share stubs (scripts/build-share-stubs.mjs, the prebuild step)
+public/r/
+
+# Raw Behance page captures dropped for processing (one is 71 MB) - copy-media.py turns project
+# folders into public/media/behance; the raw captures stay local
+assets/behance/*.png
+assets/behance/*.jpg
+# Fontspring DEMO fonts: not licensed for use or redistribution - never commit or deploy
+assets/fonts/proxima-nova-demo/

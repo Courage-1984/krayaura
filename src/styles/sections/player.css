@@ -1,0 +1,400 @@
+/* ─── Mini player (bottom-left "now playing" pill) ───────────────────────── */
+
+.mini-player {
+  --icon-accent: var(--c-orange);
+  position: fixed;
+  z-index: 150;
+  left: max(1rem, env(safe-area-inset-left));
+  bottom: max(1rem, env(safe-area-inset-bottom));
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  max-width: min(560px, calc(100vw - 2rem));
+  padding: 0.5rem 0.6rem 0.5rem 0.5rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid color-mix(in srgb, var(--c-gold) 30%, transparent);
+  background: color-mix(in srgb, var(--c-midnight) 78%, transparent);
+  backdrop-filter: blur(16px) saturate(1.3);
+  box-shadow:
+    5px 5px 0 color-mix(in srgb, var(--c-orange) 85%, transparent),
+    0 20px 50px color-mix(in srgb, #000 45%, transparent);
+  overflow: hidden;
+  transform: translateY(calc(100% + 2rem)) rotate(-2deg);
+  opacity: 0;
+  /* Closing: slide + fade, THEN leave the tab order / accessibility tree */
+  transition:
+    transform 0.6s var(--ease-out),
+    opacity 0.4s,
+    visibility 0s linear 0.6s;
+}
+
+.mini-player:not(.is-open) {
+  visibility: hidden;
+}
+
+.mini-player.is-open {
+  transform: none;
+  opacity: 1;
+  transition:
+    transform 0.6s var(--ease-out),
+    opacity 0.4s,
+    visibility 0s;
+}
+
+/* Out of the toaster: the pill pops up with an overshoot (replays each time it leaves the hero) */
+html:not(.hero-controls-visible) .mini-player.is-open {
+  animation: mp-pop 0.55s both;
+}
+
+@keyframes mp-pop {
+  0% {
+    transform: translateY(120%) rotate(-4deg);
+    animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  62% {
+    transform: translateY(-12%) rotate(0.5deg);
+    animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1);
+  }
+  100% {
+    transform: none;
+  }
+}
+
+.mini-player__art {
+  flex: none;
+  width: 2.9rem;
+  height: 2.9rem;
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: 0 0 0 2px var(--c-orange);
+}
+
+.mini-player__art img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.mini-player.is-playing .mini-player__art {
+  animation: mp-spin 4s linear infinite;
+}
+
+@keyframes mp-spin {
+  to { transform: rotate(360deg); }
+}
+
+.mini-player__info {
+  display: grid;
+  min-width: 0;
+  line-height: 1.15;
+}
+
+.mini-player__kicker {
+  font-family: var(--font-subhead);
+  font-size: 0.55rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--c-orange);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Finished: the kicker is the message, so it may wrap; the sub-line steps aside for it */
+.mini-player.is-finished {
+  max-width: min(620px, calc(100vw - 2rem));
+}
+
+.mini-player.is-finished .mini-player__info {
+  flex: 1 1 8rem;
+}
+
+.mini-player.is-finished .mini-player__kicker {
+  color: var(--c-gold);
+  white-space: normal;
+  line-height: 1.3;
+}
+
+.mini-player.is-finished .mini-player__sub {
+  display: none;
+}
+
+.mini-player__title {
+  font-family: var(--font-heading);
+  font-size: 1.05rem;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mini-player__sub {
+  font-size: 0.72rem;
+  color: var(--fg-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-variant-numeric: tabular-nums;
+}
+
+.mini-player__eq {
+  flex: none;
+  width: 56px;
+  height: 20px;
+}
+
+.mini-player__btn,
+.mini-player__next,
+.mini-player__close,
+.mini-player__links a {
+  flex: none;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  transition:
+    transform 0.25s var(--ease-out),
+    background 0.2s;
+}
+
+.mini-player__next[hidden],
+.mini-player__full[hidden] {
+  display: none;
+}
+
+.mini-player__btn {
+  --icon-accent: var(--c-void);
+  width: 2.6rem;
+  height: 2.6rem;
+  background: var(--c-gold);
+  color: var(--c-void);
+}
+
+.mini-player__btn:hover {
+  transform: scale(1.08);
+  background: var(--c-orange);
+}
+
+.mini-player__links {
+  display: flex;
+  gap: 0.15rem;
+}
+
+.mini-player__next,
+.mini-player__links a,
+.mini-player__close {
+  width: 2.25rem;
+  height: 2.25rem;
+}
+
+.mini-player__next:hover,
+.mini-player__links a:hover,
+.mini-player__close:hover {
+  background: color-mix(in srgb, var(--c-cream) 10%, transparent);
+  transform: translateY(-2px);
+}
+
+.mini-player .icon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+/* Finished: the EQ (and the icon links) give way to two labelled full-song pills */
+.mini-player__done {
+  display: none;
+  gap: 0.4rem;
+}
+
+.mini-player.is-finished .mini-player__done {
+  display: flex;
+}
+
+.mini-player.is-finished .mini-player__eq,
+.mini-player.is-finished .mini-player__links {
+  display: none;
+}
+
+.mini-player__pill,
+.mini-player__full {
+  --icon-accent: var(--c-void);
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 44px;
+  padding: 0 0.95rem 0 0.7rem;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-subhead);
+  font-size: 0.66rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  background: var(--c-gold);
+  color: var(--c-void);
+  transition:
+    transform 0.25s var(--ease-out),
+    background 0.2s,
+    box-shadow 0.25s var(--ease-out);
+}
+
+.mini-player__pill--apple {
+  background: var(--c-cream);
+}
+
+.mini-player__pill:hover,
+.mini-player__full:hover {
+  background: var(--c-orange);
+  transform: translate(-2px, -2px);
+  box-shadow: 3px 3px 0 var(--c-void);
+}
+
+.mini-player__pill .icon,
+.mini-player__full .icon {
+  width: 1.2rem;
+  height: 1.2rem;
+}
+
+/* The phone's single "Full song ↗" pill (desktop has the icon links / finished pills instead) */
+.mini-player__full {
+  display: none;
+}
+
+.mini-player__full-icon {
+  display: none;
+}
+
+.mini-player__progress {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--c-orange), var(--c-gold));
+  transform-origin: left;
+  transform: scaleX(0);
+}
+
+/* Over the hero the toaster is the player: tuck the pill away (visibility, so it leaves the tab order) */
+html.hero-controls-visible .mini-player.is-open {
+  visibility: hidden;
+  opacity: 0;
+  transform: translateY(calc(100% + 2rem)) rotate(-2deg);
+  transition:
+    transform 0.6s var(--ease-out),
+    opacity 0.4s,
+    visibility 0s linear 0.6s;
+}
+
+/* Keep anchors and the footer clear of the pill */
+html.has-player {
+  scroll-padding-bottom: 6rem;
+}
+
+html.has-player .site-footer {
+  padding-bottom: 5.5rem;
+}
+
+@media (max-width: 520px) {
+  /* art 44 · info · Full song 44 · × 32 · ⏭ 36 (runs) · ▶ 48 rightmost */
+  .mini-player {
+    right: max(1rem, env(safe-area-inset-right));
+    gap: 0.4rem;
+    padding: 0.35rem 0.4rem 0.35rem 0.35rem;
+  }
+
+  .mini-player__art {
+    order: 1;
+    width: 44px;
+    height: 44px;
+  }
+
+  .mini-player__info,
+  .mini-player.is-finished .mini-player__info {
+    order: 2;
+    flex: 1;
+  }
+
+  .mini-player__kicker-x {
+    display: none;
+  }
+
+  .mini-player__full {
+    order: 3;
+    display: inline-flex;
+    padding: 0 0.8rem;
+    font-size: 0.62rem;
+  }
+
+  .mini-player__close {
+    order: 4;
+    width: 32px;
+    height: 32px;
+    color: var(--fg-muted);
+  }
+
+  .mini-player__close .icon {
+    width: 1.05rem;
+    height: 1.05rem;
+  }
+
+  .mini-player__next {
+    order: 5;
+    width: 36px;
+    height: 36px;
+  }
+
+  .mini-player__btn {
+    order: 6;
+    width: 48px;
+    height: 48px;
+  }
+
+  .mini-player__eq,
+  .mini-player__links,
+  .mini-player.is-finished .mini-player__done {
+    display: none;
+  }
+
+  /* During a run the ⏭ needs the room: "Full song" shrinks to its platform icon (aria-label stays) */
+  .mini-player.is-queued:not(.is-finished) .mini-player__full {
+    justify-content: center;
+    width: 36px;
+    min-height: 36px;
+    height: 36px;
+    padding: 0;
+  }
+
+  .mini-player.is-queued:not(.is-finished) .mini-player__full-label,
+  .mini-player.is-queued:not(.is-finished) .mini-player__full-arrow {
+    display: none;
+  }
+
+  .mini-player.is-queued:not(.is-finished) .mini-player__full-icon {
+    display: grid;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mini-player {
+    transition:
+      opacity 0.2s,
+      visibility 0s linear 0.2s;
+  }
+
+  .mini-player.is-open {
+    transition:
+      opacity 0.2s,
+      visibility 0s;
+  }
+
+  html.hero-controls-visible .mini-player.is-open {
+    transform: none;
+    transition:
+      opacity 0.2s,
+      visibility 0s linear 0.2s;
+  }
+
+  html:not(.hero-controls-visible) .mini-player.is-open,
+  .mini-player.is-playing .mini-player__art {
+    animation: none;
+  }
+}

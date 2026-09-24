@@ -1,0 +1,58 @@
+/* ─── Intro loader (once per session; see index.html inline script) ─────── */
+
+.intro {
+  display: none;
+}
+
+html.has-intro .intro {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(circle at 50% 45%, color-mix(in srgb, var(--c-orange) 22%, transparent), transparent 45%),
+    var(--c-void);
+  clip-path: inset(0 0 0 0);
+}
+
+html.has-intro body {
+  overflow: hidden;
+}
+
+.intro__stage {
+  display: grid;
+  justify-items: center;
+  gap: 1rem;
+}
+
+.intro__logo {
+  width: clamp(110px, 22vw, 180px);
+  height: auto;
+  filter: drop-shadow(6px 6px 0 var(--c-orange));
+  visibility: hidden; /* GSAP reveals it */
+}
+
+.intro__word {
+  overflow: hidden;
+  font-family: var(--font-heading);
+  font-size: clamp(2rem, 8vw, 4.5rem);
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+}
+
+.intro__word span {
+  display: block;
+}
+
+.intro__count {
+  position: absolute;
+  right: clamp(1.25rem, 4vw, 3rem);
+  bottom: clamp(1.25rem, 4vw, 2.5rem);
+  font-family: var(--font-heading);
+  font-size: clamp(3rem, 12vw, 8rem);
+  line-height: 0.8;
+  color: var(--c-orange);
+  font-variant-numeric: tabular-nums;
+}

@@ -11,6 +11,9 @@
   --c-blue: #103784;
   --c-red: #ff1022;
   --c-slate: #2d3951;
+  /* Sampled from his own work (Crash banner, Behance portfolio, "BAD FOR ME" type) */
+  --c-orange: #f26a1f;
+  --c-orange-bright: #f68b0a;
 
   /* Surfaces */
   --bg: var(--c-void);
@@ -19,18 +22,14 @@
   --fg-muted: var(--c-mist);
   --accent: var(--c-gold);
   --accent-hot: var(--c-red);
+  --accent-warm: var(--c-orange);
+  --sticker: 6px 6px 0 var(--c-orange);
   --line: color-mix(in srgb, var(--c-cream) 12%, transparent);
 
-  /*
-    Brand type (Fonts-01):
-    Bolde — headings | Black Pro — subheadings | Proxima Nova — paragraphs
-    Licensed files can drop into /src/assets/fonts/ with matching @font-face names.
-    Free stand-ins approximate the geometric energy until then.
-  */
-  /* Prefer brand names; Clash / General / Source Sans stand in until .woff2 land */
-  --font-heading: "Clash Display", "Bolde", system-ui, sans-serif;
-  --font-subhead: "General Sans", "Black Pro", system-ui, sans-serif;
-  --font-body: "Source Sans 3", "Proxima Nova", "Segoe UI", system-ui, sans-serif;
+  /* Brand type: Bolde | Black Pro | body stand-in until licensed Proxima Nova */
+  --font-heading: "Bolde", system-ui, sans-serif;
+  --font-subhead: "Black Pro", system-ui, sans-serif;
+  --font-body: "Source Sans 3", "Proxima Nova", system-ui, sans-serif;
 
   --space-xs: 0.5rem;
   --space-sm: 1rem;
@@ -39,34 +38,97 @@
   --space-xl: 5rem;
   --space-2xl: 8rem;
 
+  /* Soft, sticker-like corners — one scale used site-wide */
+  --radius-sm: 0.65rem;
+  --radius: 1rem;
+  --radius-lg: 1.5rem;
+  --radius-pill: 999px;
+
   --nav-h: 4.5rem;
+  /* Toast browning: page progress in the nav, preview progress in the hero */
+  --browning: linear-gradient(90deg, var(--c-cream), var(--c-gold) 40%, var(--c-orange) 70%, var(--c-red));
+  /* Cartoon overshoot for CSS-only pops (brand toaster, menu bars, nav chip) */
+  --ease-pop: cubic-bezier(0.34, 1.8, 0.64, 1);
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* When licensed files exist in /public/fonts, uncomment:
+/*
+  Fonts live in src/fonts — relative URLs so Vite fingerprints + rebases them for any `base`.
+*/
+
 @font-face {
   font-family: "Bolde";
-  src: url("/fonts/Bolde.woff2") format("woff2");
-  font-weight: 700;
+  src: url("../fonts/bolde-light.woff2") format("woff2");
+  font-weight: 300;
+  font-style: normal;
   font-display: swap;
 }
+
+@font-face {
+  font-family: "Bolde";
+  src: url("../fonts/bolde-regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Bolde";
+  src: url("../fonts/bolde-italic.woff2") format("woff2");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Bolde";
+  src: url("../fonts/bolde-bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Bolde";
+  src: url("../fonts/bolde-hollow.woff2") format("woff2");
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
 @font-face {
   font-family: "Black Pro";
-  src: url("/fonts/BlackPro.woff2") format("woff2");
-  font-weight: 500;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Proxima Nova";
-  src: url("/fonts/ProximaNova-Regular.woff2") format("woff2");
+  src: url("../fonts/black-pro-regular.woff2") format("woff2");
   font-weight: 400;
+  font-style: normal;
   font-display: swap;
 }
+
 @font-face {
-  font-family: "Proxima Nova";
-  src: url("/fonts/ProximaNova-Semibold.woff2") format("woff2");
-  font-weight: 600;
+  font-family: "Black Pro";
+  src: url("../fonts/black-pro-italic.woff2") format("woff2");
+  font-weight: 400;
+  font-style: italic;
   font-display: swap;
 }
-*/
+
+@font-face {
+  font-family: "Black Pro";
+  src: url("../fonts/black-pro-bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Black Pro";
+  src: url("../fonts/black-pro-bold-italic.woff2") format("woff2");
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Proxima Nova: do NOT load Fontspring-DEMO files — they watermark spaces/hyphens.
+   (They're parked in assets/fonts/proxima-nova-demo/ so they never deploy.)
+   Drop licensed Proxima Nova .woff2 into src/fonts and add @font-face here. */

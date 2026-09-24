@@ -1,25 +1,83 @@
+/* ─── Design: his orange, flooded edge to edge ─────────────────────────────
+   The top and bottom edges slant parallel to the marquee: tan 2° × 100vw ≈ 3.5vw.
+   Everything on it is void (≈6.3:1 on #f26a1f); cream is only ever a shadow or a stroke,
+   never text (≈2.6:1). */
 .design {
-  background: var(--c-void);
+  --slant: 3.5vw;
+  --accent: var(--c-void);
+  --fg-muted: var(--c-void);
+  --line: var(--c-void);
+  background: var(--c-orange);
+  color: var(--c-void);
+  clip-path: polygon(0 var(--slant), 100% 0, 100% calc(100% - var(--slant)), 0 100%);
+  padding-block: calc(var(--space-2xl) + var(--slant)) calc(var(--space-xl) + var(--slant));
 }
 
+/* Content above the loops doodles */
+.design > .container {
+  position: relative;
+  z-index: 2;
+}
+
+/* The gold ring is ≈1.7:1 on orange */
+.design :focus-visible {
+  outline-color: var(--c-void);
+}
+
+/* base.css selects with --accent, which is void here: void on void */
+.design ::selection {
+  background: var(--c-void);
+  color: var(--c-cream);
+}
+
+/* The section-title underline: orange on orange would vanish */
+.design .doodle--under path {
+  stroke: var(--c-void);
+}
+
+.design .doodle--under path + path {
+  stroke: var(--c-cream);
+}
+
+/* Big void loops, like his portfolio cover: one across the top, one under the CTA (turned over) */
+/* Sized to the padding bands, so they never cross the heading or the CTA */
+.doodle--loops.doodle--design {
+  z-index: 1;
+  /* (+16px: the crest touched the slanted edge and the clip shaved its stroke flat; now it clears it by 10px+) */
+  top: calc(var(--slant) * 0.35 + 16px);
+  aspect-ratio: auto;
+  height: clamp(6rem, 11vw, 10rem);
+  opacity: 0.9;
+}
+
+.doodle--loops.doodle--design-end {
+  top: auto;
+  bottom: var(--slant);
+  transform: rotate(180deg);
+}
+
+/* Cap the text, not the .container (a max-width here re-centred the whole head off-grid) */
 .design__head {
   margin-bottom: var(--space-xl);
   display: grid;
   gap: 1rem;
+}
+
+.design__head > * {
   max-width: 40rem;
 }
 
 .project-list {
-  border-top: 1px solid var(--line);
+  border-top: 2px solid var(--c-void);
 }
 
 .project-item {
   position: relative;
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 0.75rem;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1rem;
   padding-block: 1.75rem;
-  border-bottom: 1px solid var(--line);
+  border-bottom: 2px solid var(--c-void);
   cursor: pointer;
 }
 
@@ -27,26 +85,64 @@
   display: grid;
   grid-template-columns: auto 1fr auto;
   gap: 1rem;
-  align-items: baseline;
+  align-items: center;
 }
 
+/* A void coin with cream digits */
 .project-item__num {
+  display: grid;
+  place-items: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 50%;
+  background: var(--c-void);
+  color: var(--c-cream);
   font-family: var(--font-subhead);
   font-size: 0.75rem;
-  letter-spacing: 0.16em;
-  color: var(--accent);
+  letter-spacing: 0.08em;
 }
 
 .project-item__title {
   font-family: var(--font-heading);
   font-size: clamp(1.6rem, 5vw, 3.2rem);
   text-transform: uppercase;
-  transition: color 0.25s;
 }
 
-.project-item:hover .project-item__title,
-.project-item:focus-within .project-item__title {
-  color: var(--accent);
+/* The title is the card's one real control; its ::after stretches over the whole card */
+.project-item__open {
+  padding: 0;
+  text-align: start;
+  text-transform: inherit;
+  letter-spacing: inherit;
+  transition: text-shadow 0.25s var(--ease-out);
+}
+
+.project-item__open::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: var(--radius-sm);
+}
+
+.project-item__open:focus-visible {
+  outline: none;
+}
+
+.project-item__open:focus-visible::after {
+  outline: 2px solid var(--c-void);
+  outline-offset: 4px;
+}
+
+/* :hover only for real pointers — on touch it sticks after a tap/scroll and doubles the title */
+@media (hover: hover) {
+  .project-item:hover .project-item__open {
+    text-shadow: 4px 4px 0 var(--c-cream);
+  }
+}
+
+.project-item:focus-within .project-item__open {
+  text-shadow: 4px 4px 0 var(--c-cream);
 }
 
 .project-item__tag {
@@ -54,40 +150,220 @@
   font-size: 0.7rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--fg-muted);
+  color: var(--c-void);
   justify-self: end;
 }
 
 .project-item__desc {
-  grid-column: 1 / -1;
   max-width: 42ch;
-  color: var(--fg-muted);
+  color: var(--c-void);
   font-size: 0.98rem;
-  padding-left: 0;
 }
 
-.project-item__preview {
+/* ── The work, always in flow: a sticker with a void border and a hard void shadow ── */
+.project-item__media {
+  margin: 0;
+  width: 100%;
+}
+
+.project-item__sticker {
+  position: relative;
+  transform: rotate(-2deg);
+}
+
+.project-list > li:nth-child(even) .project-item__sticker {
+  transform: rotate(2deg);
+}
+
+/* The shadow is its own layer, so the lift (8px → 12px) is a transform, not a repaint */
+.project-item__sticker::before {
+  content: "";
   position: absolute;
-  right: 8%;
-  top: 50%;
-  width: min(280px, 32vw);
-  aspect-ratio: 4 / 5;
-  pointer-events: none;
-  opacity: 0;
-  transform: translate(10%, -40%) rotate(4deg) scale(0.92);
-  transition:
-    opacity 0.35s var(--ease-out),
-    transform 0.45s var(--ease-out);
-  z-index: 2;
-  background:
-    linear-gradient(145deg, var(--c-blue), var(--c-midnight) 60%, var(--c-royal));
-  overflow: hidden;
+  inset: 0;
+  border-radius: var(--radius-sm);
+  background: var(--c-void);
+  transform: translate(8px, 8px);
 }
 
-.project-item__preview img {
+.project-item__sticker img {
+  position: relative;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  border: 3px solid var(--c-void);
+  border-radius: var(--radius-sm);
+  background: var(--c-void);
+  transition: transform 0.35s var(--ease-out);
+}
+
+.project-item:hover .project-item__sticker img,
+.project-item:focus-within .project-item__sticker img {
+  transform: translate(-4px, -4px);
+}
+
+/* ── Cover art: five sleeves, each its own button (above the card's stretched ::after) ── */
+.sleeve {
+  position: relative;
+  z-index: 2;
+  display: block;
+  padding: 0;
+  border-radius: 6px;
+  transition: transform 0.45s var(--ease-out);
+}
+
+.sleeve img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border: 3px solid var(--c-void);
+  border-radius: 6px;
+  background: var(--c-void);
+  box-shadow: 5px 5px 0 var(--c-void);
+}
+
+.sleeve:focus-visible {
+  outline: 3px solid var(--c-void);
+  outline-offset: 4px;
+}
+
+.design__cta {
+  margin-top: var(--space-lg);
+}
+
+/* A void pill with cream text; the site's orange hover shadow is invisible on orange */
+.design__cta .btn {
+  background: var(--c-void);
+  border-color: var(--c-void);
+  color: var(--c-cream);
+  backdrop-filter: none;
+}
+
+.design__cta .btn:hover,
+.design__cta .btn:focus-visible {
+  background: var(--c-void);
+  border-color: var(--c-void);
+  color: var(--c-cream);
+  box-shadow: 5px 5px 0 var(--c-cream);
+}
+
+/* The orange ends on a slant, so About needn't pad a second full gap of navy */
+.design + .about {
+  padding-top: var(--space-xl);
+}
+
+@media (min-width: 900px) {
+  .project-item__desc {
+    padding-left: calc(2.4rem + 1rem);
+  }
+}
+
+/* Desktop: text left, the work in a 32% column on the right */
+@media (min-width: 721px) {
+  .project-item {
+    grid-template-columns: minmax(0, 1fr) 32%;
+    grid-template-rows: auto 1fr;
+    column-gap: clamp(1.5rem, 4vw, 3.5rem);
+    row-gap: 0.75rem;
+    align-items: start;
+  }
+
+  .project-item__row,
+  .project-item__desc {
+    grid-column: 1;
+  }
+
+  .project-item__media {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+  }
+
+  /* A fanned hand of sleeves (-8…8°), CRASH on top; it spreads while the row is hovered */
+  .project-item__sleeves {
+    --w: 40%;
+    --spread: 0%;
+    --fan: 1;
+    position: relative;
+    aspect-ratio: 2 / 1;
+  }
+
+  .sleeve {
+    position: absolute;
+    top: 4%;
+    left: calc(var(--i) * (100% - var(--w)) / 4);
+    width: var(--w);
+    transform-origin: 50% 100%;
+    transform: translate(calc((var(--i) - 2) * var(--spread)), calc(var(--y) - var(--lift, 0%))) rotate(calc(var(--r) * var(--fan)));
+  }
+
+  .sleeve:nth-child(1) { --i: 0; --r: -8deg; --y: 9%; z-index: 7; }
+  .sleeve:nth-child(2) { --i: 1; --r: -4deg; --y: 3%; z-index: 6; }
+  .sleeve:nth-child(3) { --i: 2; --r: 0deg; --y: 0%; z-index: 5; }
+  .sleeve:nth-child(4) { --i: 3; --r: 4deg; --y: 3%; z-index: 4; }
+  .sleeve:nth-child(5) { --i: 4; --r: 8deg; --y: 9%; z-index: 3; }
+
+  .project-item:hover .project-item__sleeves,
+  .project-item:focus-within .project-item__sleeves {
+    --spread: 16%;
+    --fan: 1.35;
+  }
+
+  .sleeve:hover,
+  .sleeve:focus-visible {
+    --lift: 10%;
+    z-index: 8;
+  }
+}
+
+/* Phones: the image full width between the title row and the description */
+@media (max-width: 720px) {
+  .project-item__row {
+    grid-template-columns: auto 1fr;
+  }
+
+  .project-item__tag {
+    grid-column: 2;
+    justify-self: start;
+  }
+
+  .project-item__media {
+    margin-block: 0.5rem 0.25rem;
+  }
+
+  /* Leave room for the 8px shadow inside the gutter */
+  .project-item__sticker {
+    width: calc(100% - 8px);
+  }
+
+  /* 3 + 2 tiles, alternately tilted */
+  .project-item__sleeves {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 1rem 0.85rem;
+    padding-inline: 0.25rem;
+  }
+
+  .sleeve {
+    grid-column: span 2;
+    transform: rotate(-3deg);
+  }
+
+  .sleeve:nth-child(even) {
+    transform: rotate(3deg);
+  }
+
+  .sleeve:nth-child(4) {
+    grid-column: 2 / span 2;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .project-item__sticker img,
+  .sleeve,
+  .project-item__open {
+    transition: none;
+  }
 }
 
 .project-item__preview-fallback {
@@ -99,39 +375,8 @@
   font-size: 3rem;
   color: color-mix(in srgb, var(--c-cream) 35%, transparent);
   background:
-    radial-gradient(circle at 30% 30%, color-mix(in srgb, var(--accent) 40%, transparent), transparent 50%),
+    radial-gradient(circle at 30% 30%, color-mix(in srgb, var(--c-gold) 40%, transparent), transparent 50%),
     linear-gradient(145deg, var(--c-blue), var(--c-midnight));
-}
-
-.project-item:hover .project-item__preview,
-.project-item.is-active .project-item__preview {
-  opacity: 1;
-  transform: translate(0, -50%) rotate(-2deg) scale(1);
-}
-
-.design__cta {
-  margin-top: var(--space-lg);
-}
-
-@media (min-width: 900px) {
-  .project-item__desc {
-    padding-left: 3.2rem;
-  }
-}
-
-@media (max-width: 720px) {
-  .project-item__preview {
-    display: none;
-  }
-
-  .project-item__row {
-    grid-template-columns: auto 1fr;
-  }
-
-  .project-item__tag {
-    grid-column: 2;
-    justify-self: start;
-  }
 }
 
 /* Lightbox */
@@ -148,19 +393,27 @@
   visibility: hidden;
   transition:
     opacity 0.3s,
-    visibility 0.3s;
+    visibility 0s linear 0.3s;
 }
 
 .lightbox.is-open {
   opacity: 1;
   visibility: visible;
+  transition:
+    opacity 0.3s,
+    visibility 0s;
 }
 
 .lightbox__panel {
   width: min(640px, 100%);
+  max-height: calc(100svh - 2rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
   background: var(--c-midnight);
   border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
   padding: 1.75rem;
+  padding-top: 3.5rem; /* a row for ×, so it never sits on the artwork or the next slide */
   position: relative;
 }
 
@@ -203,10 +456,104 @@
   margin-bottom: 1.25rem;
   background: var(--c-royal);
   overflow: hidden;
+  border-radius: var(--radius);
 }
 
 .lightbox__media img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+/* Cover-art gallery: one square sleeve per slide, caption + its preview ▶ underneath */
+/* (doubled class: brand.css's generic .lightbox__gallery rules load later) */
+.lightbox__gallery.lightbox__gallery--sleeves .lightbox__slide {
+  flex-basis: min(78%, 27rem, 46svh);
+}
+
+.lightbox__gallery.lightbox__gallery--sleeves img {
+  aspect-ratio: 1;
+}
+
+/* A slide is image + caption: .lightbox__media img's height:100% would push the caption out of view */
+.lightbox__slide img {
+  height: auto;
+}
+
+.lightbox__slide figcaption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.lightbox__caption {
+  font-family: var(--font-subhead);
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+
+.lightbox__play {
+  --icon-accent: currentColor;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex: none;
+  min-height: 2.75rem;
+  padding: 0 1.1rem 0 0.9rem;
+  border: 1px solid color-mix(in srgb, var(--c-cream) 28%, transparent);
+  border-radius: var(--radius-pill);
+  font-family: var(--font-subhead);
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  transition:
+    background 0.25s,
+    border-color 0.25s,
+    color 0.25s,
+    box-shadow 0.3s var(--ease-out);
+}
+
+.lightbox__play .icon {
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
+.lightbox__play:hover {
+  background: var(--c-gold);
+  border-color: var(--c-gold);
+  color: var(--c-void);
+  box-shadow: 3px 3px 0 var(--c-orange);
+}
+
+.lightbox__play.is-current {
+  border-color: var(--c-orange);
+}
+
+.lightbox__play.is-playing {
+  background: var(--c-orange);
+  border-color: var(--c-orange);
+  color: var(--c-void);
+}
+
+.lightbox__play-icon {
+  display: grid;
+}
+
+.lightbox__play-icon--pause,
+.lightbox__play-label--pause,
+.lightbox__play.is-playing .lightbox__play-icon--play,
+.lightbox__play.is-playing .lightbox__play-label--play {
+  display: none;
+}
+
+.lightbox__play.is-playing .lightbox__play-icon--pause {
+  display: grid;
+}
+
+.lightbox__play.is-playing .lightbox__play-label--pause {
+  display: inline;
 }

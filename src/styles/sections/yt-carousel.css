@@ -1,0 +1,323 @@
+.yt-block {
+  margin-top: var(--space-xl);
+}
+
+.yt-block__head {
+  margin-bottom: var(--space-lg);
+  max-width: 40rem;
+}
+
+.yt-carousel {
+  position: relative;
+  outline: none;
+  --yt-depth: 48px;
+}
+
+.yt-carousel__stage {
+  /* Full-bleed hit area: clicks anywhere left/right of the centre video — out to the viewport
+     edges — go prev/next. Slide width stays tied to the content column, not the viewport. */
+  --col: min(1120px, calc(100vw - 2.5rem));
+  --yt-w: min(calc(var(--col) * 0.78), 880px);
+  margin-inline: calc(50% - 50vw);
+  position: relative;
+  perspective: 1400px;
+  transform-style: preserve-3d;
+}
+
+/* Invisible sizer: stage height = one true 16:9 slide, so thumbs/player are never cropped */
+.yt-carousel__stage::before {
+  content: "";
+  display: block;
+  width: var(--yt-w);
+  aspect-ratio: 16 / 9;
+  margin-inline: auto;
+}
+
+.yt-slide {
+  position: absolute;
+  inset: 0 0 auto;
+  width: var(--yt-w);
+  aspect-ratio: 16 / 9;
+  margin-inline: auto;
+  transition:
+    transform 0.7s var(--ease-out),
+    opacity 0.55s var(--ease-out),
+    filter 0.55s var(--ease-out);
+  transform-style: preserve-3d;
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  filter: saturate(0.7);
+}
+
+.yt-slide.is-active {
+  opacity: 1;
+  pointer-events: auto;
+  filter: none;
+  z-index: 5;
+  transform: translate3d(0, 0, 0) rotateY(0deg) scale(1);
+  cursor: default;
+}
+
+.yt-slide[data-offset="-1"] {
+  opacity: 0.55;
+  pointer-events: auto;
+  z-index: 4;
+  transform: translate3d(-42%, 0, -160px) rotateY(28deg) scale(0.86);
+}
+
+.yt-slide[data-offset="1"] {
+  opacity: 0.55;
+  pointer-events: auto;
+  z-index: 4;
+  transform: translate3d(42%, 0, -160px) rotateY(-28deg) scale(0.86);
+}
+
+.yt-slide[data-offset="-2"] {
+  opacity: 0.28;
+  z-index: 3;
+  transform: translate3d(-68%, 0, -280px) rotateY(38deg) scale(0.72);
+}
+
+.yt-slide[data-offset="2"] {
+  opacity: 0.28;
+  z-index: 3;
+  transform: translate3d(68%, 0, -280px) rotateY(-38deg) scale(0.72);
+}
+
+.yt-slide__frame {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  background: var(--c-midnight);
+  border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+  box-shadow:
+    0 30px 80px color-mix(in srgb, #000 55%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--accent-hot) 18%, transparent);
+}
+
+.yt-slide.is-active .yt-slide__frame {
+  border-color: var(--accent);
+  box-shadow:
+    0 40px 100px color-mix(in srgb, #000 60%, transparent),
+    0 0 60px color-mix(in srgb, var(--accent) 18%, transparent);
+}
+
+.yt-slide__thumb,
+.yt-slide__embed,
+.yt-slide__embed iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border: 0;
+}
+
+.yt-slide__embed {
+  z-index: 2;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.yt-slide.is-playing .yt-slide__embed {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.yt-slide.is-playing .yt-slide__thumb,
+.yt-slide.is-playing .yt-slide__play {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.yt-slide__play {
+  position: absolute;
+  z-index: 3;
+  inset: 50% auto auto 50%;
+  translate: -50% -50%;
+  width: 4.5rem;
+  height: 4.5rem;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--c-void);
+  font-family: var(--font-subhead);
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  display: grid;
+  place-items: center;
+  transition:
+    transform 0.3s var(--ease-out),
+    background 0.25s;
+}
+
+.yt-slide.is-active .yt-slide__play:hover {
+  background: var(--accent-hot);
+  color: var(--c-cream);
+  transform: scale(1.06);
+}
+
+.yt-slide:not(.is-active) .yt-slide__play {
+  opacity: 0;
+}
+
+.yt-slide__meta {
+  position: absolute;
+  z-index: 3;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  padding: 1.1rem 1.25rem;
+  background: linear-gradient(180deg, transparent, color-mix(in srgb, var(--c-void) 92%, transparent));
+}
+
+.yt-slide__index {
+  font-family: var(--font-heading);
+  font-size: 1.4rem;
+  color: var(--accent);
+}
+
+.yt-slide__title {
+  font-family: var(--font-subhead);
+  font-size: 0.75rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.yt-carousel__controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.yt-carousel__nav {
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-size: 1.1rem;
+  color: var(--fg);
+  transition:
+    border-color 0.25s,
+    background 0.25s,
+    color 0.25s;
+}
+
+.yt-carousel__nav:hover {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--c-void);
+}
+
+/* 24×24 targets (WCAG 2.5.8) with no gap, so nine still fit the 16rem row; the pill is drawn inside */
+.yt-carousel__dots {
+  display: flex;
+  gap: 0;
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: 16rem;
+}
+
+.yt-carousel__dot {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+}
+
+.yt-carousel__dot::before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--c-cream) 60%, transparent);
+  transition:
+    width 0.3s var(--ease-out),
+    background 0.25s;
+}
+
+.yt-carousel__dot:hover::before {
+  background: var(--c-cream);
+}
+
+.yt-carousel__dot.is-active::before {
+  width: 22px;
+  background: var(--accent);
+}
+
+.yt-carousel__dot:focus-visible {
+  outline-offset: 0;
+}
+
+.yt-carousel__watch {
+  display: inline-flex;
+  margin: 1rem auto 0;
+  font-family: var(--font-subhead);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  border-bottom: 1px solid transparent;
+  width: fit-content;
+  justify-self: center;
+}
+
+.yt-carousel {
+  display: grid;
+  justify-items: stretch;
+}
+
+.yt-carousel__watch:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+@media (max-width: 720px) {
+  .yt-carousel__stage {
+    --yt-w: calc(var(--col) * 0.86);
+    perspective: 900px;
+  }
+
+  .yt-slide[data-offset="-1"],
+  .yt-slide[data-offset="1"] {
+    transform: translate3d(-28%, 0, -120px) rotateY(18deg) scale(0.9);
+  }
+
+  .yt-slide[data-offset="1"] {
+    transform: translate3d(28%, 0, -120px) rotateY(-18deg) scale(0.9);
+  }
+
+  .yt-slide[data-offset="-2"],
+  .yt-slide[data-offset="2"] {
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .yt-slide {
+    transition: opacity 0.2s;
+  }
+
+  .yt-slide[data-offset="-1"],
+  .yt-slide[data-offset="1"],
+  .yt-slide[data-offset="-2"],
+  .yt-slide[data-offset="2"] {
+    transform: none;
+    opacity: 0;
+  }
+
+  .yt-slide.is-active {
+    transform: none;
+  }
+}

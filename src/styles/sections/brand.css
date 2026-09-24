@@ -1,0 +1,265 @@
+/* ─── Brand layer: 2000s cartoon · expressive strokes · warm orange ──────── */
+
+/* Hand-drawn doodles (src/js/doodles.js) */
+.doodle {
+  display: block;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.doodle path {
+  stroke: var(--c-orange);
+  stroke-width: 5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.section-title.has-doodle {
+  position: relative;
+  width: fit-content;
+  max-width: 100%;
+}
+
+.doodle--under {
+  width: min(100%, 22rem);
+  height: 0.38em;
+  margin-top: 0.08em;
+}
+
+.doodle--under path + path {
+  stroke: var(--c-gold);
+  stroke-width: 3;
+}
+
+.crash__title {
+  position: relative;
+  width: fit-content;
+}
+
+.doodle--burst {
+  position: absolute;
+  top: -0.35em;
+  right: -0.9em;
+  width: 0.85em;
+  height: 0.85em;
+}
+
+.doodle--burst path {
+  stroke: var(--c-cream);
+  stroke-width: 4;
+}
+
+.doodle--burst path + path {
+  stroke: var(--c-orange);
+  fill: color-mix(in srgb, var(--c-orange) 25%, transparent);
+}
+
+/* Sits to the right of "Book / collab", arrowhead pointing back at the button */
+.doodle--arrow {
+  position: absolute;
+  left: calc(100% + 0.6rem);
+  top: 50%;
+  width: clamp(4.5rem, 12vw, 6.5rem);
+  height: clamp(2.6rem, 7vw, 3.8rem);
+  transform: translateY(-65%) scaleX(-1) rotate(-10deg);
+}
+
+.connect [data-booking] {
+  position: relative;
+}
+
+.connect .reveal:has(> .doodle--arrow) {
+  position: relative;
+  width: fit-content;
+}
+
+/* Big looping strokes, like the Behance portfolio cover */
+.doodle--loops {
+  position: absolute;
+  z-index: 1;
+  left: -5%;
+  width: 110%;
+  height: auto;
+  aspect-ratio: 800 / 220;
+  opacity: 0.55;
+}
+
+.doodle--loops path {
+  stroke: var(--c-void);
+  stroke-width: 6;
+}
+
+.connect {
+  position: relative;
+  overflow: hidden;
+}
+
+.connect > .container {
+  position: relative;
+  z-index: 2;
+}
+
+/* Comic halftone print texture (the hero's now lives on its sun) */
+.crash__halftone {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: radial-gradient(circle, color-mix(in srgb, var(--c-orange) 55%, transparent) 1.1px, transparent 1.6px);
+  background-size: 9px 9px;
+  mask-image: radial-gradient(ellipse 60% 55% at 85% 30%, #000 10%, transparent 70%);
+  opacity: 0.5;
+}
+
+/* ─── Marquee band ──────────────────────────────────────────────────────── */
+
+.marquee {
+  position: relative;
+  z-index: 4;
+  overflow: hidden;
+  padding-block: 1rem;
+  background: var(--c-orange);
+  color: var(--c-void);
+  transform: rotate(-2deg) scale(1.04);
+  /* The -2° tilt lifts the band's right end by ~tan(2°)·50vw — clear that so it never
+     overlaps the hero, then leave breathing room before the music section */
+  margin-top: calc(1.75vw + clamp(1.5rem, 4vw, 3rem));
+  margin-bottom: clamp(0.5rem, 2vw, 1.5rem);
+  box-shadow: 0 8px 0 var(--c-void), 0 12px 0 var(--c-gold);
+}
+
+.marquee__track {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+}
+
+.marquee__run {
+  display: flex;
+  align-items: center;
+  flex: none;
+}
+
+.marquee__word {
+  font-family: var(--font-heading);
+  font-size: clamp(1.8rem, 5vw, 3.2rem);
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+  padding-inline: 1.1rem;
+}
+
+.marquee__word.is-outline {
+  color: transparent;
+  -webkit-text-stroke: 2px var(--c-void);
+}
+
+.marquee__sep {
+  --icon-accent: var(--c-cream);
+  width: clamp(1.6rem, 3.5vw, 2.4rem);
+  height: clamp(1.6rem, 3.5vw, 2.4rem);
+  color: var(--c-void);
+}
+
+/* ─── Sticker hover, site-wide ──────────────────────────────────────────── */
+
+.btn--primary {
+  box-shadow: 0 0 0 transparent;
+  transition:
+    transform 0.3s var(--ease-out),
+    background 0.3s var(--ease-soft),
+    color 0.3s var(--ease-soft),
+    box-shadow 0.3s var(--ease-out);
+}
+
+.btn--primary:hover {
+  box-shadow: 5px 5px 0 var(--c-orange);
+}
+
+.btn--ghost:hover {
+  box-shadow: 5px 5px 0 color-mix(in srgb, var(--c-orange) 70%, transparent);
+}
+
+.platform-link:hover {
+  box-shadow: 3px 3px 0 var(--c-orange);
+}
+
+.btn--listen {
+  --icon-accent: currentColor;
+}
+
+.btn__icon {
+  display: grid;
+  width: 1.15rem;
+  height: 1.15rem;
+}
+
+.btn__icon .icon {
+  width: 100%;
+  height: 100%;
+}
+
+.btn--listen.is-playing {
+  background: var(--c-orange);
+  color: var(--c-void);
+  box-shadow: 5px 5px 0 var(--c-gold);
+}
+
+/* ─── Small additions to existing sections ──────────────────────────────── */
+
+.yt-slide__kind {
+  display: block;
+  margin-top: 0.25rem;
+  font-style: normal;
+  font-size: 0.62rem;
+  letter-spacing: 0.18em;
+  color: var(--c-orange);
+}
+
+.yt-carousel:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 8px;
+  border-radius: var(--radius);
+}
+
+.lightbox {
+  z-index: 205;
+}
+
+.lightbox__media.is-gallery {
+  aspect-ratio: auto;
+  background: none;
+}
+
+.lightbox__gallery {
+  display: flex;
+  gap: 0.75rem;
+  padding-block: 6px; /* overflow clips both axes: room for the ▶'s focus ring */
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: thin;
+  scrollbar-color: var(--c-gold) transparent;
+}
+
+.lightbox__gallery.is-dragging {
+  scroll-snap-type: none;
+}
+
+.lightbox__gallery figure {
+  flex: 0 0 88%;
+  margin: 0;
+  scroll-snap-align: start;
+}
+
+.lightbox__gallery img {
+  width: 100%;
+  aspect-ratio: 16 / 11;
+  object-fit: cover;
+  border-radius: var(--radius);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee {
+    transform: rotate(-2deg);
+  }
+}

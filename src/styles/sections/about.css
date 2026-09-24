@@ -4,6 +4,61 @@
     var(--c-void);
 }
 
+.about__banner {
+  position: relative;
+  margin-bottom: var(--space-xl);
+  /* Native channel-banner proportions (1707×282) so nothing gets cropped away */
+  aspect-ratio: 1707 / 282;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  background: var(--c-midnight);
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+  box-shadow: 0 30px 80px color-mix(in srgb, #000 45%, transparent);
+}
+
+.about__banner img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 32% 50%;
+}
+
+.about__banner::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--c-cream) 8%, transparent);
+  background: linear-gradient(180deg, transparent 65%, color-mix(in srgb, var(--c-void) 45%, transparent));
+  pointer-events: none;
+}
+
+/* A 6:1 strip is too thin on phones — crop to the portrait + title instead */
+@media (max-width: 720px) {
+  .about__banner {
+    aspect-ratio: 16 / 7;
+  }
+}
+
+.about__profile {
+  width: 7.5rem;
+  height: 7.5rem;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 3px solid var(--accent);
+  box-shadow: 5px 5px 0 var(--accent-hot);
+  margin-bottom: var(--space-md);
+}
+
+.about__handle {
+  font-family: var(--font-subhead);
+  font-size: 0.75rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.75rem;
+}
+
 .about__grid {
   display: grid;
   gap: var(--space-lg);
@@ -21,8 +76,9 @@
   font-size: 0.72rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  padding: 0.45rem 0.8rem;
+  padding: 0.45rem 0.9rem;
   border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
   color: var(--fg-muted);
 }
 
@@ -65,57 +121,372 @@
   }
 }
 
+/* ─── Connect: the gold "fresh out the toaster" finale ─────────────────────
+   Void on gold is ~10.6:1. The top edge slants 3.5vw (tan 2° × 100vw), parallel to the marquee and
+   the orange Design flood. Inside, the accent flips to void so rings, rules and doodles stay visible. */
 .connect {
-  padding-block: var(--space-2xl) var(--space-xl);
-  background:
-    linear-gradient(180deg, var(--c-void), var(--c-midnight));
-  border-top: 1px solid var(--line);
+  --accent: var(--c-void);
+  --accent-hot: var(--c-orange);
+  --fg: var(--c-void);
+  --fg-muted: var(--c-void);
+  --line: color-mix(in srgb, var(--c-void) 22%, transparent);
+  padding-block: calc(var(--space-2xl) + 3.5vw) var(--space-lg);
+  background: var(--c-gold);
+  color: var(--c-void);
+  clip-path: polygon(0 3.5vw, 100% 0, 100% 100%, 0 100%);
+}
+
+/* Phones: 8rem of gold above the headline read as a blank screen */
+@media (max-width: 720px) {
+  .connect {
+    padding-top: calc(var(--space-lg) + 3.5vw);
+  }
+}
+
+.connect :focus-visible {
+  outline-color: var(--c-void);
+}
+
+.connect ::selection {
+  background: var(--c-void);
+  color: var(--c-gold);
+}
+
+.connect .doodle--arrow path {
+  stroke: var(--c-void);
 }
 
 .connect__title {
-  font-size: clamp(2.5rem, 9vw, 5rem);
+  font-size: clamp(3rem, 10vw, 8rem);
+  line-height: 0.86;
+  max-width: 15ch;
+  text-wrap: balance;
   margin-bottom: var(--space-md);
+  color: var(--c-void);
+  text-shadow: 0.035em 0.035em 0 var(--c-orange);
 }
 
 .connect__lede {
   max-width: 36ch;
-  color: var(--fg-muted);
+  margin-bottom: var(--space-md);
+  font-size: clamp(1.1rem, 2.2vw, 1.3rem);
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.connect__book {
   margin-bottom: var(--space-lg);
 }
 
+/* Book: a void pill with cream text (btn--primary's red hover would be 2.3:1 on gold) */
+.connect .btn--primary,
+.connect .btn--primary:hover {
+  background: var(--c-void);
+  color: var(--c-cream);
+}
+
+.connect .btn--primary:hover,
+.connect .btn--primary:focus-visible {
+  box-shadow: 5px 5px 0 var(--c-orange);
+}
+
+.connect__proof {
+  max-width: 62ch;
+  margin-bottom: var(--space-md);
+  padding-top: 0.9rem;
+  border-top: 2px solid var(--c-void);
+  font-family: var(--font-subhead);
+  font-size: 0.74rem;
+  line-height: 1.7;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.connect__proof:empty {
+  display: none;
+}
+
+/* Two wide streaming cards first, the four stickers under them */
+.connect__stream {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+  gap: 1rem;
+  margin-bottom: 1.4rem;
+}
+
+.stream-card {
+  --icon-accent: var(--c-gold);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  min-height: 5.25rem;
+  padding: 0.85rem 1.25rem 0.85rem 0.85rem;
+  border: 3px solid var(--c-void);
+  border-radius: var(--radius);
+  background: var(--c-orange);
+  color: var(--c-void);
+  box-shadow: 5px 5px 0 var(--c-void);
+  font-family: var(--font-subhead);
+  font-size: clamp(0.85rem, 1.6vw, 1rem);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transition:
+    transform 0.3s var(--ease-out),
+    box-shadow 0.3s var(--ease-out);
+}
+
+.stream-card__badge {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 3.25rem;
+  height: 3.25rem;
+  border-radius: 50%;
+  background: var(--c-void);
+  color: var(--c-cream);
+}
+
+.stream-card__badge .icon {
+  width: 1.9rem;
+  height: 1.9rem;
+}
+
+.stream-card__label {
+  flex: 1;
+}
+
+.stream-card__arrow {
+  font-size: 1.2rem;
+  transition: transform 0.3s var(--ease-out);
+}
+
+.stream-card:hover,
+.stream-card:focus-visible {
+  transform: translate(-3px, -3px);
+  box-shadow: 8px 8px 0 var(--c-void);
+}
+
+.stream-card:hover .stream-card__arrow,
+.stream-card:focus-visible .stream-card__arrow {
+  transform: translate(3px, -3px);
+}
+
+.stream-card:hover .icon,
+.stream-card:focus-visible .icon {
+  animation: icon-boing 0.6s var(--ease-out);
+}
+
+/* Die-cut stickers: cream, 3px void outline, 5px void shadow, slapped on at a tilt */
 .social-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  gap: 0.75rem;
-  margin-bottom: var(--space-xl);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem 0.9rem;
+  margin-bottom: var(--space-lg);
+}
+
+/* Four across only when each sticker has room for its label (the toaster takes a column from 900px) */
+@media (min-width: 1100px) {
+  .social-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
 }
 
 .social-link {
+  --icon-accent: var(--c-orange);
+  --icon-ghost: var(--c-red);
+  --tilt: -2.5deg;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 0.5rem;
-  min-height: 3.25rem;
-  padding: 0.85rem 1rem;
-  border: 1px solid var(--line);
+  gap: 0.7rem;
+  min-height: 3.75rem;
+  padding: 0.55rem 0.9rem 0.55rem 0.6rem;
+  border: 3px solid var(--c-void);
+  border-radius: var(--radius);
+  background: var(--c-cream);
+  color: var(--c-void);
+  box-shadow: 5px 5px 0 var(--c-void);
   font-family: var(--font-subhead);
   font-size: 0.72rem;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
+  rotate: var(--tilt);
   transition:
-    background 0.25s,
-    border-color 0.25s,
-    color 0.25s;
+    rotate 0.35s var(--ease-pop),
+    transform 0.3s var(--ease-out),
+    box-shadow 0.3s var(--ease-out);
 }
 
-.social-link:hover {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: var(--c-void);
+.social-link:nth-child(2) { --tilt: 2deg; }
+.social-link:nth-child(3) { --tilt: -2deg; }
+.social-link:nth-child(4) { --tilt: 3deg; }
+
+.social-link__badge {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
 }
 
-.social-link span:last-child {
-  opacity: 0.6;
+.social-link__icon {
+  width: 1.8rem;
+  height: 1.8rem;
+  overflow: visible;
+}
+
+.social-link__label {
+  flex: 1;
+  min-width: 0;
+}
+
+.social-link__arrow {
+  transition: transform 0.35s var(--ease-out);
+}
+
+.social-link:hover,
+.social-link:focus-visible {
+  rotate: 0deg;
+  transform: translate(-2px, -2px);
+  box-shadow: 7px 7px 0 var(--c-void);
+}
+
+.social-link:hover .social-link__icon,
+.social-link:focus-visible .social-link__icon {
+  animation: icon-boing 0.6s var(--ease-out);
+}
+
+.social-link:hover .social-link__arrow,
+.social-link:focus-visible .social-link__arrow {
+  transform: translate(3px, -3px);
+}
+
+@keyframes icon-boing {
+  0% { transform: scale(1) rotate(0); }
+  30% { transform: scale(1.22, 0.86) rotate(-8deg); }
+  55% { transform: scale(0.92, 1.12) rotate(5deg); }
+  75% { transform: scale(1.05) rotate(-2deg); }
+  100% { transform: scale(1) rotate(0); }
+}
+
+/* The toaster bookend: Back to top. Toast slices (decoration) pop out of it on the first scroll-in */
+.connect__end {
+  display: flex;
+  justify-content: flex-end;
+  margin: 0 0 var(--space-md);
+}
+
+.connect__toaster {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  width: clamp(7.5rem, 22vw, 10.5rem);
+  padding: 0;
+  border-radius: var(--radius);
+}
+
+/* The slices hide behind the logo's cassettes and body (x 32–72%, below 16% of its height) at y:+40px,
+   then pop 100px up, clear of the toaster (connect.js) */
+.connect__toaster-art {
+  position: relative;
+  display: block;
+  width: 100%;
+  transform-origin: 50% 100%;
+}
+
+.connect__toaster-img {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(5px 5px 0 var(--c-void));
+  pointer-events: none;
+  transition: filter 0.3s var(--ease-out);
+}
+
+.connect__slice {
+  position: absolute;
+  z-index: 0;
+  top: calc(16% - 40px);
+  left: 31%;
+  width: 28%;
+  height: auto;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.connect__slice--front {
+  top: calc(19% - 40px);
+  left: 45%;
+  width: 30%;
+}
+
+.kt-crust { fill: #5b1f0c; }
+.kt-face { fill: #b9491b; }
+.connect__slice--back .kt-face { fill: #983a15; }
+.kt-label { fill: #6a2410; }
+.kt-reel { fill: #e3a488; }
+.kt-win { fill: #3a1307; }
+.kt-shine { fill: none; stroke: #e7c2ae; stroke-width: 5; stroke-linecap: round; }
+
+.connect__toaster-hint {
+  margin-top: 0.55rem;
+  font-family: var(--font-subhead);
+  font-size: 0.66rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.connect__toaster:hover .connect__toaster-img {
+  filter: drop-shadow(7px 7px 0 var(--c-void));
+}
+
+/* In the phone flow: head-room above for the popped toast */
+.connect__end {
+  padding-top: 4.5rem;
+}
+
+@media (min-width: 900px) {
+  /* The toaster sits bottom-right, beside the streaming cards and stickers */
+  .connect > .container {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: clamp(2rem, 4vw, 4rem);
+  }
+
+  .connect > .container > * {
+    grid-column: 1;
+  }
+
+  .connect > .container > .connect__title,
+  .connect > .container > .site-footer {
+    grid-column: 1 / -1;
+  }
+
+  .connect > .container > .connect__end {
+    grid-column: 2;
+    grid-row: 5;
+    align-self: end;
+    margin: 0 0 var(--space-lg);
+    padding-top: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stream-card,
+  .stream-card:hover,
+  .social-link:hover {
+    transform: none;
+  }
+
+  .social-link {
+    transition: none;
+  }
+
+  .stream-card:hover .icon,
+  .social-link:hover .social-link__icon {
+    animation: none;
+  }
 }
 
 .site-footer {
@@ -124,15 +495,21 @@
   gap: 1rem;
   justify-content: space-between;
   align-items: center;
-  padding-top: var(--space-lg);
-  border-top: 1px solid var(--line);
+  padding-top: var(--space-md);
+  border-top: 2px solid var(--c-void);
   font-family: var(--font-subhead);
   font-size: 0.7rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--fg-muted);
+  color: var(--c-void);
+}
+
+.site-footer a {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.3em;
 }
 
 .site-footer a:hover {
-  color: var(--accent);
+  text-decoration-color: var(--c-orange);
 }

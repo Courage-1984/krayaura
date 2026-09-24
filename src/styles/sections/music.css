@@ -18,6 +18,9 @@
 }
 
 .platform-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
   font-family: var(--font-subhead);
   font-size: 0.7rem;
   letter-spacing: 0.16em;
@@ -36,6 +39,13 @@
   color: var(--c-void);
   background: var(--accent);
   border-color: var(--accent);
+  --icon-accent: var(--accent-hot);
+}
+
+.platform-link .icon {
+  width: 1.15rem;
+  height: 1.15rem;
+  margin-block: -0.2rem;
 }
 
 .track-rail {
@@ -46,143 +56,18 @@
   padding-bottom: 1rem;
   margin-inline: calc(50% - 50vw);
   padding-inline: max(1.25rem, calc(50vw - 560px));
+  scroll-padding-inline: max(1.25rem, calc(50vw - 560px));
   scrollbar-width: thin;
   scrollbar-color: var(--c-gold) transparent;
 }
 
-.track-card {
-  flex: 0 0 min(78vw, 320px);
-  scroll-snap-align: start;
-  position: relative;
-  min-height: 22rem;
-  padding: 1.5rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  isolation: isolate;
-  overflow: hidden;
-  border-radius: 0;
-  background: var(--c-royal);
+.track-rail.is-dragging {
+  scroll-snap-type: none;
+  scroll-behavior: auto;
+  user-select: none;
 }
 
-.track-card::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background:
-    linear-gradient(160deg, transparent 20%, color-mix(in srgb, var(--c-void) 85%, transparent)),
-    radial-gradient(circle at 80% 10%, color-mix(in srgb, var(--accent) 35%, transparent), transparent 45%);
-}
 
-.track-card[data-tone="red"]::before {
-  background:
-    linear-gradient(160deg, transparent 20%, color-mix(in srgb, var(--c-void) 85%, transparent)),
-    radial-gradient(circle at 80% 10%, color-mix(in srgb, var(--accent-hot) 40%, transparent), transparent 45%);
-}
-
-.track-card[data-tone="blue"]::before {
-  background:
-    linear-gradient(160deg, transparent 20%, color-mix(in srgb, var(--c-void) 85%, transparent)),
-    radial-gradient(circle at 80% 10%, color-mix(in srgb, var(--c-blue) 55%, transparent), transparent 45%);
-}
-
-.track-card__index {
-  position: absolute;
-  top: 1.25rem;
-  left: 1.25rem;
-  font-family: var(--font-heading);
-  font-size: 2.5rem;
-  color: color-mix(in srgb, var(--c-cream) 25%, transparent);
-  line-height: 1;
-}
-
-.track-card__title {
-  font-family: var(--font-heading);
-  font-size: clamp(1.8rem, 4vw, 2.4rem);
-  text-transform: uppercase;
-  margin-bottom: 0.35rem;
-}
-
-.track-card__meta {
-  font-family: var(--font-subhead);
-  font-size: 0.72rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--fg-muted);
-  margin-bottom: 1.1rem;
-}
-
-.track-card__links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-
-.track-card__links a {
-  font-size: 0.68rem;
-  font-family: var(--font-subhead);
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--accent);
-  border-bottom: 1px solid transparent;
-  padding-bottom: 0.1rem;
-  transition: border-color 0.2s;
-}
-
-.track-card__links a:hover {
-  border-color: var(--accent);
-}
-
-.music__video {
-  margin-top: var(--space-xl);
-  display: grid;
-  gap: 1rem;
-}
-
-.music__video-frame {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  background: var(--c-midnight);
-  overflow: hidden;
-}
-
-.music__video-frame iframe {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  border: 0;
-}
-
-.music__yt-card {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  gap: 0.5rem;
-  min-height: 14rem;
-  padding: 1.75rem;
-  background:
-    radial-gradient(circle at 85% 20%, color-mix(in srgb, var(--accent-hot) 45%, transparent), transparent 45%),
-    linear-gradient(145deg, var(--c-royal), var(--c-midnight));
-  transition: transform 0.35s var(--ease-out);
-}
-
-.music__yt-card:hover {
-  transform: translateY(-4px);
-}
-
-.music__yt-card-title {
-  font-family: var(--font-heading);
-  font-size: clamp(1.8rem, 4vw, 2.6rem);
-  text-transform: uppercase;
-}
-
-.music__yt-card-meta {
-  font-family: var(--font-subhead);
-  font-size: 0.75rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--fg-muted);
+.track-rail.is-dragging .record {
+  pointer-events: none;
 }

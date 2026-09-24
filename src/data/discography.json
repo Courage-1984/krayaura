@@ -1,0 +1,554 @@
+{
+  "generatedAt": "2026-09-23T20:45:17+00:00",
+  "artist": {
+    "spotify": "https://open.spotify.com/artist/2Avud2iTz4kMASfHFX2Pyu",
+    "apple": "https://music.apple.com/us/artist/krayaura/1588929160"
+  },
+  "releases": [
+    {
+      "id": "signal",
+      "title": "Signal",
+      "features": [],
+      "type": "single",
+      "date": "2026-05-28",
+      "year": 2026,
+      "trackCount": 1,
+      "apple": "https://music.apple.com/us/album/signal/6772604474",
+      "spotify": "https://open.spotify.com/album/5b5mTlS5wsEQlgu1v45wZV",
+      "cover": "covers/signal.jpg",
+      "popular": true,
+      "tracks": [
+        {
+          "n": 1,
+          "title": "Signal",
+          "features": [],
+          "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/b9/9c/37/b99c376d-db97-c422-225a-8a6c73fbed13/mzaf_14874891770687951951.plus.aac.p.m4a",
+          "apple": "https://music.apple.com/us/album/signal/6772604474",
+          "durationMs": 167304,
+          "popular": true
+        }
+      ]
+    },
+    {
+      "id": "crash",
+      "title": "Crash",
+      "features": [],
+      "type": "album",
+      "date": "2025-11-28",
+      "year": 2025,
+      "trackCount": 14,
+      "apple": "https://music.apple.com/us/album/crash/1854568860",
+      "spotify": "https://open.spotify.com/album/5MwragbiBzE5Dy6S39T1pr",
+      "cover": "covers/crash.jpg",
+      "popular": false,
+      "tracks": [
+        {
+          "n": 1,
+          "title": "Passion",
+          "features": [],
+          "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/d4/b6/76/d4b6765c-1697-8e0b-d186-d9c3beb7e88e/mzaf_16876308763228277580.plus.aac.p.m4a",
+          "apple": "https://music.apple.com/us/album/passion/1854568860",
+          "durationMs": 170352,
+          "popular": false
+        },
+        {
+          "n": 2,
+          "title": "You Amazing",
+          "features": [],
+          "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/96/0b/29/960b29a0-dec9-7b56-fbba-0e6240dc069c/mzaf_8973482397875130279.plus.aac.p.m4a",
+          "apple": "https://music.apple.com/us/album/you-amazing/1854568860",
+          "durationMs": 121944,
+          "popular": true
+        },
+        {
+          "n": 3,
+          "title": "The World",
+          "features": [
+            "Dioscuri"
+          ],
+          "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/9e/42/11/9e421131-6882-01d5-5418-cac9644be7c8/mzaf_16539852553971280771.plus.aac.p.m4a",
+          "apple": "https://music.apple.com/us/album/the-world-feat-dioscuri/1854568860",
+          "durationMs": 124272,
+          "popular": true
+        },
+        {
+          "n": 4,
+          "title": "Day Dreaming",
+          "features": [],
+          "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/eb/28/d2/eb28d207-210e-a68d-38d6-fdb74705f64d/mzaf_129495132751461610.plus.aac.p.m4a",
+          "apple": "https://music.apple.com/us/album/day-dreaming/1854568860",
+          "durationMs": 160032,
+          "popular": true
+        },
+        {
+          "n": 5,
+          "title": "You're Place",
+          "features": [
+            "iloh vas"
+          ],
+          "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/63/65/52/63655278-beab-4c3b-c431-6fe01f4c88f0/mzaf_5215343931359710056.plus.aac.p.m4a",
+          "apple": "https://music.apple.com/us/album/youre-place-feat-iloh-vas/1854568860",
+          "durationMs": 181944,
+          "popular": false
+        },
+        {
+          "n": 6,
+          "title": "Bad for Me",
+          "features": [],
+          "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/68/fe/fa/68fefa3c-ad75-d4fb-7549-fad0975cec84/mzaf_2697913709461899278.plus.aac.p.m4a",
+          "apple": "https://music.apple.com/us/album/bad-for-me/1854568860",
+          "durationMs": 107570,
+          "popular": true
+        },
+        {
+          "n": 7,
+          "title": "Gotta Bounce",
+          "features": [],
+          "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/69/54/22/69542231-b593-f391-6208-857925ee3d5c/mzaf_14071503052581440736.plus.aac.p.m4a",
+          "apple": "https://music.apple.com/us/album/gotta-bounce/1854568860",
+          "durationMs": 111074,
+          "popular": false
+        },
+        {
+          "n": 8,
+          "title": "Wrote Me a Letter",
+          "features": [],
+          "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/5c/c2/3f/5cc23f6e-02a6-af66-ca89-3ebe96d272e0/mzaf_13881784626218503447.plus.aac.p.m4a",
+          "apple": "https://music.apple.com/us/album/wrote-me-a-letter/1854568860",
+          "durationMs": 99813,
+          "popular": false
+        },
+        {
+          "n": 9,
+          "title": "South Side Baby",
+          "features": [],
+          "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/41/ae/a6/41aea693-1b5d-f263-c176-1f6d1ea4ac3e/mzaf_1808198653304455058.plus.aac.p.m4a",
+          "apple": "https://music.apple.com/us/album/south-side-baby/1854568860",
+          "durationMs": 229714,
+          "popular": false
+        },
+        {
+          "n": 10,
+          "title": "Lost Interest",
+          "features": [],
+          "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/dc/e7/a2/dce7a2ea-1666-7035-c8c1-0de0767cd2b7/mzaf_5463630984262813068.plus.aac.p.m4a",
+          "apple": "https://music.apple.com/us/album/lost-interest/1854568860",
+          "durationMs": 184416,
+          "popular": false
+        },
+        {
+          "n": 11,
+          "title": "Bestie",
+          "features": [
+            "HeIsGem"
+          ],
+          "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/f1/a8/4e/f1a84ea0-daf2-6cf8-b6b1-7e8e546fdfa0/mzaf_2224992970338564414.plus.aac.p.m4a",
+          "apple": "https://music.apple.com/us/album/bestie-feat-heisgem/1854568860",
+          "durationMs": 135211,
+          "popular": false
+        },
+        {
+          "n": 12,
+          "title": "Skin is Confident",
+          "features": [],
+          "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/e4/eb/c8/e4ebc864-baf2-740f-c9df-76b0aa6e6e10/mzaf_12299336809609350576.plus.aac.p.m4a",
+          "apple": "https://music.apple.com/us/album/skin-is-confident/1854568860",
+          "durationMs": 148536,
+          "popular": false
+        },
+        {
+          "n": 13,
+          "title": "3D",
+          "features": [
+            "Deekayzee"
+          ],
+          "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/16/a0/cc/16a0cc1b-fcbf-b575-41e6-6f2b2d784fbf/mzaf_7224492524914334329.plus.aac.p.m4a",
+          "apple": "https://music.apple.com/us/album/3d-feat-deekayzee/1854568860",
+          "durationMs": 176040,
+          "popular": false
+        },
+        {
+          "n": 14,
+          "title": "Hulk Hogan",
+          "features": [
+            "HeIsGem"
+          ],
+          "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/d2/0c/61/d20c6140-938f-1ec2-1303-bf69b18e034a/mzaf_112227364396727211.plus.aac.p.m4a",
+          "apple": "https://music.apple.com/us/album/hulk-hogan-feat-heisgem/1854568860",
+          "durationMs": 133608,
+          "popular": false
+        }
+      ]
+    },
+    {
+      "id": "you-amazing",
+      "title": "You Amazing",
+      "features": [],
+      "type": "single",
+      "date": "2025-09-01",
+      "year": 2025,
+      "trackCount": 1,
+      "apple": "https://music.apple.com/us/album/you-amazing/1835571904",
+      "spotify": "https://open.spotify.com/album/1MP58Lwkr1h3g4e4V0II7P",
+      "cover": "covers/you-amazing.jpg",
+      "popular": true,
+      "tracks": [
+        {
+          "n": 1,
+          "title": "You Amazing",
+          "features": [],
+          "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/04/bf/05/04bf057c-3de3-3b24-1b4a-5d637d7a14f0/mzaf_17841886896602081080.plus.aac.p.m4a",
+          "apple": "https://music.apple.com/us/album/you-amazing/1835571904",
+          "durationMs": 121944,
+          "popular": true
+        }
+      ]
+    },
+    {
+      "id": "south-side-baby",
+      "title": "South Side Baby",
+      "features": [],
+      "type": "single",
+      "date": "2025-05-08",
+      "year": 2025,
+      "trackCount": 1,
+      "apple": "https://music.apple.com/us/album/south-side-baby/1812471370",
+      "spotify": "https://open.spotify.com/album/1U4N5K3lVmMCVr0gLZsOyk",
+      "cover": "covers/south-side-baby.jpg",
+      "popular": false,
+      "tracks": [
+        {
+          "n": 1,
+          "title": "South Side Baby",
+          "features": [],
+          "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/f1/6b/d0/f16bd0bc-5776-7a32-896a-a108b49e753e/mzaf_16696064805697833620.plus.aac.p.m4a",
+          "apple": "https://music.apple.com/us/album/south-side-baby/1812471370",
+          "durationMs": 229714,
+          "popular": false
+        }
+      ]
+    },
+    {
+      "id": "bad-for-me",
+      "title": "Bad for Me",
+      "features": [],
+      "type": "single",
+      "date": "2025-02-27",
+      "year": 2025,
+      "trackCount": 1,
+      "apple": "https://music.apple.com/us/album/bad-for-me/1797972405",
+      "spotify": "https://open.spotify.com/album/0ezLSFKd5kM4EkuiBcCguV",
+      "cover": "covers/bad-for-me.jpg",
+      "popular": true,
+      "tracks": [
+        {
+          "n": 1,
+          "title": "Bad for Me",
+          "features": [],
+          "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/a3/e5/a2/a3e5a2dc-781d-c407-f619-3388bf0f2468/mzaf_2316916759951968471.plus.aac.p.m4a",
+          "apple": "https://music.apple.com/us/album/bad-for-me/1797972405",
+          "durationMs": 107570,
+          "popular": true
+        }
+      ]
+    },
+    {
+      "id": "wrote-me-a-letter",
+      "title": "Wrote Me A Letter",
+      "features": [],
+      "type": "single",
+      "date": "2024-12-12",
+      "year": 2024,
+      "trackCount": 1,
+      "apple": "https://music.apple.com/us/album/wrote-me-a-letter/1783356518",
+      "spotify": "https://open.spotify.com/album/0SLubzwdmMOJBnxzUYXn3m",
+      "cover": "covers/she-wrote-me-a-letter.jpg",
+      "popular": false,
+      "tracks": [
+        {
+          "n": 1,
+          "title": "Wrote Me A Letter",
+          "features": [],
+          "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/4a/7c/d3/4a7cd301-e849-3903-539e-958666dcc01a/mzaf_9077007562726525619.plus.aac.p.m4a",
+          "apple": "https://music.apple.com/us/album/wrote-me-a-letter/1783356518",
+          "durationMs": 99813,
+          "popular": false
+        }
+      ]
+    },
+    {
+      "id": "no-calls",
+      "title": "No Calls",
+      "features": [
+        "Dioscuri",
+        "iloh vas"
+      ],
+      "type": "single",
+      "date": "2024-11-21",
+      "year": 2024,
+      "trackCount": 1,
+      "apple": "https://music.apple.com/us/album/no-calls/1780859022",
+      "spotify": "https://open.spotify.com/album/26iSAZ7k0QI8y4vQrwc2jT",
+      "cover": "covers/no-calls.jpg",
+      "popular": false,
+      "tracks": [
+        {
+          "n": 1,
+          "title": "No Calls",
+          "features": [
+            "Dioscuri",
+            "iloh vas"
+          ],
+          "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/ab/e9/8d/abe98d18-c3a7-d69d-e7c7-313b1bb2ac29/mzaf_2999788347820545462.plus.aac.p.m4a",
+          "apple": "https://music.apple.com/us/album/no-calls-feat-dioscuri-iloh-vas/1780859022",
+          "durationMs": 230440,
+          "popular": false
+        }
+      ]
+    },
+    {
+      "id": "run-it",
+      "title": "Run It",
+      "features": [
+        "Dioscuri"
+      ],
+      "type": "single",
+      "date": "2024-07-19",
+      "year": 2024,
+      "trackCount": 1,
+      "apple": "https://music.apple.com/us/album/run-it/1757087506",
+      "spotify": "https://open.spotify.com/album/6QiLtr02R2YdY7YRRXPMLR",
+      "cover": "covers/run-it.jpg",
+      "popular": false,
+      "tracks": [
+        {
+          "n": 1,
+          "title": "Run It",
+          "features": [
+            "Dioscuri"
+          ],
+          "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/d9/4b/85/d94b85c3-4938-66d6-9dd6-ec096b1dc651/mzaf_13632637624527772714.plus.aac.p.m4a",
+          "apple": "https://music.apple.com/us/album/run-it-feat-dioscuri/1757087506",
+          "durationMs": 140395,
+          "popular": false
+        }
+      ]
+    },
+    {
+      "id": "ice-it",
+      "title": "Ice It",
+      "features": [],
+      "type": "single",
+      "date": "2024-05-24",
+      "year": 2024,
+      "trackCount": 1,
+      "apple": "https://music.apple.com/us/album/ice-it/1747161290",
+      "spotify": "https://open.spotify.com/album/5zw7KSGLk4NGSgC4NAlNhu",
+      "cover": "covers/ice-it.jpg",
+      "popular": false,
+      "tracks": [
+        {
+          "n": 1,
+          "title": "Ice It",
+          "features": [],
+          "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/80/07/d7/8007d7c9-b9a6-c952-ec4f-77d8ed3fb28b/mzaf_3530246176638484313.plus.aac.p.m4a",
+          "apple": "https://music.apple.com/us/album/ice-it/1747161290",
+          "durationMs": 141688,
+          "popular": false
+        }
+      ]
+    },
+    {
+      "id": "she-the-one",
+      "title": "She the One",
+      "features": [],
+      "type": "single",
+      "date": "2024-02-16",
+      "year": 2024,
+      "trackCount": 1,
+      "apple": "https://music.apple.com/us/album/she-the-one/1731479773",
+      "spotify": "https://open.spotify.com/album/6QLedGZkO6NB1ERZjFeEgE",
+      "cover": "covers/she-the-one.jpg",
+      "popular": false,
+      "tracks": [
+        {
+          "n": 1,
+          "title": "She the One",
+          "features": [],
+          "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview112/v4/9f/29/d6/9f29d613-382a-e219-b51c-d01bc39c3122/mzaf_1122609465209805831.plus.aac.p.m4a",
+          "apple": "https://music.apple.com/us/album/she-the-one/1731479773",
+          "durationMs": 148715,
+          "popular": false
+        }
+      ]
+    },
+    {
+      "id": "with-the-crew",
+      "title": "With the Crew",
+      "features": [
+        "Dioscuri",
+        "TheeGem"
+      ],
+      "type": "single",
+      "date": "2023-12-22",
+      "year": 2023,
+      "trackCount": 1,
+      "apple": "https://music.apple.com/us/album/with-the-crew/1722856809",
+      "spotify": "https://open.spotify.com/album/6sOK9Pao44kuh2301eIzRh",
+      "cover": "covers/with-the-crew.jpg",
+      "popular": false,
+      "tracks": [
+        {
+          "n": 1,
+          "title": "With the Crew",
+          "features": [
+            "Dioscuri",
+            "TheeGem"
+          ],
+          "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview126/v4/2e/7b/2a/2e7b2aba-ac63-5ef3-2a4f-11ac7409eeb5/mzaf_8889611800121774421.plus.aac.p.m4a",
+          "apple": "https://music.apple.com/us/album/with-the-crew-feat-dioscuri-theegem/1722856809",
+          "durationMs": 132461,
+          "popular": false
+        }
+      ]
+    },
+    {
+      "id": "bomb",
+      "title": "B.O.M.B",
+      "features": [
+        "iloh vas"
+      ],
+      "type": "single",
+      "date": "2023-12-01",
+      "year": 2023,
+      "trackCount": 1,
+      "apple": "https://music.apple.com/us/album/bomb/1719044000",
+      "spotify": "https://open.spotify.com/album/2PnZqyMmJly8HBbGupHnb4",
+      "cover": "covers/bomb.jpg",
+      "popular": false,
+      "tracks": [
+        {
+          "n": 1,
+          "title": "B.O.M.B",
+          "features": [
+            "iloh vas"
+          ],
+          "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview126/v4/8e/fa/ee/8efaeef8-a070-cef9-c3d7-770d3a869e4f/mzaf_17003027069483498152.plus.aac.p.m4a",
+          "apple": "https://music.apple.com/us/album/b-o-m-b-feat-iloh-vas/1719044000",
+          "durationMs": 143491,
+          "popular": false
+        }
+      ]
+    },
+    {
+      "id": "stealing-this-show",
+      "title": "Stealing This Show",
+      "features": [],
+      "type": "single",
+      "date": "2023-09-15",
+      "year": 2023,
+      "trackCount": 1,
+      "apple": "https://music.apple.com/us/album/stealing-this-show/1706909598",
+      "spotify": "https://open.spotify.com/album/6VNdEayCZ2ugYZNaE4tLOu",
+      "cover": "covers/stealing.jpg",
+      "popular": false,
+      "tracks": [
+        {
+          "n": 1,
+          "title": "Stealing This Show",
+          "features": [],
+          "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview126/v4/9e/a7/c4/9ea7c4e3-bdd9-66ba-67e6-4a1f1c6d1cf5/mzaf_6887874829870559924.plus.aac.p.m4a",
+          "apple": "https://music.apple.com/us/album/stealing-this-show/1706909598",
+          "durationMs": 170568,
+          "popular": false
+        }
+      ]
+    },
+    {
+      "id": "lets-get-smoothies",
+      "title": "Let's Get Smoothies",
+      "features": [],
+      "type": "single",
+      "date": "2022-08-26",
+      "year": 2022,
+      "trackCount": 1,
+      "apple": "https://music.apple.com/us/album/lets-get-smoothies/1638601178",
+      "spotify": "https://open.spotify.com/album/2LiafS4GOUFHk6IzoJoUdE",
+      "cover": "covers/lets-get-smoothies.jpg",
+      "popular": false,
+      "tracks": [
+        {
+          "n": 1,
+          "title": "Let's Get Smoothies",
+          "features": [],
+          "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview112/v4/59/e2/01/59e201f6-e986-3081-4b86-5e850764643a/mzaf_17737252956519944468.plus.aac.p.m4a",
+          "apple": "https://music.apple.com/us/album/lets-get-smoothies/1638601178",
+          "durationMs": 162429,
+          "popular": false
+        }
+      ]
+    },
+    {
+      "id": "andale",
+      "title": "Andale",
+      "features": [
+        "Dioscuri",
+        "KxMxJ"
+      ],
+      "type": "single",
+      "date": "2021-10-15",
+      "year": 2021,
+      "trackCount": 1,
+      "apple": "https://music.apple.com/us/album/andale/1588937536",
+      "spotify": "https://open.spotify.com/album/6jpUckULYIylo6B4tqGJma",
+      "cover": "covers/andale.jpg",
+      "popular": false,
+      "tracks": [
+        {
+          "n": 1,
+          "title": "Andale",
+          "features": [
+            "Dioscuri",
+            "KxMxJ"
+          ],
+          "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/9b/84/f3/9b84f389-7110-3ad5-61ae-cbab37835110/mzaf_5744655429894555297.plus.aac.p.m4a",
+          "apple": "https://music.apple.com/us/album/andale-feat-dioscuri-kxmxj/1588937536",
+          "durationMs": 164964,
+          "popular": false
+        }
+      ]
+    }
+  ],
+  "popular": [
+    {
+      "title": "Bad for Me",
+      "spotify": "https://open.spotify.com/track/5bIFGoSIYNCDAu0qyp8gJ5",
+      "release": "bad-for-me",
+      "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/a3/e5/a2/a3e5a2dc-781d-c407-f619-3388bf0f2468/mzaf_2316916759951968471.plus.aac.p.m4a"
+    },
+    {
+      "title": "Signal",
+      "spotify": "https://open.spotify.com/track/1Wyal9f5l6i0bvNBjrxkoX",
+      "release": "signal",
+      "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/b9/9c/37/b99c376d-db97-c422-225a-8a6c73fbed13/mzaf_14874891770687951951.plus.aac.p.m4a"
+    },
+    {
+      "title": "Day Dreaming",
+      "spotify": "https://open.spotify.com/track/7v5HJzVmiyNnMYNaTMEHPN",
+      "release": "crash",
+      "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/eb/28/d2/eb28d207-210e-a68d-38d6-fdb74705f64d/mzaf_129495132751461610.plus.aac.p.m4a"
+    },
+    {
+      "title": "You Amazing",
+      "spotify": "https://open.spotify.com/track/1tQg45WTVPcqD9NGwHVOXO",
+      "release": "you-amazing",
+      "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/04/bf/05/04bf057c-3de3-3b24-1b4a-5d637d7a14f0/mzaf_17841886896602081080.plus.aac.p.m4a"
+    },
+    {
+      "title": "The World",
+      "spotify": "https://open.spotify.com/track/5Q11zfnmkf23TaBpptozu3",
+      "release": "crash",
+      "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/9e/42/11/9e421131-6882-01d5-5418-cac9644be7c8/mzaf_16539852553971280771.plus.aac.p.m4a"
+    }
+  ]
+}

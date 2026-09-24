@@ -3,20 +3,42 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Krayaura — Artist · Creative Director · Graphic Designer</title>
+    <title>Krayaura — Rapper · Singer · Producer · Creative Director</title>
     <meta
       name="description"
-      content="Krayaura — music and visual worlds from Pretoria. Artist, creative director, and graphic designer."
+      content="Krayaura — music and visual worlds from Pretoria. Rapper, singer, producer and creative director."
     />
     <meta name="theme-color" content="#0B0B21" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-
-    <!-- Stand-ins until licensed Bolde / Black Pro / Proxima Nova files are added to /public/fonts -->
-    <link rel="preconnect" href="https://api.fontshare.com" crossorigin />
-    <link
-      href="https://api.fontshare.com/v2/css?f[]=clash-display@700&f[]=general-sans@500,600&display=swap"
-      rel="stylesheet"
+    <link rel="canonical" href="https://courage-1984.github.io/krayaura/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Krayaura" />
+    <meta property="og:title" content="Krayaura — CRASH, the album, out now" />
+    <meta
+      property="og:description"
+      content="Rapper · Singer · Producer · Creative Director from Pretoria. Dig through every release, hear previews, watch the videos."
     />
+    <meta property="og:url" content="https://courage-1984.github.io/krayaura/" />
+    <meta property="og:image" content="https://courage-1984.github.io/krayaura/media/brand/share.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="https://courage-1984.github.io/krayaura/media/brand/share.jpg" />
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <script>
+      // Before first paint: the intro (once per session) and the hero entrance pre-hide, never with reduced motion.
+      // A deep link (#r/<release> or #v/<video>, e.g. from Instagram) skips the intro and lands on it straight away.
+      try {
+        var h = document.documentElement;
+        h.classList.add("hero-in-view", "hero-controls-visible");
+        if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
+          h.classList.add("hero-pending");
+          if (!sessionStorage.getItem("kr-intro") && !/^#[rv]\//.test(location.hash)) h.classList.add("has-intro");
+        }
+      } catch (e) {}
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -25,73 +47,267 @@
     />
   </head>
   <body>
+    <!-- kr-sprite:start -->
+<svg class="kr-sprite" width="0" height="0" aria-hidden="true" focusable="false">
+<defs>
+<linearGradient id="kr-lg-1" x1="199.4" y1="183.9" x2="403.51" y2="60.61" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#0a0435"/><stop offset=".38" stop-color="#0b0535"/><stop offset=".51" stop-color="#0f0c39"/><stop offset=".61" stop-color="#17183f"/><stop offset=".69" stop-color="#222948"/><stop offset=".74" stop-color="#2d3951"/><stop offset="1" stop-color="#0a0435"/></linearGradient>
+<linearGradient id="kr-lg-2" x1="139.86" y1="46.61" x2="327.46" y2="46.61" href="#kr-lg-1"/>
+<linearGradient id="kr-lg-3" x1="261.3" y1="74.33" x2="398.79" y2="74.33" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#0b0b21"/><stop offset="1" stop-color="#2d3951"/></linearGradient>
+<linearGradient id="kr-lg-4" x1="155.75" y1="39.33" x2="243.84" y2="39.33" href="#kr-lg-3"/>
+<clipPath id="kr-slot-clip" clipPathUnits="userSpaceOnUse"><path d="M-60-420H590V205L435 208 228 252 196 236 150 228 122 216H-60Z"/></clipPath>
+<g id="kr-body"><path fill="#0a0435" d="M.14,417.76c-.82,5.5,1.95,10.92,6.89,13.48h0s162.59,84.23,162.59,84.23c2.68,1.39,5.76,1.8,8.72,1.17l314.75-67.36c5.36-1.15,9.43-5.53,10.18-10.96l23.41-170.44c.49-3.59-.53-7.22-2.83-10.03l-19.59-23.9c-1.46-1.79-3.38-3.15-5.54-3.96l-241.13-89.44c-2.61-.97-5.46-1.07-8.14-.3l-174.09,50.16c-2.01.58-3.86,1.64-5.37,3.08l-39.24,37.35c-2.1,2-3.48,4.65-3.9,7.52L.14,417.76Z"/><path fill="#103784" d="M192.71,495.08c3.55-20.65,20.35-117.3,23.61-135.57,1.57-8.11,2.95-19.4,5.45-27.14,4.08-13.4,10.82-26.01,19.58-36.94,11.48-15,28.06-26.53,46.97-29.65,49.07-8.81,100.19-16.56,149.56-23.14,35.53-4.65,37.89-4.7.44,2.7-35.4,6.93-72.69,13.69-108.32,19.58,0,0-27.17,4.31-27.17,4.31-7.75,1.34-19.11,2.4-26.35,5.39-24.69,9.07-42.96,34.58-50.99,58.91-2.6,7.6-4.1,18.78-5.79,26.68-3.41,17.94-22.49,115.06-26.39,134.97-.03.16-.19.27-.35.24-.16-.03-.27-.19-.24-.35h0Z"/><path fill="#103784" d="M253.46,284.32l-169.51-69.54,171.7,63.95c3.71,1.49,1.59,7.01-2.19,5.59h0Z"/><path fill="#f2b705" stroke="#103784" stroke-miterlimit="10" stroke-width="6" d="M328.17,464.05v-178.66h30.17v92.31l48.59-61.06,23.12,18.97-26.01,33.06,36.49,45.7-22.94,19.15-32.7-40.65-56.72,71.17Z"/><path fill="#103784" d="M422.46,205.18c4.38,1.49,10.76,1.78,12.34,7.08.08.26.14.55.02.8-.16.32-.56.42-.91.49-30.08,5.95-60.18,11.8-90.25,17.81-35.31,6.97-70.63,13.93-105.94,20.9-4.38.83-9.88,1.35-16.11.7-1.9-.2-3.69-.49-5.35-.83-4.18-.75-9.31-2.06-14.88-4.45-2.63-1.13-5.12-2.49-7.64-3.83-.64-.34-1.3-.7-1.73-1.28-2.58-3.5,3.45-8.88,6.44-9.66l224.02-27.72Z"/><path fill="#103784" d="M131.64,207.74c-5.11,2.9-7.56,5.57-7.35,7.99.69,7.84,22.95,11.19,28.44,10.69,1.34-.12,2.65-.45,3.95-.77,20.75-5.17,41.5-10.37,62.25-15.56-1.58-5.11-3.15-10.23-4.73-15.34-24.42,2.08-48.83,4.16-73.25,6.23-3.11,2.25-6.21,4.51-9.32,6.76Z"/><g><path fill="#103784" d="M136.25,254.83c-.46-.71-2.02-2.92-5.05-3.94-2.48-.84-4.61-.43-5.48-.21l-20.52,29.1-5.57,42.03,6.72,3.84,5.3-38.33,24.6-32.48Z"/><path fill="#04175b" d="M136.25,254.83c-2.49-3.69-6.87-4.71-10.3-3.99,0,0-4.98,7.38-4.98,7.38-3.16,4.63-11.82,17.23-15.11,22.03l.14-.36c-.74,6.1-1.88,14.85-2.67,21.03,0,0-2.71,21.02-2.71,21.02l-.49-.99,6.7,3.87-1.43.7c.91-6.43,3.21-22.54,4.09-28.73,0-.02,1.44-9.57,1.44-9.59.02-.12.07-.23.14-.32l6.2-7.97c3.98-5.14,14.81-18.81,18.97-24.08h0ZM136.25,254.83c-6.79,9.42-17.18,23.71-24.02,32.92,0,0,.14-.34.14-.34l-1.21,9.6c-.82,6.14-3.01,22.43-3.85,28.77-.07.66-.86,1.05-1.43.7,0,0-6.73-3.81-6.73-3.81-.36-.2-.54-.61-.49-.99l2.86-21c.88-6.21,1.99-14.91,2.9-21.02.02-.12.07-.24.14-.34l10.44-14.43c2.59-3.59,7.87-10.82,10.51-14.38,3.97-1.3,8.66.79,10.76,4.32h0Z"/></g><g><path fill="#3a9ced" d="M107.6,324.96l5.14-37.2,22.73-30.02c.51,4.93.41,10.72-1.33,11.83-.1.06-.19.14-.27.24l-14.73,17.85c-.13.16-.21.34-.25.54l-6.34,39.03-4.95-2.27Z"/><path fill="#04175b" d="M134.57,260.84c.18,4.13-.27,7.26-1.04,7.77-.2.13-.38.29-.53.47l-14.73,17.85c-.26.31-.43.69-.49,1.09l-6.1,37.55-2.81-1.29,4.98-36.06,20.73-27.38M136.25,254.83l-24.6,32.48-5.3,38.33,7.09,3.24,6.58-40.51,14.73-17.85c3.65-2.33,1.49-15.7,1.49-15.7h0Z"/></g><path fill="#3a9ced" stroke="#04175b" stroke-linecap="round" stroke-linejoin="round" stroke-width="3.08" d="M113.44,328.89c-9.56,39.93-19.12,79.85-28.68,119.78,1.35-5.73,2.55-12.2,3.35-19.34.94-8.37,1.15-16,.97-22.69,4.07-17.89,8.14-35.78,12.21-53.67l12.14-24.08Z"/><g><path fill="#103784" d="M88.69,410.84l4.66-50.34.29-.16,4.48,2.62-8.18,48.5c-.9,6.05-1.68,11.08-2.35,15.25l1.11-15.87Z"/><path fill="#04175b" d="M93.71,357.07c-1.02.54-2.04,1.09-3.06,1.63-1.6,17.31-3.21,34.63-4.81,51.94-.86,12.39-1.73,24.78-2.59,37.16.33.33.83.72,1.51.86,0,0,.23.05.55.05.16,0,.34-.01.53-.05,1.39-.27,5.22-25.33,6.91-36.73,2.76-16.34,5.51-32.68,8.27-49.01.16-.85-.23-1.7-.97-2.14l-6.35-3.72h0Z"/></g></g>
+<g id="kr-lever"><g><path fill="#103784" d="M109.31,344.16c-1.14,0-2.3-.03-3.44-.09-17.19-.91-38.25-8.76-38.62-17.14-.08-1.78.99-6.53,12.22-12.91l51.63,26.5c-7.18,2.42-14.49,3.64-21.78,3.64Z"/><path fill="#04175b" d="M79.54,316.63l45.41,23.31c-5.18,1.29-10.41,1.94-15.64,1.94-1.1,0-2.22-.03-3.32-.09-18.48-.98-36.21-9.26-36.46-14.95-.09-1.98,2.53-5.75,10.01-10.2M79.42,311.43c-13.9,7.6-14.55,13.5-14.46,15.61.46,10.49,23.52,18.4,40.78,19.32,1.21.06,2.4.09,3.57.09,11.69,0,21.24-3.04,27.42-5.6l-57.31-29.42h0Z"/></g><g><path fill="#3a9ced" d="M113.3,360.49c-3.17,0-6.37-.23-9.51-.67-18.07-2.57-30.72-11.9-36.95-17.59l-.12-11.15c7.46,6.69,20.6,15.55,38.89,16.99,1.64.13,3.31.19,4.95.19,8.24,0,16.64-1.66,24.45-4.81v13.53c-7.05,2.33-14.35,3.51-21.72,3.51Z"/><path fill="#04175b" d="M68.48,334.82c7.95,6.4,20.41,13.65,37,14.95,1.69.13,3.4.2,5.09.2,7.64,0,15.41-1.39,22.74-4.03v9.79c-6.51,2.02-13.23,3.05-20.01,3.05-3.09,0-6.21-.22-9.27-.66-17.1-2.43-29.23-11.08-35.48-16.66l-.07-6.64M64.96,327.03l.17,15.95c4.83,4.51,18.04,15.63,38.41,18.53,3.41.49,6.68.69,9.75.69,10.37,0,18.63-2.32,23.44-4v-17.35c-5,2.26-14.28,5.69-26.17,5.69-1.56,0-3.17-.06-4.82-.19-22.49-1.76-36.81-15.29-40.78-19.32h0Z"/></g></g>
+<g id="kr-slice-back"><path fill="#0b0b21" d="M357.77,100.35l-147.57,123.51-13.63,5.1c4.91-7.16,9.82-14.33,14.73-21.49-15.98,5.14-32.56,9.92-49.76,14.23-2.48.62-4.96,1.23-7.43,1.82-1.65-.15-3.39-.37-5.21-.68-3.07-.52-7.09-1.41-10.86-2.87-2.99-40.41-5.98-80.81-8.98-121.22,0,0-1.12-15.65,9.38-23.61L327.46,12.04s15.65.01,20.35,23.24l7.21,50.78,2.74,14.28Z"/><path fill="#2d3951" d="M327.46,12.04c.16,17.82.32,35.64.49,53.46.06,6.95-4.25,13.19-10.78,15.58-14.09,5.16-28.17,10.31-42.26,15.47-16.91,6.62-33.82,13.24-50.74,19.85-5.5,2.15-11.73,1.19-16.33-2.53-12.36-10-24.72-20-37.08-30L327.46,12.04Z"/><path fill="#0a0435" d="M170.77,83.88s-9.19,7.5-10.83,27.33c.53,36.83,1.06,73.66,1.6,110.49-1.09.57-2.79,1.3-4.97,1.62-1.31.19-2.29.16-3.3.13-2.29-.08-4.22-.54-8.04-1.29-.67-.13-1.24-.27-1.34-.29,0,0-.99-.24-2.04-.56-1.2-.36-5.49-1.87-11.3-4.05-.86-38.82-1.73-77.64-2.59-116.46-.23-2.58-.22-6.39,1.07-10.69,2.55-8.51,8.45-13.37,10.82-15.12l30.92,8.91Z"/><path fill="#2d3951" d="M208.29,201.17l-7.23-48.59c-.86-5.79,2.1-11.47,7.34-14.08l9.93-4.95c6.98-3.47,13.95-6.95,20.93-10.42-10.32,26.01-20.64,52.03-30.96,78.04Z"/><g opacity=".51"><path fill="#fff" d="M221.31,100.21l78.52-30.21-76.99,33.91c-2.49,1.02-4.02-2.65-1.52-3.7h0Z"/></g><g opacity=".51"><path fill="#fff" d="M204.53,84.21l108.87-43.38-106.01,49.96c-4.48,1.93-7.34-4.61-2.86-6.58h0Z"/></g><path fill="url(#kr-lg-2)" d="M327.46,12.04c-52.23,23.95-104.46,47.89-156.7,71.84l-30.91-8.9L304.92,9.34l22.54,2.7Z"/><path fill="#601306" d="M144.01,221.68l8.55.65s-1.93,1.36-8.55-.65Z"/><path fill="#0a0435" d="M308.08,20.79c-4.94-1.49-10.5-3.16-15.68-3.36-4.59-.17-9.1,1.45-13.6,2.12-9.05,1.34-20.09,3.38-28.76-.53-7.08-3.19-12.28-10.09-20.49-10.61-.57-.04-1.18-.03-1.64.3-.41.29-.61.79-.79,1.26-.66,1.69-1.32,3.38-1.98,5.06-2.51-2.42-4.53-5.35-5.89-8.57,9.97,0,19.79-7.72,29.94-6.29,7.92,1.12,15.4,7.08,20.89,12.58,4.1,4.1,11.64,5.12,17.07,6.06,6.92,1.19,13.95,1.59,20.93,1.98Z"/><path fill="url(#kr-lg-4)" d="M223.36,5.42c-5.28.15-8.62,3.98-10.65,8.52-.86,1.92-1.58,3.94-1.73,6.04-.15,2.1.32,4.3,1.63,5.95,1.25,1.58,3.13,2.5,4.79,3.64,17.03,11.69-38.22,33.32-44.22,35.18-9.03,2.8-17.27,3.88-17.42,3.96l19.88,4.53s8.2-5.38,17.22-8.18c17.63-5.47,38.28-15.89,49.14-31.43,1.05-1.5,2.05-3.22,1.82-5.04-.62-5.03-7.71-5.98-9.3-10.53-1.06-3.04-.28-5.88.94-8.72"/></g>
+<g id="kr-slice-front"><path fill="#0b0b21" d="M422.28,209.73l-196.86,40.14,26.47-122.15s1.84-22.08,19.77-30.45l155.86,12.01s13.49,7.43,9.73,29.82l-14.97,70.62Z"/><path fill="#2d3951" d="M243.4,246.21l18.45-74.46c1.9-7.68,9.15-12.81,17.03-12.04,42.36,4.11,84.72,8.22,127.08,12.33,6.75.66,11.44,7.03,10.04,13.67-1.82,8.69-3.65,17.38-5.47,26.08l-167.13,34.42Z"/><path fill="#2d3951" d="M271.65,97.28c9.34,15.35,18.68,30.69,28.02,46.04,3.1,5.09,8.46,8.39,14.41,8.85,23.19,1.8,46.38,3.6,69.57,5.4,6.3.49,12.43-2.29,16.17-7.39,9.83-13.39,20.77-24.54,30.05-39.02l-158.22-13.88Z"/><path fill="#0a0435" d="M398.4,197l-1.87,11.24c-.67,4-3.73,7.18-7.71,7.98-30.85,6.22-61.71,12.45-92.56,18.67-.85.17-1.71.23-2.58.17-5.63-.37-11.27-.74-16.9-1.11-5.76-.38-9.94-5.64-9-11.34,0-.04.01-.07.02-.11,1.32-8.05,2.64-16.1,3.96-24.15.14-2.14,1.12-5.79,3.24-9.97,2.51-4.93,6.78-9.77,13.85-9.38l100.55,6.65c5.66.37,9.89,5.47,9.05,11.08-.01.08-.03.17-.04.26Z"/><g opacity=".51"><path fill="#fff" d="M289.16,111.11l122.34,11.79-122.72-6.81c-3.34-.27-2.99-5.21.38-4.99h0Z"/></g><g opacity=".51"><path fill="#fff" d="M322.52,130.32l61.82,7.81-62.25-2.83c-3.41-.26-2.99-5.31.43-4.98h0Z"/></g><path fill="url(#kr-lg-1)" d="M225.41,249.87s-28.5-4.12-30.45-14.97l39.13-145.38s6.58-14.06,15.32-17.23l160.24,22.41,20.22,16.44-158.22-13.88s-13.18,5.24-18.69,23.71l-27.55,128.88Z"/><path fill="url(#kr-lg-3)" d="M398.79,94.41c-6.78-1.9-13.56-3.86-20.04-6.58-5.62-2.36-11.25-5.54-13.72-11.35-1.33-3.13-1.5-10.45-5.35-11.8-3.89-1.36-6.09,5.88-5.48,8.83.77,3.74,4.06,6.88,2.7,10.84-1.26,3.66-5.82,5.35-9.18,6.37-10.91,3.32-20.06,5.43-46.45,4.01-10.46-.57-19.02-1.07-24.63-1.41-5.11-4.63-10.22-9.27-15.34-13.9,4.13.4,7.77,2.51,11.76,3.45,5.86,1.39,11.82,2.36,17.81,2.91,12.02,1.09,27.75,1.88,39.04-3.14,4.12-1.84,5.76-4.93,3.72-9.19-3.46-7.24-3-13.83,5.08-18.07,8.11-4.26,18.58-.24,26.7,2.29,7.13,2.23,13.32,6.33,17.17,12.83,2.36,3.97,4,8.32,6.11,12.44,2.43,4.77,6.24,7.9,10.1,11.49Z"/><path fill="#0b0b21" d="M418.06,107c-.5-.29-10.63-5.93-19.05-12.47,2.48.79,4.42,1.35,5.5,1.66.62.17,1.18.47,1.67.88l11.88,9.94Z"/><path fill="#0a0435" d="M349.94,54.34l-4.52-1.1c.11-.01.22,0,.33.01,1.46.07,2.86.45,4.18,1.09Z"/><path d="M359.1,63.55l-.24-.16s.06-.06.09-.08c.05.08.1.16.15.24Z"/><path d="M363.32,70l-5.56-14.72,17.7,7.36c1.63,1.28,3.91,3.31,6.08,6.23,3.16,4.26,2.65,5.79,5.79,11.23,2.48,4.3,8.91,11.95,8.91,11.95h0l2.78,2.47s-15.41-4.37-20.27-6.7c-4.86-2.33-11.14-7.25-11.14-7.25-.82-.99-1.77-2.35-2.58-4.1-1.18-2.56-1.57-4.89-1.7-6.47Z"/><circle fill="#f2b705" cx="293.26" cy="210.13" r="13.19"/><path fill="#f2b705" d="M391.5,215.73l-25.73,5.34c-.38-1.22-.58-2.53-.58-3.89,0-7.28,5.91-13.19,13.19-13.19,6.79,0,12.39,5.15,13.11,11.74Z"/><polygon fill="#f2b705" points="354.53 202.82 353.08 223.7 333.59 227.75 317.03 226.61 318.83 200.35 354.53 202.82"/></g>
+</defs>
+</svg>
+    <!-- kr-sprite:end -->
+    <a class="skip-link" href="#top">Skip to content</a>
+
+    <div class="intro" data-intro aria-hidden="true">
+      <div class="intro__stage">
+        <img class="intro__logo" src="/logos/main-logo.svg" alt="" width="180" height="175" />
+        <p class="intro__word"><span>Krayaura</span></p>
+      </div>
+      <p class="intro__count"><span data-intro-count>0</span>%</p>
+    </div>
+
     <div class="cursor" aria-hidden="true"></div>
 
-    <header class="site-header">
+    <header class="site-header" data-header data-state="top">
       <div class="site-header__inner">
-        <a class="brand-mark" href="#top" aria-label="Krayaura home">
-          <img src="/logos/main-logo.svg" alt="" width="32" height="32" />
-          <span data-site-name>Krayaura</span>
+        <a class="brand-mark nav-pill" href="#top" aria-label="Krayaura, back to top" data-enter>
+          <svg class="brand-mark__toaster" viewBox="0 0 526.8 516.93" overflow="visible" aria-hidden="true" focusable="false">
+            <use href="#kr-body" />
+            <g clip-path="url(#kr-slot-clip)">
+              <g class="brand-mark__pop"><g data-brand-hop><use href="#kr-slice-back" /><use href="#kr-slice-front" /></g></g>
+            </g>
+            <use href="#kr-lever" />
+          </svg>
+          <span class="brand-mark__name" data-site-name>Krayaura</span>
         </a>
-        <nav class="nav-links" aria-label="Primary">
+
+        <nav class="nav-links nav-pill" aria-label="Primary" data-enter>
+          <span class="nav-toast" aria-hidden="true" data-nav-toast></span>
           <a href="#music">Music</a>
+          <a href="#crash">Crash<span class="nav-links__hot" aria-hidden="true" data-icon="flame"></span></a>
           <a href="#design">Design</a>
           <a href="#about">About</a>
           <a href="#connect">Connect</a>
+          <span class="nav-links__brown" aria-hidden="true"><i data-nav-progress></i></span>
         </nav>
-        <button class="nav-toggle" type="button" aria-label="Open menu" aria-expanded="false">
-          <span></span>
-        </button>
+
+        <div class="site-header__actions">
+          <button type="button" class="nav-play" data-play-key="crash:1" data-nav-play data-label-swaps aria-label="Play CRASH">
+            <span class="nav-play__icon" aria-hidden="true" data-icon="play"></span>
+            <span class="nav-play__eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+            <span class="nav-play__label" aria-hidden="true" data-nav-play-label>Play CRASH</span>
+          </button>
+          <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-drawer" data-enter>
+            <span class="nav-toggle__slots" aria-hidden="true"><i></i><i></i></span>
+            <span data-toggle-label>Menu</span>
+          </button>
+        </div>
       </div>
     </header>
 
-    <div class="nav-drawer" aria-hidden="true">
-      <nav aria-label="Mobile">
-        <a href="#music">Music</a>
-        <a href="#design">Design</a>
-        <a href="#about">About</a>
-        <a href="#connect">Connect</a>
-      </nav>
+    <div class="nav-drawer" id="nav-drawer" role="dialog" aria-modal="true" aria-label="Menu" inert data-lenis-prevent>
+      <div class="nav-drawer__inner">
+        <p class="nav-drawer__kicker" data-drawer-fade>On the menu</p>
+        <nav aria-label="Mobile">
+          <a class="drawer-card" href="#music" style="--tilt: -1.5deg">
+            <span class="drawer-card__n" aria-hidden="true">01</span><span class="drawer-card__label">Music</span><span class="drawer-card__sub">the crate</span>
+          </a>
+          <a class="drawer-card" href="#crash" style="--tilt: 1deg">
+            <span class="drawer-card__n" aria-hidden="true">02</span><span class="drawer-card__label">Crash</span><span class="drawer-card__sub">the album</span>
+          </a>
+          <a class="drawer-card" href="#design" style="--tilt: -0.8deg">
+            <span class="drawer-card__n" aria-hidden="true">03</span><span class="drawer-card__label">Design</span><span class="drawer-card__sub">visual worlds</span>
+          </a>
+          <a class="drawer-card" href="#about" style="--tilt: 1.4deg">
+            <span class="drawer-card__n" aria-hidden="true">04</span><span class="drawer-card__label">About</span><span class="drawer-card__sub">the creator</span>
+          </a>
+          <a class="drawer-card" href="#connect" style="--tilt: -1.2deg">
+            <span class="drawer-card__n" aria-hidden="true">05</span><span class="drawer-card__label">Connect</span><span class="drawer-card__sub">book / collab</span>
+          </a>
+        </nav>
+        <div class="nav-drawer__socials" data-drawer-socials data-drawer-fade></div>
+        <p class="nav-drawer__foot" data-drawer-fade>Fresh out of Pretoria · @krayaura</p>
+      </div>
+      <svg class="nav-drawer__toaster" viewBox="0 0 526.8 516.93" overflow="visible" aria-hidden="true" focusable="false">
+        <use href="#kr-body" />
+        <g clip-path="url(#kr-slot-clip)"><g data-drawer-slices><use href="#kr-slice-back" /><use href="#kr-slice-front" /></g></g>
+        <use href="#kr-lever" />
+      </svg>
     </div>
 
-    <main id="top">
-      <section class="hero" aria-label="Introduction">
+    <p class="sr-only" aria-live="polite" data-now-status></p>
+
+    <main id="top" tabindex="-1">
+      <section class="hero" aria-labelledby="hero-title" data-hero>
         <canvas id="hero-canvas" class="hero__canvas" aria-hidden="true"></canvas>
         <div class="hero__fallback" aria-hidden="true"></div>
         <div class="hero__veil" aria-hidden="true"></div>
-        <img
-          class="hero__logo"
-          src="/logos/main-logo.svg"
-          alt=""
-          width="720"
-          height="700"
-          decoding="async"
-        />
-        <div class="hero__content">
-          <h1 class="hero__wordmark" data-site-name>Krayaura</h1>
-          <p class="hero__tagline" data-tagline>
-            Nostalgia, fun, and confidence — sound and visuals from Pretoria.
-          </p>
-          <div class="hero__cta">
-            <a class="btn btn--primary magnetic" href="#music">Listen</a>
-            <a class="btn btn--ghost magnetic" href="#design">View work</a>
+        <div class="hero__floor" aria-hidden="true"></div>
+
+        <div class="hero__inner">
+          <!-- 1. The name. First in the DOM (heading navigation lands here), drawn at the bottom as the counter -->
+          <div class="hero__shelf">
+            <h1 class="hero__wordmark" id="hero-title">
+              <span class="sr-only" data-site-name>Krayaura</span>
+              <span class="hero__letters" aria-hidden="true" data-letters data-enter
+                ><span>K</span><span>R</span><span>A</span><span>Y</span><span>A</span><span>U</span><span>R</span><span>A</span></span
+              >
+              <span class="hero__echo" aria-hidden="true">Krayaura</span>
+            </h1>
+          </div>
+
+          <!-- 2. What's being served + who he is + the two actions -->
+          <div class="hero__copy">
+            <a class="serve" href="#crash" data-serve data-enter>
+              <span class="serve__cover"
+                ><img src="/media/covers/sm/crash.jpg" alt="" width="480" height="480" fetchpriority="high" decoding="async" data-serve-cover
+              /></span>
+              <span class="serve__pill" data-serve-pill>Now serving</span>
+              <strong class="serve__title" data-serve-title>Crash</strong>
+              <span class="serve__meta" data-serve-meta>The album · 14 tracks</span>
+              <span class="serve__brown" aria-hidden="true"><i data-serve-progress></i></span>
+            </a>
+
+            <p class="hero__statement" data-enter>
+              <span>A full creator,</span>
+              <span
+                ><em class="hero__hot"
+                  >fresh out<svg class="doodle doodle--hot" data-manual viewBox="0 0 240 30" fill="none" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path d="M5 17c38-9 88-11 130-7 30 3 63 2 100-5" pathLength="1" /><path d="M28 24c48-6 106-7 168-3" pathLength="1" /></svg></em
+                >
+                of Pretoria.</span
+              >
+            </p>
+            <p class="hero__roles" data-enter>Rapper · Singer · Producer · Designer</p>
+
+            <div class="hero__cta">
+              <button type="button" class="btn btn--primary btn--listen magnetic" data-play-key="crash:1" data-queue="crash" data-hero-listen data-label-swaps data-enter>
+                <span class="btn__icon" data-listen-icon></span><span data-listen-label>Listen to CRASH</span>
+              </button>
+              <a class="btn btn--ghost magnetic" href="#design" data-enter>See the work</a>
+            </div>
+          </div>
+
+          <!-- 3. The toaster on the counter. After the CTAs in the DOM so the lever is the last tab stop -->
+          <div class="hero__stage" data-stage>
+            <div class="hero__sun" aria-hidden="true">
+              <span class="hero__sun-disc" data-sun></span>
+              <span class="toaster__shadow" data-toaster-shadow></span>
+            </div>
+            <div class="toaster" data-toaster data-cursor="Pop!" aria-hidden="true" data-enter>
+              <div class="toaster__rig" data-rig>
+                <svg class="toaster__layer" viewBox="0 0 526.8 516.93" focusable="false"><use href="#kr-body" /></svg>
+                <div class="toaster__slots">
+                  <div class="toaster__slice toaster__slice--back" data-slice="back">
+                    <svg class="toaster__layer" viewBox="0 0 526.8 516.93" overflow="visible" focusable="false"><use href="#kr-slice-back" /></svg>
+                  </div>
+                  <div class="toaster__slice toaster__slice--front" data-slice="front">
+                    <svg class="toaster__layer" viewBox="0 0 526.8 516.93" overflow="visible" focusable="false"><use href="#kr-slice-front" /></svg>
+                  </div>
+                </div>
+                <div class="toaster__lever" data-lever>
+                  <svg class="toaster__layer" viewBox="0 0 526.8 516.93" focusable="false"><use href="#kr-lever" /></svg>
+                </div>
+              </div>
+              <p class="toaster__ding">Ding!</p>
+            </div>
+            <p class="hero__hint" aria-hidden="true" data-hint>
+              <span>push the lever</span
+              ><svg class="doodle doodle--hint" data-manual viewBox="0 0 120 70" fill="none" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path d="M6 60C22 22 58 8 104 18" pathLength="1" /><path d="M88 6l17 12-14 15" pathLength="1" /></svg>
+            </p>
+            <button type="button" class="toaster__lever-btn" data-lever-btn data-cursor="Push" aria-label="Push the lever: play CRASH"></button>
           </div>
         </div>
-        <p class="hero__scroll">Scroll</p>
       </section>
+
+      <div class="marquee" aria-hidden="true" data-marquee>
+        <div class="marquee__track" data-marquee-track></div>
+      </div>
 
       <section class="section music" id="music">
         <div class="container music__head reveal">
-          <p class="section-label">Music</p>
+          <p class="section-label">Music · The crate</p>
           <h2 class="section-title">Records that hit like a cartoon punchline</h2>
           <p class="section-lede">
-            Singles and vibes for late nights, early rollouts, and everything between the drop and the
-            reaction.
+            Every release since 2021. Dig through the crate, pull a record out and hear it spin.
           </p>
           <div class="music__platforms" data-platforms></div>
         </div>
-        <div class="track-rail" data-track-rail></div>
-        <div class="container music__video reveal" data-video></div>
+        <div class="crate" data-crate>
+          <div class="container crate__bar">
+            <div class="crate__filters" role="toolbar" aria-label="Filter releases" data-filters></div>
+            <p class="crate__hint">
+              <span class="crate__hint--fine">Drag · Shift+scroll · hit ▶ for a preview</span>
+              <span class="crate__hint--touch">Swipe the crate · tap ▶ for a preview</span>
+            </p>
+          </div>
+          <div class="track-rail crate__rail" data-track-rail></div>
+          <div class="container">
+            <div class="crate__timeline" data-timeline></div>
+          </div>
+        </div>
+        <div class="container yt-block reveal">
+          <div class="yt-block__head">
+            <p class="section-label">On screen</p>
+            <h2 class="section-title">Watch the world move</h2>
+            <p class="section-lede">
+              The CRASH trailer, the videos, the visualisers. Tap the middle one to play.
+            </p>
+          </div>
+          <div data-video></div>
+        </div>
+      </section>
+
+      <section class="crash" id="crash" aria-label="Crash — the album">
+        <div class="crash__halftone" aria-hidden="true"></div>
+        <div class="crash__glow" aria-hidden="true"></div>
+        <div class="crash__pin" data-crash-pin>
+          <div class="container crash__grid">
+            <!-- The cover pops out of a 14-ray sunburst (one ray per track; rays injected by crash.js) -->
+            <div class="crash__stage" data-crash-stage>
+              <div class="crash__cover" data-crash-cover-wrap>
+                <img data-crash-cover alt="Crash album cover art" width="640" height="640" loading="lazy" />
+                <span class="crash__cover-dim" aria-hidden="true" data-crash-cover-dim></span>
+              </div>
+            </div>
+            <div class="crash__viewport">
+              <div class="crash__copy">
+                <button type="button" class="chip crash__score" data-play-key="crash:1" data-queue="crash" data-cursor="Play" data-crash-score>
+                  <span class="crash__score-icon" aria-hidden="true" data-crash-score-icon></span><span>Read it with the album on</span>
+                </button>
+                <p class="crash__kicker" data-crash-kicker></p>
+                <h2 class="crash__title"><span data-crash-title>CRASH</span></h2>
+                <div class="crash__story" data-crash-story></div>
+                <div class="crash__punch" data-crash-punch></div>
+                <!-- Desktop: crash.js lifts this out of the viewport's fade mask into .crash__pin -->
+                <div class="crash__finale" data-crash-finale>
+                  <p class="crash__finale-line">
+                    <span class="crash__finale-small" data-crash-finale-lead></span>
+                    <span class="crash__finale-big" data-crash-finale-big></span>
+                  </p>
+                  <p class="crash__finale-tail" data-crash-finale-tail></p>
+                  <p class="crash__credit" data-crash-credit></p>
+                  <div class="crash__stream" data-crash-stream></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="container crash__album">
+          <div class="crash__album-head">
+            <div>
+              <p class="section-label">The tracklist</p>
+              <p class="crash__album-meta" data-crash-meta></p>
+            </div>
+            <div class="crash__links" data-crash-links></div>
+          </div>
+          <div data-crash-tracklist></div>
+        </div>
       </section>
 
       <section class="section design" id="design">
@@ -99,7 +315,7 @@
           <p class="section-label">Design</p>
           <h2 class="section-title">Visual worlds with loud personality</h2>
           <p class="section-lede">
-            Brand systems, cover art, motion, and campaign looks — nostalgia-forward, confidence-first.
+            I went to school to become a visual communicator — graphic design, videography, photography. These are the covers and worlds I built around the music.
           </p>
         </div>
         <div class="container">
@@ -117,46 +333,69 @@
       </section>
 
       <section class="section about" id="about">
-        <div class="container about__grid">
-          <div class="reveal">
-            <p class="section-label">About</p>
-            <h2 class="section-title">Built on joy &amp; imagination</h2>
-            <ul class="about__roles" data-roles></ul>
-            <div class="about__copy" data-bio></div>
+        <div class="container">
+          <div class="about__banner reveal">
+            <img data-about-banner alt="" width="1200" height="400" loading="lazy" />
           </div>
-          <aside class="about__aside reveal">
-            <p class="about__aside-label">Based in</p>
-            <p data-location>Pretoria, South Africa</p>
-          </aside>
+          <div class="about__grid">
+            <div class="reveal">
+              <img class="about__profile" data-about-profile alt="Krayaura" width="160" height="160" loading="lazy" />
+              <p class="section-label">About</p>
+              <p class="about__handle" data-about-handle>@krayaura</p>
+              <h2 class="section-title">Built on joy &amp; imagination</h2>
+              <ul class="about__roles" data-roles></ul>
+              <div class="about__copy" data-bio></div>
+            </div>
+            <aside class="about__aside reveal">
+              <p class="about__aside-label">Based in</p>
+              <p data-location>Pretoria, South Africa</p>
+            </aside>
+          </div>
         </div>
       </section>
 
-      <section class="section connect" id="connect">
+      <section class="section connect" id="connect" aria-labelledby="connect-title">
         <div class="container">
-          <h2 class="connect__title reveal" data-site-name>Krayaura</h2>
+          <!-- Draft headline for his OK -->
+          <h2 class="connect__title reveal" id="connect-title">Let's cook something loud</h2>
           <p class="connect__lede reveal" data-booking-note>
-            DM on Instagram for bookings &amp; collabs
+            DM me on Instagram for bookings, features &amp; collabs
           </p>
-          <div class="reveal" style="margin-bottom: 2rem">
-            <a class="btn btn--primary magnetic" data-booking href="https://www.instagram.com/krayaura/"
+          <div class="connect__book reveal">
+            <a class="btn btn--primary magnetic" data-booking href="https://ig.me/m/krayaura" target="_blank" rel="noopener noreferrer"
               >Book / collab</a
             >
           </div>
-          <div class="social-grid reveal" data-socials></div>
+          <p class="connect__proof reveal" data-proof></p>
+          <div class="connect__links reveal">
+            <div class="connect__stream" data-stream-cards></div>
+            <div class="social-grid" data-socials></div>
+          </div>
+          <div class="connect__end">
+            <!-- Back to top: his toaster (an <img>, so the logo's own .cls-* styles and gradient ids stay sealed off) -->
+            <button type="button" class="connect__toaster" aria-label="Back to top" data-cursor="Top" data-back-top>
+              <span class="connect__toaster-art">
+                <svg class="connect__slice connect__slice--back" viewBox="0 0 100 130" aria-hidden="true" focusable="false" data-toast-slice><g transform="rotate(-8 50 70)"><path class="kt-crust" d="M6 128V44C6 20 26 4 50 4s44 16 44 40v84z" /><path class="kt-face" d="M13 128V47c0-18 16-31 37-31s37 13 37 31v81z" /><path class="kt-shine" d="M26 36h34M26 47h44" /><path class="kt-label" d="M22 64h56v42H22z" /><circle class="kt-reel" cx="37" cy="85" r="7.5" /><circle class="kt-reel" cx="63" cy="85" r="7.5" /><path class="kt-win" d="M45.5 80h9v10h-9z" /></g></svg>
+                <svg class="connect__slice connect__slice--front" viewBox="0 0 100 130" aria-hidden="true" focusable="false" data-toast-slice><g transform="rotate(7 50 70)"><path class="kt-crust" d="M6 128V44C6 20 26 4 50 4s44 16 44 40v84z" /><path class="kt-face" d="M13 128V47c0-18 16-31 37-31s37 13 37 31v81z" /><path class="kt-shine" d="M26 36h34M26 47h44" /><path class="kt-label" d="M22 64h56v42H22z" /><circle class="kt-reel" cx="37" cy="85" r="7.5" /><circle class="kt-reel" cx="63" cy="85" r="7.5" /><path class="kt-win" d="M45.5 80h9v10h-9z" /></g></svg>
+                <img class="connect__toaster-img" src="/logos/main-logo.svg" alt="" width="526" height="517" loading="lazy" decoding="async" />
+              </span>
+              <span class="connect__toaster-hint" aria-hidden="true">Back to top ↑</span>
+            </button>
+          </div>
           <footer class="site-footer">
-            <p>© <span data-year></span> Krayaura</p>
+            <p>© <span data-year></span> Krayaura · Fresh out the toaster · Pretoria</p>
             <a href="https://linktr.ee/krayaura" target="_blank" rel="noopener noreferrer">Linktree</a>
           </footer>
         </div>
       </section>
     </main>
 
-    <div class="lightbox" id="lightbox" aria-hidden="true" role="dialog" aria-modal="true">
+    <div class="lightbox" id="lightbox" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="lightbox-title" data-lenis-prevent>
       <div class="lightbox__panel">
         <button class="lightbox__close" type="button" data-lightbox-close aria-label="Close">×</button>
         <div class="lightbox__media" data-lightbox-media></div>
         <p class="lightbox__meta" data-lightbox-meta></p>
-        <h3 class="lightbox__title" data-lightbox-title></h3>
+        <h3 class="lightbox__title" id="lightbox-title" data-lightbox-title></h3>
         <p class="lightbox__body" data-lightbox-body></p>
         <a
           class="btn btn--primary"
@@ -167,6 +406,10 @@
           >View project</a
         >
       </div>
+    </div>
+
+    <div class="record-sheet" id="record-sheet" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="record-sheet-title">
+      <div class="record-sheet__panel" data-sheet-panel tabindex="-1"></div>
     </div>
 
     <script type="module" src="/src/main.js"></script>

@@ -1,134 +1,583 @@
+/* ─── Header: three floating stickers — brand toaster · slot capsule · play chip ─── */
+
 .site-header {
   position: fixed;
   inset: 0 0 auto;
   z-index: 100;
-  height: var(--nav-h);
-  display: flex;
-  align-items: center;
+  padding-top: 10px;
   pointer-events: none;
 }
 
 .site-header__inner {
-  width: min(1280px, calc(100% - 2rem));
+  width: calc(100% - 24px);
+  height: 52px;
   margin-inline: auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 8px;
+}
+
+.site-header__inner > * {
   pointer-events: auto;
 }
 
+/* Shared sticker surface. No backdrop blur over the hero: it would re-blur the live canvas every frame */
+.nav-pill {
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--c-midnight) 55%, transparent);
+  transition:
+    background 0.35s var(--ease-soft),
+    box-shadow 0.35s var(--ease-out);
+}
+
+.site-header[data-state="scrolled"] .nav-pill {
+  background: color-mix(in srgb, var(--c-midnight) 88%, transparent);
+}
+
+html:not(.hero-in-view) .site-header[data-state="scrolled"] .nav-pill {
+  backdrop-filter: blur(12px) saturate(1.2);
+}
+
+/* Over the orange drawer a see-through pill turns muddy; go solid */
+html.is-menu-open .nav-pill {
+  background: var(--c-midnight);
+}
+
+/* 1 · Brand sticker: the real toaster, its cassettes pop on hover and hop with the kick */
 .brand-mark {
   display: inline-flex;
   align-items: center;
-  gap: 0.65rem;
+  gap: 0.5rem;
+  height: 52px;
+  padding: 0 1rem 0 0.45rem;
   font-family: var(--font-heading);
-  font-size: 1rem;
-  letter-spacing: 0.08em;
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
+  color: var(--c-cream);
 }
 
-.brand-mark img {
-  width: 2rem;
-  height: 2rem;
-  object-fit: contain;
+.site-header[data-state="scrolled"] .brand-mark {
+  box-shadow: 3px 3px 0 var(--c-orange);
 }
 
+.brand-mark__toaster {
+  width: 36px;
+  height: auto;
+  overflow: visible;
+  transition: rotate 0.35s var(--ease-out);
+}
+
+.brand-mark__pop {
+  transition: transform 0.45s var(--ease-pop);
+}
+
+.brand-mark:hover .brand-mark__toaster,
+.brand-mark:focus-visible .brand-mark__toaster {
+  rotate: -6deg;
+}
+
+/* SVG user units: 60 up the slot axis (x = 0.28 · rise) */
+.brand-mark:hover .brand-mark__pop,
+.brand-mark:focus-visible .brand-mark__pop {
+  transform: translate(17px, -60px);
+}
+
+/* 2 · Slot capsule: links sit in a toaster slot; the active one gets a slice of toast */
 .nav-links {
+  position: relative;
   display: none;
-  gap: 1.75rem;
+  align-items: center;
+  padding: 5px;
+  overflow: hidden;
+  box-shadow: inset 0 -3px 0 color-mix(in srgb, var(--c-void) 60%, transparent);
 }
 
 .nav-links a {
-  font-family: var(--font-subhead);
-  font-size: 0.72rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--fg-muted);
-  transition: color 0.25s var(--ease-soft);
-}
-
-.nav-links a:hover,
-.nav-links a:focus-visible {
-  color: var(--accent);
-}
-
-.nav-toggle {
-  width: 2.5rem;
-  height: 2.5rem;
-  display: grid;
-  place-items: center;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--c-void) 55%, transparent);
-  backdrop-filter: blur(10px);
-}
-
-.nav-toggle span {
-  display: block;
-  width: 1rem;
-  height: 2px;
-  background: var(--fg);
   position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  height: 44px;
+  padding: 0 1rem;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-subhead);
+  font-weight: 700;
+  font-size: 0.74rem;
+  line-height: 1;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--c-cream) 80%, transparent);
+  transition:
+    color 0.2s var(--ease-soft) 0.12s,
+    translate 0.25s var(--ease-out);
 }
 
-.nav-toggle span::before,
-.nav-toggle span::after {
-  content: "";
+.nav-links a:hover {
+  color: var(--c-cream);
+  translate: 0 -2px;
+}
+
+.nav-links a[aria-current] {
+  color: var(--c-void);
+}
+
+/* overflow:hidden would clip an outside ring, so it sits inside the pill */
+.nav-links a:focus-visible {
+  outline: 2px solid var(--c-gold);
+  outline-offset: -4px;
+}
+
+.nav-links a[aria-current]:focus-visible {
+  outline-color: var(--c-void);
+}
+
+.nav-links__hot {
+  --icon-accent: var(--c-red);
+  display: grid;
+  margin-top: -2px;
+}
+
+.nav-links__hot .icon {
+  width: 0.95rem;
+  height: 0.95rem;
+}
+
+.nav-toast {
+  position: absolute;
+  z-index: 0;
+  top: 5px;
+  left: 0;
+  width: 80px;
+  height: 44px;
+  border-radius: var(--radius-pill);
+  background: var(--c-gold);
+  /* golden-brown crust top and bottom */
+  box-shadow:
+    inset 0 3px 0 color-mix(in srgb, var(--c-orange) 55%, var(--c-gold)),
+    inset 0 -3px 0 color-mix(in srgb, var(--c-orange) 35%, var(--c-gold));
+  transform: translateY(64px); /* sunk in the slot until a section is active */
+  pointer-events: none;
+}
+
+/* Page progress, browning from cream to burnt red */
+.nav-links__brown {
+  position: absolute;
+  left: 18px;
+  right: 18px;
+  bottom: 2px;
+  height: 2px;
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+  background: color-mix(in srgb, var(--c-cream) 8%, transparent);
+}
+
+.nav-links__brown i {
+  display: block;
+  height: 100%;
+  background: var(--browning);
+  transform-origin: left;
+  transform: scaleX(0);
+}
+
+/* 3 · Play chip: one play control that's always in reach (hidden while the hero's own Listen is on screen) */
+.site-header__actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-play {
+  --icon-accent: var(--c-void);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-pill);
+  background: var(--c-orange);
+  color: var(--c-void);
+  box-shadow: 3px 3px 0 var(--c-gold);
+  font-family: var(--font-subhead);
+  font-weight: 700;
+  font-size: 0.72rem;
+  line-height: 1;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition:
+    box-shadow 0.25s var(--ease-out),
+    background 0.25s var(--ease-soft),
+    translate 0.25s var(--ease-out),
+    scale 0.45s var(--ease-pop),
+    opacity 0.3s,
+    visibility 0.45s;
+}
+
+.nav-play:hover {
+  translate: -1px -1px;
+  box-shadow: 5px 5px 0 var(--c-gold);
+}
+
+.nav-play.is-playing {
+  background: var(--c-gold);
+  box-shadow: 3px 3px 0 var(--c-orange);
+}
+
+.nav-play:focus-visible {
+  outline-color: var(--c-cream);
+}
+
+html.hero-controls-visible .nav-play {
+  visibility: hidden;
+  opacity: 0;
+  scale: 0.6;
+}
+
+/* Over the orange Design flood, the gold Connect finale and the orange menu, an orange / gold chip melts
+   into the page: it turns void with cream ink (nav.js sets data-surface-* from what's under the sticker) */
+.site-header[data-surface-play] .nav-play,
+html.is-menu-open .nav-play {
+  --icon-accent: var(--c-cream);
+  background: var(--c-void);
+  color: var(--c-cream);
+  box-shadow: 3px 3px 0 var(--c-cream);
+}
+
+.site-header[data-surface-play] .nav-play:hover {
+  box-shadow: 5px 5px 0 var(--c-cream);
+}
+
+.site-header[data-surface-play="gold"] .nav-play {
+  box-shadow: 3px 3px 0 var(--c-orange);
+}
+
+.site-header[data-surface-play="gold"] .nav-play:hover {
+  box-shadow: 5px 5px 0 var(--c-orange);
+}
+
+.site-header[data-surface-play] .nav-play__eq i,
+html.is-menu-open .nav-play__eq i {
+  background: var(--c-cream);
+}
+
+.site-header[data-surface-brand="orange"][data-state="scrolled"] .brand-mark {
+  box-shadow: 3px 3px 0 var(--c-void);
+}
+
+.nav-play__icon {
+  display: grid;
+}
+
+.nav-play__icon .icon {
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
+.nav-play__label {
+  display: none;
+}
+
+.nav-play__eq {
+  display: none;
+  align-items: center;
+  gap: 2px;
+  height: 14px;
+}
+
+.nav-play__eq i {
+  width: 3px;
+  height: 14px;
+  border-radius: 2px;
+  background: var(--c-void);
+  transform: scaleY(0.25);
+}
+
+.nav-play.is-playing .nav-play__icon {
+  display: none;
+}
+
+.nav-play.is-playing .nav-play__eq {
+  display: inline-flex;
+}
+
+/* Mobile menu toggle: a labelled "toaster slot" — two gold slots that cross into an X */
+.nav-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  height: 44px;
+  padding: 0 1rem 0 0.85rem;
+  border: 1.5px solid var(--line);
+  border-radius: 14px;
+  background: var(--c-midnight);
+  font-family: var(--font-subhead);
+  font-weight: 700;
+  font-size: 0.72rem;
+  line-height: 1;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--c-cream);
+  transition: background 0.3s var(--ease-soft);
+}
+
+.nav-toggle[aria-expanded="true"] {
+  background: var(--c-void);
+}
+
+.nav-toggle__slots {
+  position: relative;
+  width: 18px;
+  height: 12px;
+}
+
+.nav-toggle__slots i {
   position: absolute;
   left: 0;
-  width: 100%;
-  height: 2px;
-  background: inherit;
+  width: 18px;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--c-gold);
+  transition: transform 0.4s var(--ease-pop);
 }
 
-.nav-toggle span::before {
-  top: -5px;
+.nav-toggle__slots i:first-child {
+  top: 0;
 }
 
-.nav-toggle span::after {
-  top: 5px;
+.nav-toggle__slots i:last-child {
+  bottom: 0;
 }
+
+.nav-toggle[aria-expanded="true"] .nav-toggle__slots i:first-child {
+  transform: translateY(4px) rotate(45deg);
+}
+
+.nav-toggle[aria-expanded="true"] .nav-toggle__slots i:last-child {
+  transform: translateY(-4px) rotate(-45deg);
+}
+
+/* ─── Drawer: his orange portfolio page, the menu served out of the toaster ─── */
 
 .nav-drawer {
   position: fixed;
   inset: 0;
   z-index: 90;
-  background: color-mix(in srgb, var(--c-void) 94%, transparent);
-  backdrop-filter: blur(18px);
-  display: grid;
-  place-items: center;
-  opacity: 0;
+  overflow: hidden auto;
+  overscroll-behavior: contain;
+  background: var(--c-orange);
+  color: var(--c-void);
   visibility: hidden;
-  transition:
-    opacity 0.35s var(--ease-out),
-    visibility 0.35s;
 }
 
 .nav-drawer.is-open {
-  opacity: 1;
   visibility: visible;
 }
 
-.nav-drawer nav {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  text-align: center;
+.nav-drawer__inner {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 10px;
+  padding: 84px 16px 40px;
 }
 
-.nav-drawer a {
-  font-family: var(--font-heading);
-  font-size: clamp(2rem, 8vw, 3.5rem);
-  letter-spacing: 0.04em;
+.nav-drawer__kicker,
+.nav-drawer__foot {
+  font-family: var(--font-subhead);
+  font-weight: 700;
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
 }
 
+.nav-drawer nav {
+  display: grid;
+  gap: 10px;
+}
+
+.drawer-card {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 64px;
+  padding: 0 1.1rem;
+  border-radius: var(--radius-lg);
+  background: var(--c-void);
+  color: var(--c-cream);
+  box-shadow: 4px 5px 0 color-mix(in srgb, var(--c-void) 35%, var(--c-orange));
+  rotate: var(--tilt, 0deg);
+}
+
+.drawer-card__n {
+  font-family: var(--font-subhead);
+  font-weight: 700;
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  color: var(--c-gold);
+}
+
+.drawer-card__label {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 1.9rem;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.drawer-card__sub {
+  font-family: var(--font-subhead);
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--c-mist);
+}
+
+.drawer-card.is-current {
+  background: var(--c-gold);
+  color: var(--c-void);
+}
+
+.drawer-card.is-current .drawer-card__n,
+.drawer-card.is-current .drawer-card__sub {
+  color: var(--c-void);
+}
+
+.drawer-card:focus-visible,
+.drawer-social:focus-visible {
+  outline: 3px solid var(--c-void);
+  outline-offset: 3px;
+}
+
+.nav-drawer__socials {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.drawer-social {
+  --icon-accent: var(--c-gold);
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--c-void);
+  color: var(--c-cream);
+}
+
+.drawer-social .icon {
+  width: 1.3rem;
+  height: 1.3rem;
+}
+
+.nav-drawer__toaster {
+  position: absolute;
+  z-index: 0;
+  right: -40px;
+  bottom: -70px;
+  width: min(78vw, 330px);
+  height: auto;
+  overflow: visible;
+  rotate: -8deg;
+  pointer-events: none;
+}
+
+@media (max-height: 700px) {
+  .nav-drawer__toaster {
+    width: 210px;
+    bottom: -50px;
+  }
+}
+
+/* ─── Desktop ─── */
+
 @media (min-width: 860px) {
+  .site-header {
+    padding-top: 16px;
+  }
+
+  /* Grid, not space-between: the nav stays centred whatever the play chip's label ("Play CRASH" / "Pause") */
+  .site-header__inner {
+    width: min(1280px, 100% - 64px);
+    height: 56px;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+  }
+
+  .site-header__inner > .brand-mark {
+    justify-self: start;
+  }
+
+  .site-header__actions {
+    justify-self: end;
+  }
+
+  .brand-mark {
+    height: 56px;
+    padding-right: 1.15rem;
+    font-size: 1.05rem;
+    letter-spacing: 0.08em;
+  }
+
+  .brand-mark__toaster {
+    width: 40px;
+  }
+
   .nav-links {
     display: flex;
   }
 
-  .nav-toggle {
+  .nav-toggle,
+  .nav-drawer {
     display: none;
+  }
+}
+
+@media (min-width: 860px) and (max-width: 999px) {
+  .brand-mark__name {
+    display: none;
+  }
+
+  .brand-mark {
+    padding-right: 0.45rem;
+  }
+}
+
+@media (min-width: 1000px) {
+  .nav-play {
+    width: auto;
+    padding: 0 1.15rem 0 0.9rem;
+  }
+
+  .nav-play__label {
+    display: inline;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brand-mark__pop,
+  .brand-mark__toaster,
+  .nav-toggle__slots i,
+  .nav-play {
+    transition: none;
+  }
+
+  .nav-drawer {
+    opacity: 0;
+    transition:
+      opacity 0.15s linear,
+      visibility 0.15s;
+  }
+
+  .nav-drawer.is-open {
+    opacity: 1;
   }
 }

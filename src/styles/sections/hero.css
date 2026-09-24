@@ -1,13 +1,32 @@
+/* ─── Hero: "Fresh out the toaster" ────────────────────────────────────────
+   A 2000s cartoon title card: 14 rays (one per CRASH track) fan out of an orange sun that rises
+   behind the toaster, and the toaster sits on KRAYAURA as if the letters were the counter.
+
+   Bolde 700 metrics (measured): "KRAYAURA" = 3.297em wide at letter-spacing -0.01em,
+   caps 0.511em tall; with line-height 0.66 the cap line sits 0.139em below the line-box top
+   and the baseline 0.01em above its bottom. The counter (cap line) is therefore
+   0.521em above the bottom of the h1 box, so every position below is plain CSS, no JS layout.
+   (These vars use cqi, so they're only read by descendants of .hero, the container.) */
+
 .hero {
+  --gutter: 16px;
+  --inner: calc(100cqi - var(--gutter) * 2);
+  --wm: min(calc(var(--inner) / 3.32), 43svh); /* wordmark font-size: fills the row, capped by height */
+  --tw: min(72cqi, 36svh, 320px); /* toaster stage width */
+  --sink: calc(var(--tw) * 0.02); /* front corner sinks 2% into the letters */
+  --pad-b: 16px;
+  --nav-clear: 84px; /* 10px + 52px header + air */
+  --counter: calc(var(--pad-b) + var(--wm) * 0.521); /* cap line, measured up from the hero bottom */
+
   position: relative;
-  min-height: 100svh;
-  display: grid;
-  align-items: end;
   overflow: hidden;
   isolation: isolate;
+  container-type: inline-size;
+  background: var(--c-void);
 }
 
-.hero__canvas {
+.hero__canvas,
+.hero__fallback {
   position: absolute;
   inset: 0;
   z-index: 0;
@@ -15,15 +34,22 @@
   height: 100%;
 }
 
+/* Reduced motion / no WebGL: the same fan of rays as a static conic gradient, same origin */
 .hero__fallback {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  background:
-    radial-gradient(ellipse 80% 60% at 70% 40%, color-mix(in srgb, var(--c-blue) 55%, transparent), transparent 70%),
-    radial-gradient(ellipse 50% 40% at 20% 80%, color-mix(in srgb, var(--c-red) 28%, transparent), transparent 60%),
-    linear-gradient(160deg, var(--c-midnight), var(--c-void) 55%, #050510);
   display: none;
+  background:
+    radial-gradient(
+      circle at var(--ox, 72%) var(--oy, 58%),
+      color-mix(in srgb, var(--c-red) 40%, var(--c-orange)) 0,
+      color-mix(in srgb, var(--c-orange) 30%, transparent) calc(var(--or, 160px) * 1.4),
+      transparent calc(var(--or, 160px) * 2.4)
+    ),
+    repeating-conic-gradient(
+      from -100deg at var(--ox, 72%) var(--oy, 58%),
+      color-mix(in srgb, var(--c-royal) 75%, var(--c-midnight)) 0deg 7.14deg,
+      transparent 7.14deg 14.29deg
+    ),
+    linear-gradient(180deg, var(--c-midnight), var(--c-void) 80%);
 }
 
 .hero.reduced-motion .hero__canvas {
@@ -34,73 +60,590 @@
   display: block;
 }
 
+/* Legibility for the copy over the rays */
 .hero__veil {
   position: absolute;
   inset: 0;
   z-index: 1;
-  background:
-    linear-gradient(180deg, transparent 35%, color-mix(in srgb, var(--c-void) 88%, transparent) 100%),
-    linear-gradient(90deg, color-mix(in srgb, var(--c-void) 55%, transparent), transparent 45%);
   pointer-events: none;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--c-void) 72%, transparent) 0 28%, transparent 52%);
 }
 
-.hero__logo {
+/* The counter: rays and sun stop at the cap line, the letters stand on a dark floor */
+.hero__floor {
   position: absolute;
-  right: max(-8vw, -6rem);
-  bottom: 8%;
-  top: 12%;
-  z-index: 2;
-  width: min(62vw, 720px);
-  height: auto;
-  object-fit: contain;
+  z-index: 1;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: var(--counter);
+  background: var(--c-void);
+  box-shadow: 0 -2px 0 color-mix(in srgb, var(--c-cream) 10%, transparent);
   pointer-events: none;
-  filter: drop-shadow(0 30px 60px color-mix(in srgb, var(--c-royal) 45%, transparent));
-  opacity: 0.92;
-  animation: logo-float 9s ease-in-out infinite;
 }
 
-@keyframes logo-float {
-  0%,
-  100% {
-    transform: translateY(0) rotate(-2deg);
-  }
-  50% {
-    transform: translateY(-18px) rotate(1deg);
-  }
-}
-
-.hero__content {
+.hero__inner {
   position: relative;
-  z-index: 3;
-  width: min(1120px, calc(100% - 2.5rem));
-  margin: 0 auto;
-  padding-block: calc(var(--nav-h) + 2rem) 4.5rem;
+  z-index: 2;
+  width: var(--inner);
+  min-height: 100svh;
+  margin-inline: auto;
+  padding-top: var(--nav-clear);
+  padding-bottom: var(--pad-b);
+  display: grid;
+  grid-template-areas:
+    "copy"
+    "shelf";
+  grid-template-rows: auto 1fr;
+}
+
+/* ─── Wordmark (the counter) ─── */
+
+.hero__shelf {
+  grid-area: shelf;
+  align-self: end;
+  justify-self: start;
+  padding-top: calc(var(--tw) * 1.2); /* mobile: room for the sun + popped cassettes above the counter */
 }
 
 .hero__wordmark {
-  font-size: clamp(3.6rem, 16vw, 10.5rem);
-  line-height: 0.82;
-  letter-spacing: -0.035em;
-  max-width: 9ch;
-  margin-bottom: 1.25rem;
-  text-shadow: 0 0 80px color-mix(in srgb, var(--c-blue) 40%, transparent);
+  position: relative;
+  isolation: isolate; /* keeps the echo's z-index:-1 behind the letters, not behind the page */
+  font-size: var(--wm);
+  line-height: 0.66;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  color: var(--c-cream);
 }
 
-.hero__tagline {
+.hero__letters {
+  display: block;
+  text-shadow: 0.035em 0.035em 0 var(--c-royal); /* hard cartoon extrusion */
+}
+
+.hero__letters > span {
+  display: inline-block;
+}
+
+/* inline-block letters lose the font's kerning, so the three pairs Bolde kerns are put back by hand
+   (measured in Chrome from Bolde 700's GPOS). Keeps the word 3.297em wide and matching .hero__echo. */
+.hero__letters > span:nth-child(3) {
+  margin-right: -0.156em; /* A→Y */
+}
+
+.hero__letters > span:nth-child(4) {
+  margin-right: -0.157em; /* Y→A */
+}
+
+.hero__letters > span:nth-child(5) {
+  margin-right: -0.039em; /* A→U */
+}
+
+/* CRASH's glowing title trail, as an orange outline that pulls away on the kick (JS writes `translate`) */
+.hero__echo {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  color: transparent;
+  -webkit-text-stroke: 0.014em var(--c-orange);
+  translate: 0.035em 0.035em;
+  opacity: 0;
+  transition: opacity 0.45s var(--ease-soft);
+}
+
+html.is-audio-playing .hero__echo {
+  opacity: 1;
+  will-change: translate;
+}
+
+html.is-lite .hero__echo {
+  display: none;
+}
+
+/* ─── Copy ─── */
+
+.hero__copy {
+  grid-area: copy;
+  position: relative;
+  z-index: 4;
+  align-self: start;
+}
+
+/* "Now serving" ticket: the share-card sticker, later the now-playing readout */
+.serve {
+  --cover: 64px;
+  display: grid;
+  grid-template-columns: var(--cover) auto;
+  grid-template-rows: repeat(4, auto);
+  align-items: center;
+  column-gap: 0.9rem;
+  width: fit-content;
+  margin-bottom: 1.1rem;
+  color: var(--c-cream);
+}
+
+.serve__cover {
+  grid-row: 1 / span 4;
+  width: var(--cover);
+  aspect-ratio: 1;
+  overflow: hidden;
+  border: 3px solid var(--c-cream);
+  border-radius: var(--radius-sm);
+  background: var(--c-midnight);
+  box-shadow: 5px 5px 0 var(--c-orange);
+  rotate: -5deg;
+  transition:
+    rotate 0.3s var(--ease-out),
+    box-shadow 0.3s var(--ease-out);
+}
+
+.serve__cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.serve:hover .serve__cover,
+.serve:focus-visible .serve__cover {
+  rotate: -2deg;
+  box-shadow: 7px 7px 0 var(--c-orange);
+}
+
+.serve__pill {
+  justify-self: start;
+  padding: 0.32rem 0.7rem 0.28rem;
+  border-radius: var(--radius-pill);
+  background: var(--c-red);
+  color: var(--c-void); /* 4.9:1 — cream on red would only be 3.3:1 */
   font-family: var(--font-subhead);
-  font-size: clamp(0.95rem, 2.2vw, 1.15rem);
-  letter-spacing: 0.06em;
+  font-weight: 700;
+  font-size: 0.62rem;
+  line-height: 1;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--fg-muted);
-  max-width: 28ch;
-  margin-bottom: 2rem;
+  box-shadow: 2px 2px 0 var(--c-gold);
+  rotate: -3deg;
+}
+
+.serve.is-live .serve__pill {
+  background: var(--c-gold);
+  box-shadow: 2px 2px 0 var(--c-red);
+}
+
+.serve__title {
+  max-width: 13ch;
+  margin-top: 0.3rem;
+  overflow: hidden;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 1.15rem;
+  line-height: 1.05;
+  text-transform: uppercase;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.serve__meta {
+  font-family: var(--font-subhead);
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--c-mist);
+}
+
+.serve__brown {
+  width: 8rem;
+  height: 4px;
+  margin-top: 0.4rem;
+  overflow: hidden;
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--c-cream) 12%, transparent);
+}
+
+.serve__brown i {
+  display: block;
+  height: 100%;
+  background: var(--browning);
+  transform-origin: left;
+  transform: scaleX(0);
+}
+
+.hero__statement {
+  font-family: var(--font-subhead);
+  font-weight: 700;
+  font-size: clamp(1.75rem, 3.4vw, 3.25rem);
+  line-height: 1.04;
+  letter-spacing: -0.01em;
+  color: var(--c-cream);
+}
+
+.hero__statement > span {
+  display: block;
+}
+
+.hero__hot {
+  position: relative;
+  font-style: normal;
+  white-space: nowrap;
+  color: var(--c-orange);
+}
+
+.doodle--hot {
+  position: absolute;
+  left: -3%;
+  bottom: -0.3em;
+  width: 106%;
+  height: 0.34em;
+}
+
+/* .hero__hot prefix: brand.css (loaded later) styles every .doodle path */
+.hero__hot .doodle--hot path {
+  stroke-width: 4;
+}
+
+.hero__hot .doodle--hot path + path {
+  stroke: var(--c-gold);
+  stroke-width: 2.5;
+}
+
+/* Hand-placed doodles animate from JS (initDoodles skips [data-manual]); drawn by default */
+.doodle[data-manual] path {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+
+.hero__roles {
+  margin-top: 0.9rem;
+  font-family: var(--font-subhead);
+  font-size: 0.66rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--c-mist);
 }
 
 .hero__cta {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.85rem;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
 }
+
+.hero__cta .btn {
+  flex: 1 1 0;
+  min-height: 3rem;
+  padding-inline: 1rem;
+}
+
+.hero__cta .btn--listen {
+  flex-grow: 1.3;
+}
+
+.btn--listen.is-toasting .btn__icon {
+  --icon-accent: var(--c-red);
+}
+
+/* ─── The stage: sun + toaster, parked on the counter ─── */
+
+.hero__stage {
+  position: absolute;
+  z-index: 3;
+  width: var(--tw);
+  aspect-ratio: 526.8 / 516.93;
+  /* right edge 0.07em inside the last A (its side bearing is 0.058em) */
+  left: calc(var(--wm) * 3.2266 - var(--tw));
+  /* its bottom (the toaster's front corner) sinks --sink below the cap line */
+  bottom: calc(var(--counter) - var(--sink));
+}
+
+/* Only the part above the counter shows, so it reads as a sun rising behind the letters */
+.hero__sun {
+  position: absolute;
+  left: -17.5%; /* centred, without translate: toaster.js reads its offsets for the ray origin */
+  bottom: var(--sink);
+  width: 135%;
+  height: calc(var(--tw) * 1.145);
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.hero__sun-disc {
+  position: absolute;
+  inset: 0 0 auto;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 46% 40%,
+    var(--c-orange-bright) 0 28%,
+    var(--c-orange) 58%,
+    color-mix(in srgb, var(--c-orange) 78%, var(--c-red)) 100%
+  );
+  box-shadow: inset 0 0 0 calc(var(--tw) * 0.014) color-mix(in srgb, var(--c-red) 45%, var(--c-orange));
+}
+
+/* Comic halftone on the sun's lower-left, like his print work */
+.hero__sun-disc::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background-image: radial-gradient(circle, color-mix(in srgb, var(--c-void) 45%, transparent) 1.2px, transparent 1.8px);
+  background-size: 10px 10px;
+  mask-image: radial-gradient(circle at 18% 78%, #000 0 22%, transparent 58%);
+  opacity: 0.55;
+}
+
+.toaster__shadow {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 54%;
+  height: calc(var(--tw) * 0.09);
+  border-radius: 50%;
+  translate: -50% 45%;
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--c-void) 75%, transparent), transparent);
+}
+
+.toaster,
+.toaster__rig,
+.toaster__slots,
+.toaster__slice,
+.toaster__lever {
+  position: absolute;
+  inset: 0;
+}
+
+.toaster {
+  z-index: 1;
+}
+
+.toaster__rig {
+  transform-origin: 50% 100%;
+}
+
+.toaster__layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* Same line as #kr-slot-clip, in % of the stage: cassettes below it are inside the toaster.
+   Static clip on a wrapper, so the slices themselves move on the compositor. */
+.toaster__slots {
+  clip-path: polygon(
+    -12% -90%,
+    112% -90%,
+    112% 39.66%,
+    82.57% 40.24%,
+    43.28% 48.75%,
+    37.21% 45.65%,
+    28.47% 44.11%,
+    23.16% 41.78%,
+    -12% 41.78%
+  );
+}
+
+.toaster__slice--back {
+  transform-origin: 46.5% 25.1%;
+}
+
+.toaster__slice--front {
+  transform-origin: 62.6% 33.9%;
+}
+
+html.is-audio-playing .toaster__slice {
+  will-change: transform;
+}
+
+.toaster__ding {
+  position: absolute;
+  top: -4%;
+  right: -2%;
+  padding: 0.38em 0.75em 0.32em;
+  border-radius: var(--radius-pill);
+  background: var(--c-gold);
+  color: var(--c-void);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: clamp(1.1rem, calc(var(--tw) * 0.075), 2.2rem);
+  line-height: 1;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  box-shadow: 4px 4px 0 var(--c-red);
+  visibility: hidden; /* GSAP autoAlpha */
+  pointer-events: none;
+}
+
+/* Real button over the painted lever; ≥44px even on the small toaster */
+.toaster__lever-btn {
+  position: absolute;
+  z-index: 4;
+  left: 19.2%;
+  top: 65%;
+  width: max(44px, 16%);
+  height: max(44px, 12%);
+  translate: -50% -50%;
+  border-radius: var(--radius-pill);
+}
+
+.toaster__lever-btn:focus-visible {
+  outline: 3px solid var(--c-gold);
+  outline-offset: 4px;
+}
+
+.hero__hint {
+  display: none;
+}
+
+/* ─── Desktop: copy left, toaster right, the name spans the whole row ─── */
+
+@media (min-width: 860px) {
+  .hero {
+    --gutter: 32px;
+    --inner: min(1280px, 100cqi - 64px);
+    --tw: min(34cqi, 48svh, 520px);
+    --pad-b: clamp(16px, 3svh, 32px);
+    --nav-clear: 104px;
+  }
+
+  .hero__inner {
+    grid-template-rows: 1fr auto;
+  }
+
+  .hero__shelf {
+    padding-top: 0;
+  }
+
+  .hero__veil {
+    background: linear-gradient(90deg, color-mix(in srgb, var(--c-void) 62%, transparent) 0 22%, transparent 58%);
+  }
+
+  .hero__copy {
+    align-self: center;
+    /* stops 2.5rem short of the sun's left edge (stage left − 17.5% of the stage) */
+    max-width: min(40rem, calc(var(--wm) * 3.2266 - var(--tw) * 1.175 - 2.5rem));
+    padding-block: 1.5rem 2.5rem;
+  }
+
+  .serve {
+    --cover: 104px;
+    column-gap: 1.2rem;
+    margin-bottom: 1.75rem;
+  }
+
+  .serve__cover {
+    border-width: 4px;
+    border-radius: var(--radius);
+    box-shadow: 6px 6px 0 var(--c-orange);
+  }
+
+  .serve__pill {
+    font-size: 0.66rem;
+  }
+
+  .serve__title {
+    font-size: 1.55rem;
+  }
+
+  .serve__meta {
+    font-size: 0.7rem;
+  }
+
+  .serve__brown {
+    width: 11rem;
+  }
+
+  .hero__roles {
+    margin-top: 1.1rem;
+    font-size: 0.78rem;
+    letter-spacing: 0.2em;
+  }
+
+  .hero__cta {
+    flex-wrap: wrap;
+    margin-top: 1.75rem;
+  }
+
+  .hero__cta .btn {
+    flex: none;
+    min-height: 3.25rem;
+    padding-inline: 1.45rem;
+  }
+}
+
+@media (min-width: 860px) and (max-height: 720px) {
+  .hero {
+    --nav-clear: 88px;
+  }
+
+  .hero__copy {
+    padding-block: 0.5rem 1.5rem;
+  }
+
+  .serve {
+    --cover: 80px;
+    margin-bottom: 1.25rem;
+  }
+
+  .hero__statement {
+    font-size: clamp(1.75rem, 3vw, 2.4rem);
+  }
+}
+
+@media (min-width: 1280px) {
+  .hero__hint {
+    position: absolute;
+    z-index: 2;
+    right: calc(100% - 3%); /* the arrow tip touches the toaster's side, level with the lever */
+    top: 55%;
+    width: max-content;
+    display: flex;
+    align-items: flex-end;
+    gap: 0.25rem;
+    white-space: nowrap;
+    transition: opacity 0.3s var(--ease-soft);
+  }
+
+  /* A little void sticker: the rays behind it are orange, so orange text would vanish */
+  .hero__hint span {
+    padding: 0.4rem 0.75rem 0.35rem;
+    border-radius: var(--radius-pill);
+    background: color-mix(in srgb, var(--c-void) 85%, transparent);
+    color: var(--c-cream);
+    font-family: var(--font-subhead);
+    font-style: italic;
+    font-size: 0.85rem;
+    box-shadow: 3px 3px 0 var(--c-orange);
+    rotate: -3deg;
+  }
+
+  .hero.is-used .hero__hint {
+    opacity: 0;
+  }
+
+  .doodle--hint {
+    width: 4.25rem;
+    height: 2.5rem;
+    scale: 1 -1; /* curve down onto the lever */
+  }
+
+  .hero__hint .doodle--hint path {
+    stroke: var(--c-cream);
+    stroke-width: 3;
+  }
+}
+
+@media (max-width: 859px) and (max-height: 700px) {
+  .hero {
+    --tw: min(64cqi, 32svh, 300px);
+  }
+
+  .hero__roles {
+    display: none;
+  }
+}
+
+/* ─── Buttons (site-wide; unchanged, they just live in this file) ─── */
 
 .btn {
   display: inline-flex;
@@ -129,7 +672,7 @@
 
 .btn--primary:hover {
   background: var(--accent-hot);
-  color: var(--c-cream);
+  color: var(--c-void); /* was cream: 3.3:1 on red; void is 4.9:1 */
 }
 
 .btn--ghost {
@@ -146,36 +689,4 @@
 
 .btn.magnetic {
   will-change: transform;
-}
-
-.hero__scroll {
-  position: absolute;
-  left: 50%;
-  bottom: 1.25rem;
-  z-index: 3;
-  transform: translateX(-50%);
-  font-family: var(--font-subhead);
-  font-size: 0.65rem;
-  letter-spacing: 0.28em;
-  text-transform: uppercase;
-  color: var(--fg-muted);
-}
-
-@media (max-width: 720px) {
-  .hero__logo {
-    right: -18vw;
-    width: 78vw;
-    opacity: 0.55;
-    top: 18%;
-  }
-
-  .hero__content {
-    padding-bottom: 5.5rem;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .hero__logo {
-    animation: none;
-  }
 }

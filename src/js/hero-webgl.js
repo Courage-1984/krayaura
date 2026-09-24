@@ -1,158 +1,262 @@
-import * as THREE from "three";
+import gsap from "gsap";
+
+/**
+ * Hero background: raw WebGL (no three.js), one full-screen triangle + a fragment shader.
+ * A cartoon title-card fan of 14 rays (one per CRASH track) out of the orange sun behind the toaster,
+ * with CRASH's red-orange stage light. Renders ON DEMAND: once per resize / origin change, during the
+ * entrance fan-out, and every frame only while music plays (toaster.js drives frame()). Idle = 0 GPU work.
+ */
 
 const VERT = /* glsl */ `
-varying vec2 vUv;
+attribute vec2 aPos;
 void main() {
-  vUv = uv;
-  gl_Position = vec4(position.xy, 0.0, 1.0);
+  gl_Position = vec4(aPos, 0.0, 1.0);
 }
 `;
 
 const FRAG = /* glsl */ `
+#ifdef GL_FRAGMENT_PRECISION_HIGH
 precision highp float;
+#else
+precision mediump float;
+#endif
+uniform vec2 uOrigin;   // sun centre, canvas px (GL: y runs up)
+uniform float uScale;   // sun radius, canvas px
 uniform float uTime;
-uniform vec2 uResolution;
-uniform vec2 uPointer;
-varying vec2 vUv;
+uniform float uBass;
+uniform float uEnergy;
+uniform float uHigh;
+uniform float uActive;  // ray lit for the current CRASH track (0..13), -1 for none
+uniform float uFan;     // 0..1, the entrance sweep
+
+const float PI = 3.14159265;
+const float TAU = 6.28318531;
+const float RAYS = 14.0;
+const float MARGIN = 0.2; // the fan dips ~11deg under each horizon
+
+const vec3 VOID_C = vec3(0.043, 0.043, 0.129);
+const vec3 MIDNIGHT = vec3(0.039, 0.016, 0.208);
+const vec3 ROYAL = vec3(0.016, 0.090, 0.357);
+const vec3 BLUE = vec3(0.063, 0.216, 0.518);
+const vec3 GOLD = vec3(0.949, 0.718, 0.020);
+const vec3 ORANGE = vec3(0.949, 0.416, 0.122);
+const vec3 RED = vec3(1.0, 0.063, 0.133);
 
 float hash(vec2 p) {
   return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
 }
 
-float noise(vec2 p) {
-  vec2 i = floor(p);
-  vec2 f = fract(p);
-  float a = hash(i);
-  float b = hash(i + vec2(1.0, 0.0));
-  float c = hash(i + vec2(0.0, 1.0));
-  float d = hash(i + vec2(1.0, 1.0));
-  vec2 u = f * f * (3.0 - 2.0 * f);
-  return mix(a, b, u.x) + (c - a) * u.y * (1.0 - u.x) + (d - b) * u.x * u.y;
-}
-
 void main() {
-  vec2 uv = vUv;
-  vec2 p = (gl_FragCoord.xy - 0.5 * uResolution) / min(uResolution.x, uResolution.y);
-  vec2 mouse = (uPointer - 0.5) * 0.35;
+  vec2 o = (gl_FragCoord.xy - uOrigin) / uScale; // 1.0 = one sun radius
+  float r = length(o);
+  float a = atan(o.y, o.x);                      // 0 = right, PI/2 = up
+  if (a < -0.5 * PI) a += TAU;                   // lower-left quadrant continues past the left horizon
+  float span = PI + 2.0 * MARGIN;
+  float u = (PI + MARGIN - a) / span;            // 0 = left horizon → 1 = right, clockwise over the top
+  float s = u * RAYS;
+  float seg = floor(s);
+  float f = fract(s);
+  float px = RAYS / (span * max(r * uScale, 1.0)); // one pixel, in ray units: crisp flat wedges
+  float fan = step(0.0, u) * step(u, 1.0);
+  float ray = smoothstep(0.0, px, f) * (1.0 - smoothstep(0.5 - px, 0.5, f)) * fan;
 
-  float t = uTime * 0.12;
-  float n = noise(p * 2.4 + t + mouse);
-  float n2 = noise(p * 5.0 - t * 1.3);
-  float field = smoothstep(0.2, 0.85, n * 0.7 + n2 * 0.35);
+  float edge = uFan * 3.4 + uBass * 0.45;        // rays sweep out on entrance, reach further on kicks
+  float reach = 1.0 - smoothstep(edge - 0.6, edge, r);
+  float fade = 1.0 - smoothstep(2.6, 4.4, r);
 
-  vec3 voidC = vec3(0.043, 0.043, 0.129);
-  vec3 midnight = vec3(0.039, 0.016, 0.208);
-  vec3 royal = vec3(0.016, 0.090, 0.357);
-  vec3 blue = vec3(0.063, 0.216, 0.518);
-  vec3 gold = vec3(0.949, 0.718, 0.020);
-  vec3 red = vec3(1.0, 0.063, 0.133);
+  vec3 warm = mix(RED, ORANGE, 0.6);
+  vec3 col = mix(MIDNIGHT, VOID_C, smoothstep(0.8, 3.6, r));
+  col = mix(col, warm, (1.0 - smoothstep(0.9, 2.3, r)) * (0.34 + uEnergy * 0.22) * uFan); // stage light
 
-  vec3 col = mix(voidC, midnight, uv.y);
-  col = mix(col, royal, field * 0.55);
-  col = mix(col, blue, smoothstep(0.55, 1.0, n2) * 0.4);
+  vec3 rayC = mix(mix(warm, ORANGE, 0.4), mix(ROYAL, BLUE, uBass), smoothstep(1.1, 2.8, r));
+  col = mix(col, rayC, ray * reach * fade * (0.3 + uEnergy * 0.16 + uBass * 0.12));
 
-  float flecks = step(0.965, hash(floor(p * 90.0 + t * 2.0)));
-  col += gold * flecks * 0.85;
+  // fades out before it reaches the copy on the left
+  float lit = (1.0 - step(0.5, abs(seg - uActive))) * ray * reach * (1.0 - smoothstep(1.2, 2.7, r));
+  col = mix(col, GOLD, lit * (0.26 + uEnergy * 0.34));
 
-  float ribbon = smoothstep(0.08, 0.0, abs(p.y + sin(p.x * 2.5 + t * 2.0) * 0.25 - mouse.y * 0.5));
-  col = mix(col, mix(gold, red, 0.35 + 0.35 * sin(t * 3.0)), ribbon * 0.35);
-
-  float vignette = smoothstep(1.35, 0.2, length(p * vec2(1.1, 1.25)));
-  col *= vignette;
+  // Embers rise only while music plays
+  float live = smoothstep(0.02, 0.2, uEnergy);
+  vec2 g = (gl_FragCoord.xy / uScale + vec2(0.0, -uTime * 0.05)) * 16.0;
+  vec2 id = floor(g);
+  vec2 q = fract(g) - 0.5 - (vec2(hash(id + 1.3), hash(id + 7.1)) - 0.5) * 0.5;
+  float h = hash(id);
+  float size = 0.035 + hash(id + 3.7) * 0.06;
+  float tw = 0.45 + 0.55 * sin(uTime * (2.0 + h * 3.0) + h * 40.0);
+  float spark = step(0.93 - uHigh * 0.05, h) * smoothstep(size, size * 0.2, length(q)) * tw;
+  col += mix(GOLD, ORANGE, h) * spark * (0.7 + uHigh) * live * fan;
 
   gl_FragColor = vec4(col, 1.0);
 }
 `;
 
+const noop = {
+  ok: false,
+  freeze() {},
+  setOrigin() {},
+  setActive() {},
+  frame() {},
+  fan() {},
+  setLite() {},
+  pause() {},
+  resume() {},
+  destroy() {},
+};
+
+function compile(gl, type, src) {
+  const s = gl.createShader(type);
+  gl.shaderSource(s, src);
+  gl.compileShader(s);
+  if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) {
+    throw new Error(gl.getShaderInfoLog(s) || "shader compile failed");
+  }
+  return s;
+}
+
 export function initHeroWebGL(canvas, { reducedMotion = false } = {}) {
-  if (reducedMotion || !canvas) {
-    return { destroy() {}, pause() {}, resume() {} };
+  if (reducedMotion || !canvas) return noop;
+
+  let gl;
+  let program;
+  let buffer;
+  try {
+    // failIfMajorPerformanceCaveat: software-only GL (SwiftShader, llvmpipe, no GPU) gets the static CSS fan instead
+    gl = canvas.getContext("webgl", {
+      antialias: false,
+      alpha: false,
+      depth: false,
+      stencil: false,
+      powerPreference: "low-power",
+      failIfMajorPerformanceCaveat: true,
+    });
+    if (!gl) return noop;
+    program = gl.createProgram();
+    gl.attachShader(program, compile(gl, gl.VERTEX_SHADER, VERT));
+    gl.attachShader(program, compile(gl, gl.FRAGMENT_SHADER, FRAG));
+    gl.linkProgram(program);
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(program));
+  } catch (err) {
+    console.warn("[hero] WebGL unavailable, using CSS fallback", err);
+    return noop;
   }
 
-  const renderer = new THREE.WebGLRenderer({
-    canvas,
-    antialias: false,
-    alpha: false,
-    powerPreference: "high-performance",
-  });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.75));
-  renderer.setSize(canvas.clientWidth, canvas.clientHeight, false);
+  gl.useProgram(program);
+  buffer = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+  // One oversized triangle covers the viewport — no seam down the diagonal
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+  const aPos = gl.getAttribLocation(program, "aPos");
+  gl.enableVertexAttribArray(aPos);
+  gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0);
 
-  const scene = new THREE.Scene();
-  const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+  const u = Object.fromEntries(
+    ["uOrigin", "uScale", "uTime", "uBass", "uEnergy", "uHigh", "uActive", "uFan"].map((n) => [n, gl.getUniformLocation(program, n)])
+  );
 
-  const uniforms = {
-    uTime: { value: 0 },
-    uResolution: {
-      value: new THREE.Vector2(canvas.clientWidth, canvas.clientHeight),
-    },
-    uPointer: { value: new THREE.Vector2(0.5, 0.5) },
+  // Flat rays don't need retina: 1.5× max, 1× on ≤4-core machines, 0.6× (and 30fps) once the governor trips
+  let dpr = Math.min(window.devicePixelRatio || 1, (navigator.hardwareConcurrency || 8) <= 4 ? 1 : 1.5);
+  const origin = { x: canvas.clientWidth * 0.72, y: canvas.clientHeight * 0.58, r: 200 };
+  const p = {
+    time: 0,
+    bass: 0,
+    energy: 0,
+    high: 0,
+    active: -1,
+    // folded away until the entrance sweeps it open (only when an entrance is coming)
+    fan: document.documentElement.classList.contains("hero-pending") ? 0 : 1,
   };
+  let visible = true;
+  let lost = false;
+  let fanTween = null;
+  let lite = false;
+  let skip = false;
+  let frozen = false;
 
-  const material = new THREE.ShaderMaterial({
-    uniforms,
-    vertexShader: VERT,
-    fragmentShader: FRAG,
-  });
+  function draw() {
+    if (!visible || lost || !canvas.width) return;
+    gl.uniform2f(u.uOrigin, origin.x * dpr, canvas.height - origin.y * dpr);
+    gl.uniform1f(u.uScale, Math.max(1, origin.r * dpr));
+    gl.uniform1f(u.uTime, p.time);
+    gl.uniform1f(u.uBass, p.bass);
+    gl.uniform1f(u.uEnergy, p.energy);
+    gl.uniform1f(u.uHigh, p.high);
+    gl.uniform1f(u.uActive, p.active);
+    gl.uniform1f(u.uFan, p.fan);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+  }
 
-  const mesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
-  scene.add(mesh);
-
-  let raf = 0;
-  let running = true;
-  let start = performance.now();
-  const pointer = { x: 0.5, y: 0.5 };
-  const pointerTarget = { x: 0.5, y: 0.5 };
-
-  const onPointer = (e) => {
-    const rect = canvas.getBoundingClientRect();
-    pointerTarget.x = (e.clientX - rect.left) / rect.width;
-    pointerTarget.y = 1 - (e.clientY - rect.top) / rect.height;
-  };
-
-  const onResize = () => {
+  function resize() {
     const w = canvas.clientWidth;
     const h = canvas.clientHeight;
     if (!w || !h) return;
-    renderer.setSize(w, h, false);
-    uniforms.uResolution.value.set(w, h);
-  };
+    canvas.width = Math.round(w * dpr);
+    canvas.height = Math.round(h * dpr);
+    gl.viewport(0, 0, canvas.width, canvas.height);
+    draw();
+  }
 
-  const tick = (now) => {
-    if (!running) return;
-    raf = requestAnimationFrame(tick);
-    const t = (now - start) / 1000;
-    uniforms.uTime.value = t;
-    pointer.x += (pointerTarget.x - pointer.x) * 0.06;
-    pointer.y += (pointerTarget.y - pointer.y) * 0.06;
-    uniforms.uPointer.value.set(pointer.x, pointer.y);
-    renderer.render(scene, camera);
-  };
+  const ro = new ResizeObserver(resize);
+  ro.observe(canvas);
+  canvas.addEventListener("webglcontextlost", (e) => {
+    e.preventDefault();
+    lost = true;
+    canvas.closest(".hero")?.classList.add("reduced-motion"); // the CSS fan takes over
+  });
+  resize();
 
-  window.addEventListener("pointermove", onPointer, { passive: true });
-  window.addEventListener("resize", onResize);
-  onResize();
-  raf = requestAnimationFrame(tick);
-
-  return {
+  const api = {
+    ok: true,
+    /** Sun centre + radius in CSS px, relative to the canvas */
+    setOrigin(x, y, r) {
+      origin.x = x;
+      origin.y = y;
+      origin.r = r;
+      draw();
+    },
+    setActive(n) {
+      if (p.active === n) return;
+      p.active = n;
+      draw();
+    },
+    /** One audio frame from signal.js */
+    frame(s, dtMs) {
+      p.time += dtMs / 1000;
+      p.bass = s.bass;
+      p.energy = s.energy;
+      p.high = s.high;
+      if (frozen || (lite && (skip = !skip))) return; // lite: 30fps rays · frozen: rays stay still
+      draw();
+    },
+    fan(duration = 1.1) {
+      fanTween?.kill();
+      fanTween = gsap.fromTo(p, { fan: 0 }, { fan: 1, duration, ease: "power3.out", onUpdate: draw });
+    },
+    setLite() {
+      lite = true;
+      dpr = Math.min(dpr, 0.6);
+      resize();
+    },
+    /** The GPU can't keep up at all: stop drawing per frame (rays stay as they are, everything else keeps moving) */
+    freeze() {
+      frozen = true;
+    },
     pause() {
-      running = false;
-      cancelAnimationFrame(raf);
+      visible = false;
     },
     resume() {
-      if (running) return;
-      running = true;
-      start = performance.now() - uniforms.uTime.value * 1000;
-      raf = requestAnimationFrame(tick);
+      if (visible) return;
+      visible = true;
+      draw();
     },
     destroy() {
-      running = false;
-      cancelAnimationFrame(raf);
-      window.removeEventListener("pointermove", onPointer);
-      window.removeEventListener("resize", onResize);
-      material.dispose();
-      mesh.geometry.dispose();
-      renderer.dispose();
+      ro.disconnect();
+      fanTween?.kill();
+      gl.deleteBuffer(buffer);
+      gl.deleteProgram(program);
     },
   };
+
+  // If the entrance never comes (a JS error later in boot), don't leave the rays folded away
+  if (p.fan === 0) setTimeout(() => p.fan === 0 && !fanTween && api.fan(0.6), 4000);
+  return api;
 }

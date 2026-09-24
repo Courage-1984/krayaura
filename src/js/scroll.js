@@ -25,12 +25,14 @@ export function initScroll() {
   });
   gsap.ticker.lagSmoothing(0);
 
+  // opacity, not autoAlpha: until it's revealed a block must stay in the tab order and the accessibility
+  // tree (visibility:hidden took the Connect CTA and cards out of both). Focus inside reveals it at once.
   document.querySelectorAll(".reveal").forEach((el) => {
-    gsap.fromTo(
+    const tween = gsap.fromTo(
       el,
-      { autoAlpha: 0, y: 40 },
+      { opacity: 0, y: 40 },
       {
-        autoAlpha: 1,
+        opacity: 1,
         y: 0,
         duration: 1,
         ease: "power3.out",
@@ -44,22 +46,23 @@ export function initScroll() {
         },
       }
     );
+    el.addEventListener("focusin", () => tween.progress() < 1 && tween.play(), { passive: true });
   });
 
-  gsap.utils.toArray(".track-card").forEach((card, i) => {
-    gsap.from(card, {
-      autoAlpha: 0,
-      x: 48,
-      duration: 0.9,
-      delay: i * 0.05,
-      ease: "power3.out",
-      scrollTrigger: {
-        trigger: card,
-        start: "top 90%",
-        once: true,
-      },
+  // Records get dealt into the crate like cards
+  const rail = document.querySelector("[data-track-rail]");
+  if (rail) {
+    const dealt = gsap.from(rail.querySelectorAll(".record"), {
+      opacity: 0,
+      y: 60,
+      rotate: (i) => (i % 2 ? 5 : -5),
+      duration: 0.8,
+      stagger: 0.06,
+      ease: "back.out(1.4)",
+      scrollTrigger: { trigger: rail, start: "top 85%", once: true },
     });
-  });
+    rail.addEventListener("focusin", () => dealt.progress() < 1 && dealt.play(), { passive: true });
+  }
 
   return {
     lenis,

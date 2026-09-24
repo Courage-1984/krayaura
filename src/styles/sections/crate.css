@@ -1,0 +1,1027 @@
+/* ─── The Crate: record sleeves in the drag rail ─────────────────────────── */
+
+.crate__bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.crate__filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.crate__hint {
+  font-family: var(--font-subhead);
+  font-size: 0.66rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+
+.crate__hint--touch {
+  display: none;
+}
+
+@media (hover: none) {
+  .crate__hint--fine {
+    display: none;
+  }
+
+  .crate__hint--touch {
+    display: inline;
+  }
+}
+
+.chip {
+  --icon-accent: var(--c-orange);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.5rem 0.6rem 0.5rem 0.95rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  font-family: var(--font-subhead);
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  transition:
+    background 0.25s,
+    color 0.25s,
+    border-color 0.25s,
+    transform 0.3s var(--ease-out);
+}
+
+.chip .icon {
+  width: 1rem;
+  height: 1rem;
+}
+
+.chip__count {
+  min-width: 1.5rem;
+  padding: 0.15rem 0.4rem;
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--c-cream) 10%, transparent);
+  font-size: 0.62rem;
+  text-align: center;
+}
+
+.chip:hover {
+  color: var(--fg);
+  border-color: var(--accent);
+}
+
+.chip.is-active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--c-void);
+  transform: rotate(-2deg);
+  box-shadow: 3px 3px 0 var(--c-orange);
+  --icon-accent: var(--c-red);
+}
+
+.chip.is-active .chip__count {
+  background: color-mix(in srgb, var(--c-void) 16%, transparent);
+}
+
+/* Room above the sleeves so records can be pulled up without clipping */
+.crate__rail {
+  padding-top: 5.5rem;
+  gap: 1.5rem;
+}
+
+.record {
+  flex: 0 0 clamp(210px, 62vw, 270px);
+  scroll-snap-align: start;
+  position: relative;
+}
+
+.record[hidden] {
+  display: none;
+}
+
+.record__stage {
+  position: relative;
+  aspect-ratio: 1;
+}
+
+.record__vinyl {
+  --out: 12%;
+  --spin: 0deg;
+  --kick: 1;
+  position: absolute;
+  inset: 4%;
+  z-index: 0;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, transparent 17%, #0d0d14 17.5%, #0d0d14 19%, transparent 19.5%),
+    repeating-radial-gradient(circle, #121218 0 1.6px, #1b1b24 2.2px 3.4px),
+    #111;
+  box-shadow:
+    inset 0 0 0 2px #000,
+    0 10px 30px color-mix(in srgb, #000 55%, transparent);
+  transform: translateY(calc(var(--out) * -1)) rotate(var(--spin)) scale(var(--kick));
+  transition: transform 0.6s var(--ease-out);
+}
+
+/* Specular sheen that doesn't rotate — sells the spin */
+.record__vinyl::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 30deg,
+    transparent 0 12%,
+    color-mix(in srgb, var(--c-cream) 14%, transparent) 16%,
+    transparent 22% 60%,
+    color-mix(in srgb, var(--c-cream) 10%, transparent) 64%,
+    transparent 70%
+  );
+  transform: rotate(calc(var(--spin) * -1));
+}
+
+.record__label {
+  position: absolute;
+  inset: 32%;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--c-orange) 70%, #000);
+}
+
+.record__label::after {
+  content: "";
+  position: absolute;
+  inset: 44%;
+  border-radius: 50%;
+  background: var(--c-void);
+}
+
+.record:hover .record__vinyl,
+.record:focus-within .record__vinyl {
+  --out: 34%;
+}
+
+.record.is-live .record__vinyl {
+  --out: 40%;
+  transition: none; /* rotation is driven every frame */
+}
+
+.record__sleeve {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  padding: 0;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--c-royal);
+  box-shadow:
+    0 18px 40px color-mix(in srgb, #000 45%, transparent),
+    inset 0 0 0 1px color-mix(in srgb, var(--c-cream) 10%, transparent);
+  transition:
+    transform 0.45s var(--ease-out),
+    box-shadow 0.45s var(--ease-out);
+}
+
+.record__sleeve img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Paper-sleeve sheen */
+.record__sleeve::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(125deg, color-mix(in srgb, #fff 16%, transparent), transparent 35%);
+  pointer-events: none;
+}
+
+.record:hover .record__sleeve,
+.record:focus-within .record__sleeve,
+.record.is-live .record__sleeve {
+  transform: translate(-4px, 6px) rotate(-1.5deg);
+  box-shadow:
+    var(--sticker),
+    0 24px 50px color-mix(in srgb, #000 50%, transparent);
+}
+
+.record__sticker {
+  --icon-accent: var(--c-gold);
+  position: absolute;
+  z-index: 3;
+  top: 0.7rem;
+  left: -0.6rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.3rem 0.65rem 0.3rem 0.45rem;
+  border-radius: var(--radius-pill);
+  background: var(--c-red);
+  color: var(--c-void); /* void on red ~4.9:1 (cream was 3.3:1 at this size) */
+  font-family: var(--font-subhead);
+  font-size: 0.6rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  transform: rotate(-8deg);
+  box-shadow: 3px 3px 0 var(--c-void);
+  pointer-events: none;
+}
+
+.record__sticker .icon {
+  width: 1rem;
+  height: 1rem;
+}
+
+.record__play {
+  --icon-accent: var(--c-void);
+  position: absolute;
+  z-index: 3;
+  right: 0.8rem;
+  bottom: 0.8rem;
+  width: 3.4rem;
+  height: 3.4rem;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--c-orange);
+  color: var(--c-void);
+  box-shadow: 3px 3px 0 var(--c-void);
+  transition:
+    transform 0.3s var(--ease-out),
+    background 0.25s;
+}
+
+.record__play:hover {
+  transform: scale(1.08) rotate(-6deg);
+  background: var(--c-gold);
+}
+
+.record__play-icon {
+  grid-area: 1 / 1;
+  display: grid;
+}
+
+.record__play-icon .icon {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.record__play-icon--pause,
+.record__play.is-playing .record__play-icon--play {
+  display: none;
+}
+
+.record__play.is-playing .record__play-icon--pause {
+  display: grid;
+}
+
+.record__ring {
+  grid-area: 1 / 1;
+  width: 118%;
+  height: 118%;
+  transform: rotate(-90deg);
+  pointer-events: none;
+}
+
+.record__ring circle {
+  fill: none;
+  stroke: var(--c-gold);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-dasharray: 138.2;
+  stroke-dashoffset: 138.2;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.record.is-live .record__ring circle {
+  opacity: 1;
+}
+
+/* A deliberate hover arms the preview: the ring fills over the 600ms dwell, then the song switches */
+.record.is-arming .record__ring circle {
+  opacity: 1;
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 0.6s linear;
+}
+
+.record__meta {
+  padding: 1rem 0.2rem 0;
+}
+
+.record__year {
+  font-family: var(--font-subhead);
+  font-size: 0.64rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.3rem;
+}
+
+.record__title {
+  font-family: var(--font-heading);
+  font-size: clamp(1.35rem, 3.5vw, 1.7rem);
+  line-height: 0.95;
+  text-transform: uppercase;
+}
+
+.record.is-live .record__title {
+  color: var(--c-orange);
+}
+
+.record__feat {
+  margin-top: 0.3rem;
+  font-size: 0.85rem;
+  color: var(--fg-muted);
+}
+
+.record.is-flash .record__sleeve {
+  animation: record-flash 0.9s var(--ease-out);
+}
+
+@keyframes record-flash {
+  0% { transform: translateY(0); }
+  30% { transform: translateY(-14px) rotate(-3deg); box-shadow: 0 0 0 4px var(--c-gold); }
+  100% { transform: translateY(0); }
+}
+
+/* ─── Timeline ───────────────────────────────────────────────────────────── */
+
+.crate__timeline {
+  margin-top: 2rem;
+}
+
+/* --lanes (0–2, set by music.js) makes room above the line for stacked, clustered dots */
+.timeline {
+  --lane-step: 1.55rem;
+  position: relative;
+  height: 4.25rem;
+  margin-top: calc(var(--lanes, 0) * var(--lane-step));
+}
+
+.timeline__line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 1.25rem;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--c-orange), var(--c-gold) 40%, color-mix(in srgb, var(--c-cream) 18%, transparent));
+}
+
+.timeline__head {
+  position: absolute;
+  top: 0.35rem;
+  width: 2px;
+  height: 1.8rem;
+  margin-left: -1px;
+  border-radius: 2px;
+  background: var(--c-cream);
+  box-shadow: 0 0 12px var(--c-gold);
+  transition: left 0.45s var(--ease-out);
+}
+
+.timeline__year {
+  position: absolute;
+  top: 2.4rem;
+  transform: translateX(-50%);
+  font-family: var(--font-subhead);
+  font-size: 0.62rem;
+  letter-spacing: 0.16em;
+  color: var(--fg-muted);
+}
+
+.timeline__stem {
+  position: absolute;
+  top: calc(1.25rem - var(--lane, 0) * var(--lane-step));
+  width: 1px;
+  height: calc(var(--lane, 0) * var(--lane-step));
+  margin-left: -0.5px;
+  background: color-mix(in srgb, var(--c-gold) 70%, transparent);
+  pointer-events: none;
+}
+
+.timeline__dot {
+  position: absolute;
+  top: calc(1.25rem - var(--lane, 0) * var(--lane-step));
+  width: 0.8rem;
+  height: 0.8rem;
+  margin: -0.4rem 0 0 -0.4rem;
+  border-radius: 50%;
+  background: var(--c-void);
+  border: 2px solid var(--c-gold);
+  transition:
+    transform 0.3s var(--ease-out),
+    background 0.25s;
+}
+
+/* ~25px hit area around the 13px dot (inset is from the padding box, inside the 2px border);
+   the lanes keep neighbours' hit areas apart */
+.timeline__dot::before {
+  content: "";
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+}
+
+.timeline__dot.is-album {
+  width: 1.15rem;
+  height: 1.15rem;
+  margin: -0.575rem 0 0 -0.575rem;
+  border-color: var(--c-orange);
+  background: var(--c-orange);
+}
+
+.timeline__dot.is-hot::after {
+  content: "";
+  position: absolute;
+  inset: -5px;
+  border-radius: 50%;
+  border: 1px dashed var(--c-red);
+}
+
+.timeline__dot:hover,
+.timeline__dot:focus-visible,
+.timeline__dot.is-current {
+  transform: scale(1.45);
+  background: var(--c-gold);
+}
+
+.timeline__tip {
+  position: absolute;
+  bottom: calc(100% + 0.6rem);
+  left: 50%;
+  translate: -50% 0;
+  white-space: nowrap;
+  padding: 0.35rem 0.6rem;
+  border-radius: var(--radius-sm);
+  background: var(--c-cream);
+  color: var(--c-void);
+  font-family: var(--font-subhead);
+  font-size: 0.55rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(4px) scale(0.7);
+  transition:
+    opacity 0.2s,
+    transform 0.25s var(--ease-out);
+}
+
+.timeline__dot.is-start .timeline__tip {
+  left: -0.4rem;
+  translate: 0 0;
+  transform-origin: left bottom;
+}
+
+.timeline__dot.is-end .timeline__tip {
+  left: auto;
+  right: -0.4rem;
+  translate: 0 0;
+  transform-origin: right bottom;
+}
+
+.timeline__tip em {
+  display: block;
+  font-style: normal;
+  opacity: 0.6;
+}
+
+.timeline__dot:hover .timeline__tip,
+.timeline__dot:focus-visible .timeline__tip,
+.timeline__dot.is-current .timeline__tip {
+  opacity: 1;
+  transform: translateY(0) scale(0.7);
+}
+
+/* ─── Tracklist (Crash section + record sheet) ───────────────────────────── */
+
+.tracklist {
+  display: grid;
+  gap: 0.2rem;
+  counter-reset: none;
+}
+
+.tracklist__row {
+  --icon-accent: var(--c-orange);
+  width: 100%;
+  display: grid;
+  grid-template-columns: 2rem 1.6rem 1fr auto auto;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.7rem 0.9rem;
+  border-radius: var(--radius-sm);
+  text-align: left;
+  transition:
+    background 0.2s,
+    transform 0.3s var(--ease-out);
+}
+
+.tracklist__row:hover:not(:disabled),
+.tracklist__row:focus-visible {
+  background: color-mix(in srgb, var(--c-cream) 7%, transparent);
+  transform: translateX(4px);
+}
+
+.tracklist__n {
+  font-family: var(--font-subhead);
+  font-size: 0.72rem;
+  color: var(--fg-muted);
+}
+
+.tracklist__state {
+  display: grid;
+  place-items: center;
+}
+
+.tracklist__play,
+.tracklist__eq {
+  grid-area: 1 / 1;
+}
+
+.tracklist__play .icon {
+  width: 1.3rem;
+  height: 1.3rem;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+
+/* No hover on touch: the icon is the only sign a row plays */
+@media (hover: none) {
+  .tracklist__play .icon {
+    opacity: 0.9;
+  }
+}
+
+.tracklist__row:hover .tracklist__play .icon {
+  opacity: 1;
+}
+
+.tracklist__eq {
+  display: none;
+  gap: 2px;
+  align-items: end;
+  height: 1rem;
+}
+
+.tracklist__eq i {
+  width: 3px;
+  height: 100%;
+  border-radius: 2px;
+  background: var(--c-orange);
+  animation: eq 0.9s ease-in-out infinite;
+  transform-origin: bottom;
+}
+
+.tracklist__eq i:nth-child(2) { animation-delay: -0.3s; background: var(--c-gold); }
+.tracklist__eq i:nth-child(3) { animation-delay: -0.6s; }
+
+@keyframes eq {
+  0%, 100% { transform: scaleY(0.25); }
+  50% { transform: scaleY(1); }
+}
+
+.tracklist__row.is-playing .tracklist__play { display: none; }
+.tracklist__row.is-playing .tracklist__eq { display: flex; }
+.tracklist__row.is-current .tracklist__title { color: var(--c-orange); }
+
+.tracklist__title {
+  font-family: var(--font-subhead);
+  font-size: 0.86rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.tracklist__feat {
+  display: block;
+  margin-top: 0.15rem;
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--fg-muted);
+}
+
+.tracklist__hot .icon {
+  --icon-accent: var(--c-gold);
+  width: 1.1rem;
+  height: 1.1rem;
+  color: var(--c-red);
+}
+
+/* Fixed columns: a row without a flame would otherwise pull its time into the flame's column (12px left) */
+.tracklist__hot {
+  grid-column: 4;
+}
+
+/* Body face: Black Pro's digits read 2:50 as a blur at this size */
+.tracklist__time {
+  grid-column: 5;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.8rem;
+  color: var(--fg-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ─── Deep-link pills ────────────────────────────────────────────────────── */
+
+.release-link {
+  --icon-accent: var(--c-gold);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 0.95rem 0.55rem 0.65rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  font-family: var(--font-subhead);
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  transition:
+    background 0.25s,
+    color 0.25s,
+    border-color 0.25s,
+    transform 0.3s var(--ease-out),
+    box-shadow 0.3s var(--ease-out);
+}
+
+.release-link .icon {
+  width: 1.2rem;
+  height: 1.2rem;
+}
+
+.release-link:hover {
+  --icon-accent: var(--c-red);
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--c-void);
+  transform: translate(-2px, -2px);
+  box-shadow: 4px 4px 0 var(--c-orange);
+}
+
+.release-link--big {
+  padding: 0.8rem 1.25rem 0.8rem 0.9rem;
+  font-size: 0.74rem;
+}
+
+.release-link--big .icon {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+/* ─── Record sheet (dialog) ──────────────────────────────────────────────── */
+
+.record-sheet {
+  position: fixed;
+  inset: 0;
+  z-index: 210;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: color-mix(in srgb, var(--c-void) 84%, transparent);
+  backdrop-filter: blur(18px) saturate(1.2);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none; /* a closing sheet is already gone for the pointer (and the cursor label) */
+  /* Hide only after the fade; show instantly so focus() can land on open */
+  transition:
+    opacity 0.35s,
+    visibility 0s linear 0.35s;
+}
+
+.record-sheet.is-open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transition:
+    opacity 0.35s,
+    visibility 0s;
+}
+
+.record-sheet__panel {
+  position: relative;
+  width: min(1040px, 100%);
+  max-height: calc(100svh - 2rem);
+  overflow: auto;
+  overscroll-behavior: contain;
+  display: grid;
+  gap: 1.5rem;
+  padding: clamp(1.25rem, 3vw, 2.25rem);
+  border-radius: var(--radius-lg);
+  border: 1px solid color-mix(in srgb, var(--c-gold) 28%, transparent);
+  background:
+    radial-gradient(circle at 20% 20%, color-mix(in srgb, var(--c-orange) 16%, transparent), transparent 50%),
+    var(--c-midnight);
+  box-shadow: 10px 10px 0 color-mix(in srgb, var(--c-orange) 80%, transparent);
+  transform: translateY(30px) scale(0.96);
+  transition: transform 0.5s var(--ease-out);
+  outline: none;
+}
+
+.record-sheet.is-open .record-sheet__panel {
+  transform: none;
+}
+
+@media (min-width: 860px) {
+  .record-sheet__panel {
+    grid-template-columns: 0.95fr 1.05fr;
+    align-items: start;
+    gap: 2.5rem;
+  }
+}
+
+.sheet__close {
+  position: absolute;
+  z-index: 5;
+  top: 1rem;
+  right: 1rem;
+  width: 2.6rem;
+  height: 2.6rem;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: var(--c-void);
+  transition: transform 0.3s var(--ease-out), border-color 0.2s;
+}
+
+.sheet__close .icon {
+  width: 1.2rem;
+  height: 1.2rem;
+}
+
+.sheet__close:hover {
+  transform: rotate(90deg);
+  border-color: var(--accent);
+}
+
+/* Share sits beside ×; the kicker keeps clear of both */
+.sheet__share {
+  --icon-accent: var(--c-gold);
+  position: absolute;
+  z-index: 5;
+  top: 1rem;
+  right: 4.1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  height: 2.6rem;
+  padding: 0 0.95rem 0 0.75rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--line);
+  background: var(--c-void);
+  font-family: var(--font-subhead);
+  font-size: 0.66rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  transition:
+    border-color 0.2s,
+    transform 0.3s var(--ease-out);
+}
+
+.sheet__share .icon {
+  width: 1.15rem;
+  height: 1.15rem;
+}
+
+.sheet__share:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+}
+
+@media (min-width: 860px) {
+  .sheet__kicker {
+    padding-right: 9.5rem;
+  }
+}
+
+/* "Link copied" */
+.sheet__toast {
+  position: absolute;
+  z-index: 6;
+  top: 4.1rem;
+  right: 1rem;
+  max-width: calc(100% - 2rem);
+  padding: 0.55rem 0.9rem;
+  border-radius: var(--radius-pill);
+  background: var(--c-gold);
+  color: var(--c-void);
+  box-shadow: 4px 4px 0 var(--c-orange);
+  font-family: var(--font-subhead);
+  font-size: 0.66rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+  opacity: 0;
+  transform: translateY(-6px) scale(0.9);
+  pointer-events: none;
+  transition:
+    opacity 0.2s,
+    transform 0.35s var(--ease-pop);
+}
+
+.sheet__toast.is-on {
+  opacity: 1;
+  transform: none;
+}
+
+/* Audio still locked (a deep link, or no play yet): one big, obvious start */
+.btn.sheet__needle {
+  display: flex;
+  width: fit-content;
+  margin-top: 1.25rem;
+  min-height: 3.5rem;
+  padding-inline: 1.6rem 1.9rem;
+  font-size: 0.86rem;
+  box-shadow: 5px 5px 0 var(--c-orange);
+}
+
+.sheet__needle-icon .icon + .icon,
+.sheet__needle.is-playing .sheet__needle-icon .icon:first-child,
+.sheet__needle-label--on,
+.sheet__needle.is-playing .sheet__needle-label {
+  display: none;
+}
+
+.sheet__needle.is-playing .sheet__needle-icon .icon + .icon,
+.sheet__needle.is-playing .sheet__needle-label--on {
+  display: block;
+}
+
+.sheet__deck {
+  position: sticky;
+  top: 0;
+}
+
+/* Phones: Share and × get a row of their own above the turntable and its visualiser ring */
+@media (max-width: 520px) {
+  .sheet__deck {
+    padding-top: 3.75rem; /* clears the visualiser ring even at full swing */
+  }
+}
+
+.sheet__turntable {
+  position: relative;
+  aspect-ratio: 1;
+  max-width: 460px;
+  margin-inline: auto;
+}
+
+.sheet__viz {
+  position: absolute;
+  inset: -6%;
+  width: 112%;
+  height: 112%;
+  pointer-events: none;
+}
+
+.sheet__platter {
+  position: absolute;
+  inset: 8%;
+  border-radius: 50%;
+  background: radial-gradient(circle, #222 0 60%, #111 61%);
+  box-shadow:
+    0 30px 60px color-mix(in srgb, #000 55%, transparent),
+    inset 0 0 0 6px #0a0a0f;
+}
+
+.sheet__vinyl {
+  position: absolute;
+  inset: 3%;
+  border-radius: 50%;
+  background:
+    repeating-radial-gradient(circle, #121218 0 1.8px, #1c1c25 2.4px 3.8px),
+    #111;
+  box-shadow: inset 0 0 0 2px #000;
+}
+
+.sheet__vinyl::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 20deg,
+    transparent 0 10%,
+    color-mix(in srgb, var(--c-cream) 16%, transparent) 15%,
+    transparent 21% 58%,
+    color-mix(in srgb, var(--c-cream) 10%, transparent) 63%,
+    transparent 69%
+  );
+}
+
+.sheet__label {
+  position: absolute;
+  inset: 31%;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  box-shadow: 0 0 0 4px var(--c-orange);
+}
+
+.sheet__label::after {
+  content: "";
+  position: absolute;
+  inset: 45%;
+  border-radius: 50%;
+  background: #ddd;
+}
+
+.sheet__sleeve {
+  position: absolute;
+  z-index: -1;
+  width: 44%;
+  left: -2%;
+  bottom: -4%;
+  border-radius: var(--radius);
+  transform: rotate(-10deg);
+  box-shadow: 6px 6px 0 var(--c-red);
+}
+
+.sheet__info {
+  padding-top: 0.5rem;
+}
+
+.sheet__kicker {
+  font-family: var(--font-subhead);
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.6rem;
+  padding-right: 3rem;
+}
+
+.sheet__title {
+  font-family: var(--font-heading);
+  font-size: clamp(2.4rem, 6vw, 4.2rem);
+  line-height: 0.88;
+  text-transform: uppercase;
+}
+
+.sheet__feat {
+  margin-top: 0.5rem;
+  color: var(--fg-muted);
+}
+
+.sheet__hot {
+  --icon-accent: var(--c-gold);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.9rem;
+  padding: 0.35rem 0.75rem 0.35rem 0.5rem;
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--c-red) 18%, transparent);
+  color: var(--c-cream);
+  font-family: var(--font-subhead);
+  font-size: 0.64rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.sheet__hot .icon {
+  width: 1rem;
+  height: 1rem;
+  color: var(--c-red);
+}
+
+.sheet__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin: 1.5rem 0;
+}
+
+.sheet__tracks {
+  border-top: 1px solid var(--line);
+  padding-top: 0.75rem;
+}
+
+.sheet__note {
+  margin-top: 1rem;
+  font-size: 0.78rem;
+  color: var(--fg-muted);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .record__vinyl,
+  .record__sleeve,
+  .record-sheet__panel {
+    transition: none;
+  }
+
+  .tracklist__eq i {
+    animation: none;
+  }
+}
