@@ -1,10 +1,126 @@
 {
   "connected-to-the-future": {
-    "images": [],
-    "description": null
+    "images": [
+      {
+        "src": "behance/connected-to-the-future/01-connected-to-the-future.jpg",
+        "w": 1131,
+        "h": 1600,
+        "caption": "Connected to the Future \u00b7 Illustrated poster artwork"
+      }
+    ],
+    "description": "This illustrated artwork represents my connection to the future planet upon which we live. It portrays a futuristic metropolis that floats in space using rocket power to float in space. In this city, there are flying vehicles, which reflect future technological and transportation improvements. It also uses cool colours like blue to give a future world mood.\n\nAt the bottom of the poster, there are unused roads, which symbolize the changes that have taken place over time. As we evolve and embrace new technologies, the old ways become outdated and fall out of use.\n\nThis artwork illustrates the idea that the future is continuously changing and evolving and that it is up to us to adapt and welcome these changes. It motivates us to look forward to the future with hope and enthusiasm, knowing that we can change it and make the world a better place than it has ever been. My connection to the future is the contribution I can make to the world's growth through the stories and concepts I tell or produce through the artwork I create."
   },
   "koketso-ramogale-portfolio": {
-    "images": [],
-    "description": null
+    "images": [
+      {
+        "src": "behance/koketso-ramogale-portfolio/00159-portfolio-cover.jpg",
+        "w": 1600,
+        "h": 1131,
+        "caption": "Koketso Ramogale Portfolio \u00b7 Cover illustration"
+      },
+      {
+        "src": "behance/koketso-ramogale-portfolio/06487-salute-ci-manual.jpg",
+        "w": 1600,
+        "h": 1129,
+        "caption": "Salute Health Brand \u00b7 CI manual cover"
+      },
+      {
+        "src": "behance/koketso-ramogale-portfolio/09645-salute-packaging.jpg",
+        "w": 1600,
+        "h": 1131,
+        "caption": "Salute Health Brand \u00b7 Packaging (bags and boxes)"
+      },
+      {
+        "src": "behance/koketso-ramogale-portfolio/15968-salute-merchandise.jpg",
+        "w": 1600,
+        "h": 1131,
+        "caption": "Salute Health Brand \u00b7 Merchandise (suitcase, T-shirts, pillow, van)"
+      },
+      {
+        "src": "behance/koketso-ramogale-portfolio/20711-fosho-packaging.jpg",
+        "w": 1600,
+        "h": 1131,
+        "caption": "Fosho Sauces \u00b7 Packaging (Tomato, Chilli and Monkey Gland sauce boxes)"
+      },
+      {
+        "src": "behance/koketso-ramogale-portfolio/22292-fosho-dielines.jpg",
+        "w": 1600,
+        "h": 1131,
+        "caption": "Fosho Sauces \u00b7 Packaging dielines"
+      },
+      {
+        "src": "behance/koketso-ramogale-portfolio/27034-hidden-layer-cover.jpg",
+        "w": 1600,
+        "h": 1131,
+        "caption": "Hidden Layer Magazine \u00b7 Cover"
+      },
+      {
+        "src": "behance/koketso-ramogale-portfolio/28615-hidden-layer-spreads.jpg",
+        "w": 1600,
+        "h": 1131,
+        "caption": "Hidden Layer Magazine \u00b7 Contents and feature spreads"
+      },
+      {
+        "src": "behance/koketso-ramogale-portfolio/33358-stories-of-creation-cover.jpg",
+        "w": 1600,
+        "h": 1131,
+        "caption": "Stories of Creation Story Book \u00b7 Cover"
+      },
+      {
+        "src": "behance/koketso-ramogale-portfolio/34939-stories-of-creation-spreads.jpg",
+        "w": 1600,
+        "h": 1131,
+        "caption": "Stories of Creation Story Book \u00b7 Pangu and V\u00e4in\u00e4m\u00f6inen spreads"
+      },
+      {
+        "src": "behance/koketso-ramogale-portfolio/38101-penguin-cuckoos-nest.jpg",
+        "w": 1600,
+        "h": 1130,
+        "caption": "Penguin Books Story Books \u00b7 One Flew Over the Cuckoo's Nest cover"
+      },
+      {
+        "src": "behance/koketso-ramogale-portfolio/39681-penguin-les-miserables.jpg",
+        "w": 1600,
+        "h": 1131,
+        "caption": "Penguin Books Story Books \u00b7 Les Mis\u00e9rables cover"
+      },
+      {
+        "src": "behance/koketso-ramogale-portfolio/42843-iz-zit-bottles.jpg",
+        "w": 1600,
+        "h": 1131,
+        "caption": "Iz-Zit Packaging \u00b7 Beer bottles"
+      },
+      {
+        "src": "behance/koketso-ramogale-portfolio/47585-iz-zit-press-ad.jpg",
+        "w": 1600,
+        "h": 1131,
+        "caption": "Iz-Zit Packaging \u00b7 Press advertising poster"
+      },
+      {
+        "src": "behance/koketso-ramogale-portfolio/52328-oyibamba-ci-manual.jpg",
+        "w": 1600,
+        "h": 1131,
+        "caption": "Oyibamba Production \u00b7 CI manual spreads"
+      },
+      {
+        "src": "behance/koketso-ramogale-portfolio/53909-oyibamba-van.jpg",
+        "w": 1600,
+        "h": 1131,
+        "caption": "Oyibamba Production \u00b7 Promotional van"
+      },
+      {
+        "src": "behance/koketso-ramogale-portfolio/58652-visual-communication-poster.jpg",
+        "w": 1600,
+        "h": 1131,
+        "caption": "Visual Communication Poster \u00b7 CTU promotional poster"
+      },
+      {
+        "src": "behance/koketso-ramogale-portfolio/61813-conceptual-photography.jpg",
+        "w": 1600,
+        "h": 1131,
+        "caption": "Conceptual Photography \u00b7 Portrait diptych"
+      }
+    ],
+    "description": "Nine case studies across CI manuals, packaging design, editorial design, promotional work and photography.\n\nSalute Health Brand, Fosho Sauces, Hidden Layer Magazine, Stories of Creation Story Book, Penguin Books Story Books, Iz-Zit Packaging, Oyibamba Production, Visual Communication Poster and Conceptual Photography."
   }
 }

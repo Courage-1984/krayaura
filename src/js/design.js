@@ -37,7 +37,7 @@ export function renderDesign(root, lightbox) {
 
   list.innerHTML = projects
     .map((project, i) => {
-      const desc = describe(project);
+      const desc = summary(project);
       return `
         <li>
           <article class="project-item${project.releases ? " project-item--sleeves" : ""}">
@@ -107,8 +107,34 @@ export function renderDesign(root, lightbox) {
   });
 }
 
+/** Full description: his own text from Behance (description.txt) wins over the placeholder line */
 function describe(project) {
   return (project.gallery && behance[project.gallery]?.description) || project.description || "";
+}
+
+/** The row shows one line: the first paragraph, cut at its first sentence when it runs long */
+function summary(project) {
+  const first = describe(project).split(/\n\s*\n/)[0].trim();
+  if (first.length <= 170) return first;
+  const cut = first.match(/^.{40,170}?[.!?](?=\s)/);
+  return cut ? cut[0] : `${first.slice(0, 167).replace(/\s+\S*$/, "")}…`;
+}
+
+const escapeHTML = (s) =>
+  s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+
+/** One case-study slide: the module at its own aspect ratio, caption + "03 / 18" under it */
+function workSlide(project, img, i, n) {
+  const caption = img.caption || project.title;
+  return `
+      <figure class="lightbox__slide">
+        <img src="${MEDIA}/${img.src}" alt="${escapeHTML(caption)}" width="${img.w}" height="${img.h}" style="--ar:${(img.w / img.h).toFixed(4)}"
+          loading="${i < 2 ? "eager" : "lazy"}" decoding="async" draggable="false" />
+        <figcaption>
+          <span class="lightbox__caption">${escapeHTML(caption)}</span>
+          <span class="lightbox__count" aria-hidden="true">${pad(i + 1)} / ${pad(n)}</span>
+        </figcaption>
+      </figure>`;
 }
 
 /** One gallery slide per release: sleeve + "Signal · Single · 2026" + a ▶ for its lead preview */
@@ -137,11 +163,17 @@ function populateLightbox(lightbox, project, index = 0) {
   lightbox.querySelector("[data-lightbox-title]").textContent = project.title;
   lightbox.querySelector("[data-lightbox-meta]").textContent = project.tag;
   const body = lightbox.querySelector("[data-lightbox-body]");
-  body.textContent = describe(project);
-  body.hidden = !body.textContent;
+  const paragraphs = describe(project)
+    .split(/\n\s*\n/)
+    .map((p) => p.trim())
+    .filter(Boolean);
+  body.innerHTML = paragraphs.map((p) => `<p>${escapeHTML(p)}</p>`).join("");
+  body.hidden = !paragraphs.length;
   const media = lightbox.querySelector("[data-lightbox-media]");
   const images = (project.gallery && behance[project.gallery]?.images) || [];
   const sleeves = (project.releases || []).map((id) => releaseById[id]).filter(Boolean);
+  // Case-study galleries get a wider panel so tall pages and wide spreads both read
+  lightbox.classList.toggle("is-wide", !sleeves.length && images.length > 1);
 
   if (sleeves.length) {
     // Cover art: a swipeable gallery of the sleeves, opened on the one that was clicked, each with its preview
@@ -155,10 +187,13 @@ function populateLightbox(lightbox, project, index = 0) {
   } else if (images.length) {
     // Swipeable gallery (drag / Shift+scroll / touch), same rail behaviour as the crate
     media.classList.add("is-gallery");
-    media.innerHTML = `<div class="lightbox__gallery" data-gallery>${[project.cover, ...images.map((p) => `${MEDIA}/${p}`)]
-      .map((src, i) => `<figure class="lightbox__slide"><img src="${src}" alt="${project.title} — image ${i + 1}" loading="lazy" draggable="false" /></figure>`)
+    media.innerHTML = `<div class="lightbox__gallery lightbox__gallery--work" data-gallery data-cursor="Drag"
+        role="group" aria-label="${escapeHTML(project.title)}: ${images.length} images — drag or scroll sideways">${images
+      .map((img, i) => workSlide(project, img, i, images.length))
       .join("")}</div>`;
-    initDragRail(media.querySelector("[data-gallery]"));
+    const gallery = media.querySelector("[data-gallery]");
+    gallery.scrollLeft = 0;
+    initDragRail(gallery);
   } else {
     media.classList.remove("is-gallery");
     media.innerHTML = project.cover

@@ -58,20 +58,50 @@ if banner.exists():
         save_resized(banner, pub / "brand" / f"channel-banner-{w}.jpg", w)
 
 # Behance projects → resized gallery images + manifest (src/data/behance.json)
+#   assets/behance/<project>/cover.jpg        list preview
+#   assets/behance/<project>/<NN-name>.jpg    gallery slides, in file-name order
+#   assets/behance/<project>/captions.json    optional {"<file name>": "<caption>"}
+#   assets/behance/<project>/description.txt  optional; paragraphs separated by a blank line
+# Loose files in assets/behance/ itself (raw page captures) are sources only and are ignored here.
+GALLERY_LONG_SIDE = 1600  # slides render ≤ ~36rem tall / ≤ 1000px wide — 2× DPR safe
+
+
+def save_fitted(src: Path, dest: Path, long_side: int):
+    im = Image.open(src).convert("RGB")
+    scale = long_side / max(im.size)
+    if scale < 1:
+        im = im.resize((round(im.width * scale), round(im.height * scale)), Image.LANCZOS)
+    im.save(dest, quality=84, optimize=True, progressive=True)
+    print(dest.relative_to(root), f"{im.width}x{im.height}", f"{dest.stat().st_size // 1024}KB")
+    return im.size
+
+
+Image.MAX_IMAGE_PIXELS = None
 behance_src = root / "assets" / "behance"
 manifest = {}
 if behance_src.exists():
     for proj in sorted(p for p in behance_src.iterdir() if p.is_dir()):
         dest_dir = pub / "behance" / proj.name
+        if dest_dir.exists():
+            shutil.rmtree(dest_dir)  # re-crops / deletions upstream must not leave stale slides
         dest_dir.mkdir(parents=True, exist_ok=True)
+        cap_file = proj / "captions.json"
+        captions = json.loads(cap_file.read_text(encoding="utf-8")) if cap_file.exists() else {}
         images = []
         for f in sorted(proj.iterdir()):
             if f.suffix.lower() not in {".jpg", ".jpeg", ".png", ".webp"}:
                 continue
             out_name = f"{slug(f.stem + '.jpg')}"
-            save_resized(f, dest_dir / out_name, 900 if f.stem == "cover" else 1600)
-            if f.stem != "cover":
-                images.append(f"behance/{proj.name}/{out_name}")
+            if f.stem == "cover":
+                save_resized(f, dest_dir / out_name, 900)
+                continue
+            w, h = save_fitted(f, dest_dir / out_name, GALLERY_LONG_SIDE)
+            images.append({
+                "src": f"behance/{proj.name}/{out_name}",
+                "w": w,
+                "h": h,
+                "caption": captions.get(f.name) or captions.get(out_name) or "",
+            })
         desc = proj / "description.txt"
         manifest[proj.name] = {
             "images": images,

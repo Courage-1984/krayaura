@@ -449,6 +449,66 @@
 .lightbox__body {
   color: var(--fg-muted);
   margin-bottom: 1.5rem;
+  max-width: 68ch;
+}
+
+.lightbox__body p + p {
+  margin-top: 0.8rem;
+}
+
+/* ── Case-study galleries (Behance): wider panel, every slide at its own aspect ratio ── */
+.lightbox.is-wide .lightbox__panel {
+  width: min(1080px, 100%);
+}
+
+.lightbox__gallery.lightbox__gallery--work {
+  --slide-h: min(58svh, 36rem);
+  gap: 1rem;
+  container-type: inline-size; /* 100cqi = the gallery's width, for the slide sizing below */
+}
+
+.lightbox__gallery.lightbox__gallery--work .lightbox__slide {
+  flex: 0 0 auto;
+  max-width: 100%;
+  scroll-snap-align: center;
+}
+
+/* Height = the slide height, or less when the image's width (height × --ar) would exceed the gallery —
+   so tall pages and wide spreads both fill their slot without letterbox bars. Width follows the ratio. */
+.lightbox__gallery.lightbox__gallery--work img {
+  display: block;
+  height: var(--slide-h);
+  height: min(var(--slide-h), calc(100cqi / var(--ar, 1)));
+  width: auto;
+  max-width: 100%;
+  aspect-ratio: auto;
+  object-fit: contain;
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--c-cream) 5%, transparent);
+}
+
+.lightbox__gallery--work figcaption {
+  max-width: 100%;
+}
+
+/* A single artwork: centred, nothing to swipe */
+.lightbox__gallery.lightbox__gallery--work:has(> .lightbox__slide:only-child) {
+  justify-content: center;
+}
+
+.lightbox__count {
+  flex: none;
+  font-family: var(--font-subhead);
+  font-size: 0.66rem;
+  letter-spacing: 0.16em;
+  color: var(--c-gold);
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 720px) {
+  .lightbox__gallery.lightbox__gallery--work {
+    --slide-h: min(50svh, 26rem);
+  }
 }
 
 .lightbox__media {
