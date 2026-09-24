@@ -156,10 +156,6 @@ html.is-audio-playing .hero__echo {
   will-change: translate;
 }
 
-html.is-lite .hero__echo {
-  display: none;
-}
-
 /* ─── Copy ─── */
 
 .hero__copy {

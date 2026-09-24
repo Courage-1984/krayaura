@@ -308,15 +308,19 @@ export function initToaster({ heroApi, reducedMotion = false }) {
     if (!heroVisible) return;
     serve.bar.style.transform = `scaleX(${state.progress})`; // information, so it runs with reduced motion too
     if (reducedMotion) return;
-    const hop = s.bass * 36 * unit; // cassettes hop out of the slots on the kick
+    // Cassettes rest just proud of the slots and jump out on each beat
+    const hop = (0.12 * s.bass + 0.88 * s.kick) * 40 * unit;
     back.style.translate = `${hop * SLOT_LEAN}px ${-hop}px`;
-    front.style.translate = `${hop * 0.85 * SLOT_LEAN}px ${-hop * 0.85}px`;
-    const o = (0.035 + s.bass * 0.03) * wm; // CRASH's title trail pulls away on the kick
+    // the front one lags a hair behind, so the pair reads as two bouncing slices, not one block
+    const hopFront = (0.12 * s.bass + 0.88 * Math.min(1, s.kick * 0.9)) * 34 * unit;
+    front.style.translate = `${hopFront * SLOT_LEAN}px ${-hopFront}px`;
+    const o = (0.03 + s.kick * 0.075) * wm; // CRASH's title trail kicks away from KRAYAURA on the beat
     echo.style.translate = `${o}px ${o}px`;
     heroApi.frame(s, dt);
   });
   window.addEventListener("krayaura:lite", () => heroApi.setLite());
   window.addEventListener("krayaura:frozen", () => heroApi.freeze());
+  window.addEventListener("krayaura:thaw", () => heroApi.thaw());
 
   /* ── Input ── */
   listen.addEventListener("click", () => {

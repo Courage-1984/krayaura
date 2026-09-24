@@ -94,7 +94,18 @@
           <a href="#design">Design</a>
           <a href="#about">About</a>
           <a href="#connect">Connect</a>
-          <span class="nav-links__brown" aria-hidden="true"><i data-nav-progress></i></span>
+          <svg class="nav-links__brown" aria-hidden="true" focusable="false" data-nav-brown>
+            <defs>
+              <linearGradient id="nav-browning" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="100" y2="0">
+                <stop offset="0" stop-color="#efeddf" />
+                <stop offset="0.4" stop-color="#f2b705" />
+                <stop offset="0.7" stop-color="#f26a1f" />
+                <stop offset="1" stop-color="#ff1022" />
+              </linearGradient>
+            </defs>
+            <path class="nav-links__brown-track" data-nav-track />
+            <path class="nav-links__brown-fill" data-nav-progress pathLength="1" stroke="url(#nav-browning)" />
+          </svg>
         </nav>
 
         <div class="site-header__actions">
@@ -332,24 +343,28 @@
         </div>
       </section>
 
-      <section class="section about" id="about">
-        <div class="container">
-          <div class="about__banner reveal">
-            <img data-about-banner alt="" width="1200" height="400" loading="lazy" />
-          </div>
-          <div class="about__grid">
-            <div class="reveal">
-              <img class="about__profile" data-about-profile alt="Krayaura" width="160" height="160" loading="lazy" />
-              <p class="section-label">About</p>
-              <p class="about__handle" data-about-handle>@krayaura</p>
-              <h2 class="section-title">Built on joy &amp; imagination</h2>
-              <ul class="about__roles" data-roles></ul>
-              <div class="about__copy" data-bio></div>
+      <section class="section about" id="about" aria-labelledby="about-title">
+        <div class="container about__grid">
+          <figure class="about__portrait reveal">
+            <div class="about__photo">
+              <img data-about-portrait alt="Krayaura in denim among the plants, from the CRASH shoot" width="900" height="1125" loading="lazy" decoding="async" />
             </div>
-            <aside class="about__aside reveal">
-              <p class="about__aside-label">Based in</p>
-              <p data-location>Pretoria, South Africa</p>
-            </aside>
+            <figcaption class="about__stamp" aria-label="Based in Pretoria, South Africa">
+              <span class="about__stamp-top">Based in</span>
+              <span class="about__stamp-city" data-location-city>Pretoria</span>
+              <span class="about__stamp-bottom">South Africa</span>
+            </figcaption>
+            <p class="about__tag" data-about-handle>@krayaura</p>
+          </figure>
+          <div class="about__body">
+            <div class="reveal">
+              <p class="section-label">About</p>
+              <h2 class="section-title" id="about-title">Built on joy &amp; imagination</h2>
+              <ul class="about__roles" data-roles aria-label="What he does"></ul>
+            </div>
+            <blockquote class="about__quote reveal" data-about-quote></blockquote>
+            <div class="about__copy reveal" data-bio></div>
+            <ul class="about__stats reveal" data-about-stats aria-label="By the numbers"></ul>
           </div>
         </div>
       </section>
@@ -366,25 +381,25 @@
               >Book / collab</a
             >
           </div>
-          <p class="connect__proof reveal" data-proof></p>
           <div class="connect__links reveal">
             <div class="connect__stream" data-stream-cards></div>
             <div class="social-grid" data-socials></div>
           </div>
           <div class="connect__end">
             <!-- Back to top: his toaster (an <img>, so the logo's own .cls-* styles and gradient ids stay sealed off) -->
-            <button type="button" class="connect__toaster" aria-label="Back to top" data-cursor="Top" data-back-top>
+            <button type="button" class="connect__toaster" aria-label="Back to top" data-back-top>
               <span class="connect__toaster-art">
-                <svg class="connect__slice connect__slice--back" viewBox="0 0 100 130" aria-hidden="true" focusable="false" data-toast-slice><g transform="rotate(-8 50 70)"><path class="kt-crust" d="M6 128V44C6 20 26 4 50 4s44 16 44 40v84z" /><path class="kt-face" d="M13 128V47c0-18 16-31 37-31s37 13 37 31v81z" /><path class="kt-shine" d="M26 36h34M26 47h44" /><path class="kt-label" d="M22 64h56v42H22z" /><circle class="kt-reel" cx="37" cy="85" r="7.5" /><circle class="kt-reel" cx="63" cy="85" r="7.5" /><path class="kt-win" d="M45.5 80h9v10h-9z" /></g></svg>
-                <svg class="connect__slice connect__slice--front" viewBox="0 0 100 130" aria-hidden="true" focusable="false" data-toast-slice><g transform="rotate(7 50 70)"><path class="kt-crust" d="M6 128V44C6 20 26 4 50 4s44 16 44 40v84z" /><path class="kt-face" d="M13 128V47c0-18 16-31 37-31s37 13 37 31v81z" /><path class="kt-shine" d="M26 36h34M26 47h44" /><path class="kt-label" d="M22 64h56v42H22z" /><circle class="kt-reel" cx="37" cy="85" r="7.5" /><circle class="kt-reel" cx="63" cy="85" r="7.5" /><path class="kt-win" d="M45.5 80h9v10h-9z" /></g></svg>
                 <img class="connect__toaster-img" src="/logos/main-logo.svg" alt="" width="526" height="517" loading="lazy" decoding="async" />
               </span>
               <span class="connect__toaster-hint" aria-hidden="true">Back to top ↑</span>
             </button>
           </div>
           <footer class="site-footer">
-            <p>© <span data-year></span> Krayaura · Fresh out the toaster · Pretoria</p>
-            <a href="https://linktr.ee/krayaura" target="_blank" rel="noopener noreferrer">Linktree</a>
+            <p>
+              © <span data-year></span> Krayaura · Fresh out the toaster · Pretoria | Designed and hosted by
+              <a class="site-footer__credit" href="https://logi-ink.co.za/" target="_blank" rel="noopener">Logi-Ink</a>
+            </p>
+            <ul class="site-footer__socials" data-footer-socials aria-label="Krayaura elsewhere"></ul>
           </footer>
         </div>
       </section>
@@ -393,18 +408,22 @@
     <div class="lightbox" id="lightbox" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="lightbox-title" data-lenis-prevent>
       <div class="lightbox__panel">
         <button class="lightbox__close" type="button" data-lightbox-close aria-label="Close">×</button>
-        <div class="lightbox__media" data-lightbox-media></div>
-        <p class="lightbox__meta" data-lightbox-meta></p>
-        <h3 class="lightbox__title" id="lightbox-title" data-lightbox-title></h3>
-        <div class="lightbox__body" data-lightbox-body></div>
-        <a
-          class="btn btn--primary"
-          data-lightbox-link
-          href="#"
-          target="_blank"
-          rel="noopener noreferrer"
-          >View project</a
-        >
+        <header class="lightbox__head">
+          <p class="lightbox__meta" data-lightbox-meta></p>
+          <h3 class="lightbox__title" id="lightbox-title" data-lightbox-title></h3>
+        </header>
+        <div class="lightbox__stage">
+          <div class="lightbox__media" data-lightbox-media></div>
+          <button class="lightbox__nav lightbox__nav--prev" type="button" data-lightbox-step="-1" aria-label="Previous image" hidden>←</button>
+          <button class="lightbox__nav lightbox__nav--next" type="button" data-lightbox-step="1" aria-label="Next image" hidden>→</button>
+        </div>
+        <div class="lightbox__info">
+          <div class="lightbox__body" data-lightbox-body tabindex="0"></div>
+          <div class="lightbox__foot">
+            <span class="lightbox__counter" data-lightbox-counter aria-live="polite"></span>
+            <a class="btn btn--primary lightbox__cta" data-lightbox-link href="#" target="_blank" rel="noopener noreferrer">View project</a>
+          </div>
+        </div>
       </div>
     </div>
 

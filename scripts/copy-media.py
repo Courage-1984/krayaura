@@ -51,6 +51,16 @@ for f in (root / "assets" / "new_images").glob("*.jpg"):
     shutil.copy2(f, dest)
     print(dest.relative_to(root))
 
+# About portrait: a 4:5 crop of him from the full-res CRASH shoot (the 160px channel avatar is too small)
+crash_src = root / "assets" / "new_images" / "covers" / "crash.jpg"
+if crash_src.exists():
+    shoot = Image.open(crash_src).convert("RGB").crop((820, 1020, 2300, 2870))
+    for w, name in ((900, "portrait.jpg"), (480, "portrait-sm.jpg")):
+        im = shoot.resize((w, round(w * shoot.height / shoot.width)), Image.LANCZOS)
+        dest = pub / "brand" / name
+        im.save(dest, quality=84, optimize=True, progressive=True)
+        print(dest.relative_to(root), f"{im.width}x{im.height}", f"{dest.stat().st_size // 1024}KB")
+
 # Full channel art (2560×1440) → sized for the Channel World preview + lightbox
 banner = root / "assets" / "current_reference_images" / "You-tuber-banner.jpg"
 if banner.exists():

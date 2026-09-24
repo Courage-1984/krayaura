@@ -12,7 +12,7 @@ import "./styles/sections/player.css";
 import "./styles/sections/brand.css";
 import "./styles/sections/intro.css";
 
-import { site, socials, proofLine, releaseById } from "./js/content.js";
+import { site, socials, releaseById, releases, crashAlbum, videos } from "./js/content.js";
 import { icon } from "./js/icons.js";
 import { initHeroWebGL } from "./js/hero-webgl.js";
 import { initScroll, initMagneticButtons } from "./js/scroll.js";
@@ -49,24 +49,50 @@ function hydrateStaticCopy() {
     bio.innerHTML = site.bio.map((p) => `<p>${p}</p>`).join("");
   }
 
-  const location = document.querySelector("[data-location]");
-  if (location) {
-    location.textContent = site.location;
-  }
+  const city = document.querySelector("[data-location-city]");
+  if (city) city.textContent = site.location.split(",")[0];
 
   const handle = document.querySelector("[data-about-handle]");
   if (handle) handle.textContent = site.handle;
 
-  const profile = document.querySelector("[data-about-profile]");
-  if (profile) {
-    profile.src = site.profileImage;
-    profile.alt = site.name;
+  const portrait = document.querySelector("[data-about-portrait]");
+  if (portrait) {
+    portrait.srcset = `${site.portraitSm} 480w, ${site.portrait} 900w`;
+    portrait.sizes = "(min-width: 900px) 30rem, 80vw";
+    portrait.src = site.portrait;
   }
 
-  const banner = document.querySelector("[data-about-banner]");
-  if (banner) {
-    banner.src = site.bannerImage;
-    banner.alt = "";
+  const quote = document.querySelector("[data-about-quote]");
+  if (quote) quote.innerHTML = `<p>${site.quote}</p>`;
+
+  // Counted from the data, so they stay true as he drops more
+  const stats = document.querySelector("[data-about-stats]");
+  if (stats) {
+    const first = Math.min(...releases.map((r) => Number(String(r.date || r.year).slice(0, 4))).filter(Boolean));
+    // Cassette tapes (the ones that pop out of his toaster), in his colours; A/B sides alternate
+    const tapes = ["orange", "gold", "red", "blue"];
+    stats.innerHTML = [
+      [releases.length, "Releases"],
+      [crashAlbum?.trackCount ?? 14, "Tracks on CRASH"],
+      [videos.length, "Videos"],
+      [first, "Dropping since", true],
+    ]
+      .map(
+        ([n, label, plain], i) => `
+        <li class="cassette cassette--${tapes[i]}">
+          <div class="cassette__label">
+            <span class="cassette__side" aria-hidden="true">Side ${i % 2 ? "B" : "A"}</span>
+            <strong class="cassette__num" data-count="${n}"${plain ? " data-plain" : ""}>${n}</strong>
+            <span class="cassette__name">${label}</span>
+          </div>
+          <div class="cassette__window" aria-hidden="true">
+            <span class="cassette__reel cassette__reel--full"></span>
+            <span class="cassette__reel"></span>
+          </div>
+          <span class="cassette__head" aria-hidden="true"></span>
+        </li>`
+      )
+      .join("");
   }
 
   const booking = document.querySelector("[data-booking]");
@@ -112,8 +138,18 @@ function hydrateStaticCopy() {
       .join("");
   }
 
-  const proof = document.querySelector("[data-proof]");
-  if (proof) proof.textContent = proofLine();
+  // Footer: icon-only strip, every platform plus Linktree
+  const footerSocials = document.querySelector("[data-footer-socials]");
+  if (footerSocials) {
+    footerSocials.innerHTML = [...socials, { label: "Linktree", icon: "linktree", href: "https://linktr.ee/krayaura" }]
+      .map(
+        (s) => `
+        <li><a class="footer-social" href="${s.href}" ${external} aria-label="${s.label}" data-cursor="${s.label}">
+          ${icon(s.icon, "icon footer-social__icon")}
+        </a></li>`
+      )
+      .join("");
+  }
 
   const year = document.querySelector("[data-year]");
   if (year) year.textContent = String(new Date().getFullYear());

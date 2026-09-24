@@ -93,6 +93,7 @@ void main() {
 const noop = {
   ok: false,
   freeze() {},
+  thaw() {},
   setOrigin() {},
   setActive() {},
   frame() {},
@@ -169,8 +170,8 @@ export function initHeroWebGL(canvas, { reducedMotion = false } = {}) {
   let lost = false;
   let fanTween = null;
   let lite = false;
-  let skip = false;
-  let frozen = false;
+  let frozen = false; // "slowest" tier: still drawn, just coarse and at ~15fps — never static
+  let tick = 0;
 
   function draw() {
     if (!visible || lost || !canvas.width) return;
@@ -221,10 +222,14 @@ export function initHeroWebGL(canvas, { reducedMotion = false } = {}) {
     /** One audio frame from signal.js */
     frame(s, dtMs) {
       p.time += dtMs / 1000;
-      p.bass = s.bass;
+      // rays reach and flash on the beat (kick), with a little of the level underneath so they never sit dead
+      p.bass = Math.min(1, s.kick * 0.9 + s.bass * 0.25);
       p.energy = s.energy;
       p.high = s.high;
-      if (frozen || (lite && (skip = !skip))) return; // lite: 30fps rays · frozen: rays stay still
+      // lite: every 2nd frame (~30fps) · slowest: every 4th (~15fps) at low resolution. The rays keep
+      // reacting to the beat in every tier — a static fan read as "broken" after the first track.
+      const every = frozen ? 4 : lite ? 2 : 1;
+      if (++tick % every) return;
       draw();
     },
     fan(duration = 1.1) {
@@ -239,6 +244,13 @@ export function initHeroWebGL(canvas, { reducedMotion = false } = {}) {
     /** The GPU can't keep up at all: stop drawing per frame (rays stay as they are, everything else keeps moving) */
     freeze() {
       frozen = true;
+      dpr = Math.min(dpr, 0.45);
+      resize();
+    },
+    thaw() {
+      frozen = false;
+      dpr = 0.6; // back to the lite tier's resolution
+      resize();
     },
     pause() {
       visible = false;

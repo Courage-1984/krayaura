@@ -9,6 +9,7 @@
 }
 
 .site-header__inner {
+  position: relative; /* the progress meter is laid over the nav capsule from here (nav.js) */
   width: calc(100% - 24px);
   height: 52px;
   margin-inline: auto;
@@ -164,24 +165,30 @@ html.is-menu-open .nav-pill {
   pointer-events: none;
 }
 
-/* Page progress, browning from cream to burnt red */
+/* Page progress, browning from cream to burnt red. It traces the capsule's lower edge — up out of the
+   left end, along the bottom, round into the right end (nav.js draws the path to the capsule's size) */
+/* Lives beside the capsule (not inside it: the capsule clips to inside its border), laid exactly over its
+   border box by nav.js so the stroke can sit centred on the 1px border */
 .nav-links__brown {
   position: absolute;
-  left: 18px;
-  right: 18px;
-  bottom: 2px;
-  height: 2px;
-  border-radius: var(--radius-pill);
-  overflow: hidden;
-  background: color-mix(in srgb, var(--c-cream) 8%, transparent);
+  z-index: 2;
+  overflow: visible;
+  pointer-events: none;
 }
 
-.nav-links__brown i {
-  display: block;
-  height: 100%;
-  background: var(--browning);
-  transform-origin: left;
-  transform: scaleX(0);
+.nav-links__brown path {
+  fill: none;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+}
+
+.nav-links__brown-track {
+  stroke: color-mix(in srgb, var(--c-cream) 10%, transparent);
+}
+
+.nav-links__brown-fill {
+  stroke-dasharray: 1 1;
+  stroke-dashoffset: 1;
 }
 
 /* 3 · Play chip: one play control that's always in reach (hidden while the hero's own Listen is on screen) */

@@ -1,123 +1,420 @@
 .about {
-  background:
-    radial-gradient(ellipse 70% 50% at 0% 50%, color-mix(in srgb, var(--c-royal) 55%, transparent), transparent 60%),
-    var(--c-void);
-}
-
-.about__banner {
   position: relative;
-  margin-bottom: var(--space-xl);
-  /* Native channel-banner proportions (1707×282) so nothing gets cropped away */
-  aspect-ratio: 1707 / 282;
-  overflow: hidden;
-  border-radius: var(--radius-lg);
-  background: var(--c-midnight);
-  border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
-  box-shadow: 0 30px 80px color-mix(in srgb, #000 45%, transparent);
-}
-
-.about__banner img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: 32% 50%;
-}
-
-.about__banner::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--c-cream) 8%, transparent);
-  background: linear-gradient(180deg, transparent 65%, color-mix(in srgb, var(--c-void) 45%, transparent));
-  pointer-events: none;
-}
-
-/* A 6:1 strip is too thin on phones — crop to the portrait + title instead */
-@media (max-width: 720px) {
-  .about__banner {
-    aspect-ratio: 16 / 7;
-  }
-}
-
-.about__profile {
-  width: 7.5rem;
-  height: 7.5rem;
-  object-fit: cover;
-  border-radius: 50%;
-  border: 3px solid var(--accent);
-  box-shadow: 5px 5px 0 var(--accent-hot);
-  margin-bottom: var(--space-md);
-}
-
-.about__handle {
-  font-family: var(--font-subhead);
-  font-size: 0.75rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--accent);
-  margin-bottom: 0.75rem;
+  overflow: clip;
+  background:
+    radial-gradient(ellipse 60% 55% at 12% 45%, color-mix(in srgb, var(--c-orange) 22%, transparent), transparent 65%),
+    radial-gradient(ellipse 70% 50% at 100% 60%, color-mix(in srgb, var(--c-royal) 55%, transparent), transparent 60%),
+    var(--c-void);
 }
 
 .about__grid {
   display: grid;
-  gap: var(--space-lg);
+  gap: var(--space-xl);
+  align-items: start;
+}
+
+/* ─── Portrait: a tilted photo sticker with a passport stamp slapped on the corner ─── */
+.about__portrait {
+  position: relative;
+  width: min(100%, 26rem);
+  margin: 0 auto;
+  padding: 0 1.5rem 1.5rem 0;
+}
+
+.about__photo {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  border: 3px solid var(--c-cream);
+  background: var(--c-midnight);
+  box-shadow: 10px 10px 0 var(--c-orange), 0 40px 90px color-mix(in srgb, #000 55%, transparent);
+  rotate: -3deg;
+  transition: rotate 0.6s var(--ease-pop);
+}
+
+.about__photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: scale 0.8s var(--ease-out);
+}
+
+/* Halftone dots over the photo edge — the comic print feel from the hero */
+.about__photo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle, color-mix(in srgb, var(--c-orange) 55%, transparent) 1.2px, transparent 1.6px) 0 0 / 7px 7px;
+  mask: linear-gradient(200deg, transparent 55%, #000 100%);
+  mix-blend-mode: screen;
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+@media (hover: hover) {
+  .about__portrait:hover .about__photo {
+    rotate: -1deg;
+  }
+
+  .about__portrait:hover .about__photo img {
+    scale: 1.04;
+  }
+
+  .about__portrait:hover .about__stamp {
+    rotate: 4deg;
+  }
+}
+
+.about__stamp {
+  position: absolute;
+  right: -0.25rem;
+  bottom: 0;
+  width: 8.5rem;
+  aspect-ratio: 1;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 0.15rem;
+  border-radius: 50%;
+  background: var(--c-gold);
+  color: var(--c-void);
+  border: 3px solid var(--c-void);
+  outline: 2px dashed var(--c-void);
+  outline-offset: -10px;
+  box-shadow: 5px 5px 0 var(--c-red);
+  rotate: 12deg;
+  text-align: center;
+  transition: rotate 0.6s var(--ease-pop);
+}
+
+.about__stamp-top,
+.about__stamp-bottom {
+  font-family: var(--font-subhead);
+  font-size: 0.58rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.about__stamp-city {
+  font-family: var(--font-heading);
+  font-size: 1.35rem;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.about__tag {
+  position: absolute;
+  left: -0.5rem;
+  top: 1.5rem;
+  padding: 0.4rem 0.85rem;
+  border-radius: var(--radius-pill);
+  background: var(--c-cream);
+  color: var(--c-void);
+  font-family: var(--font-subhead);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  box-shadow: 4px 4px 0 var(--c-void);
+  rotate: -8deg;
+}
+
+/* ─── Body ─── */
+.about__body .section-title {
+  max-width: 14ch;
 }
 
 .about__roles {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.6rem;
-  margin-bottom: var(--space-md);
+  gap: 0.5rem;
 }
 
 .about__roles li {
   font-family: var(--font-subhead);
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   padding: 0.45rem 0.9rem;
   border: 1px solid var(--line);
   border-radius: var(--radius-pill);
   color: var(--fg-muted);
+  transition: background 0.25s, color 0.25s, border-color 0.25s, rotate 0.4s var(--ease-pop);
+}
+
+@media (hover: hover) {
+  .about__roles li:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--c-void);
+    rotate: -3deg;
+  }
+}
+
+.about__quote {
+  position: relative;
+  margin: var(--space-lg) 0 var(--space-md);
+  padding-left: 1.5rem;
+  border-left: 4px solid var(--c-orange);
+}
+
+.about__quote::before {
+  content: "\201C";
+  position: absolute;
+  left: 0.6rem;
+  top: -2.2rem;
+  font-family: var(--font-heading);
+  font-size: 5rem;
+  line-height: 1;
+  color: var(--c-orange);
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+.about__quote p {
+  font-family: var(--font-heading);
+  font-size: clamp(1.45rem, 3vw, 2.2rem);
+  line-height: 1.12;
+  text-transform: uppercase;
+  max-width: 24ch;
+  text-wrap: balance;
 }
 
 .about__copy p {
-  font-size: clamp(1.05rem, 2.2vw, 1.25rem);
-  max-width: 42ch;
+  font-size: clamp(1.02rem, 1.6vw, 1.15rem);
+  max-width: 52ch;
   color: var(--fg-muted);
 }
 
 .about__copy p + p {
-  margin-top: 1rem;
+  margin-top: 0.9rem;
 }
 
-.about__aside {
-  border-left: 2px solid var(--accent);
-  padding-left: 1.25rem;
+/* ─── By the numbers: four cassette tapes (the toaster's cassettes), counting up as they land.
+   Reels spin while the count runs, on hover, and whenever his music is playing on the site. ─── */
+.about__stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(1rem, 2.5vw, 1.6rem) clamp(0.85rem, 2vw, 1.4rem);
+  margin-top: var(--space-lg);
+  padding: 0.25rem 0.5rem 0.5rem 0.25rem; /* room for the tilts + hard shadows */
 }
 
-.about__aside-label {
+.cassette {
+  --body: var(--c-orange);
+  --stripe: var(--c-red);
+  --tilt: -2.5deg;
+  --screw: radial-gradient(circle, var(--c-void) 0 2px, transparent 2.5px);
+  position: relative;
+  display: grid;
+  gap: 0.45rem;
+  padding: 0.7rem 0.7rem 0;
+  border: 3px solid var(--c-void);
+  border-radius: 0.9rem;
+  background:
+    var(--screw) left 3px top 3px / 12px 12px no-repeat,
+    var(--screw) right 3px top 3px / 12px 12px no-repeat,
+    var(--screw) left 3px bottom 3px / 12px 12px no-repeat,
+    var(--screw) right 3px bottom 3px / 12px 12px no-repeat,
+    var(--body);
+  box-shadow: 6px 6px 0 var(--shadow, var(--c-red));
+  rotate: var(--tilt);
+  transition:
+    rotate 0.45s var(--ease-pop),
+    translate 0.35s var(--ease-out),
+    box-shadow 0.35s var(--ease-out);
+}
+
+.cassette--gold { --body: var(--c-gold); --stripe: var(--c-orange); --shadow: var(--c-orange); --tilt: 2deg; }
+.cassette--red { --body: var(--c-red); --stripe: var(--c-gold); --shadow: var(--c-gold); --tilt: 1.5deg; }
+.cassette--blue { --body: var(--c-blue); --stripe: var(--c-orange); --shadow: var(--c-orange); --tilt: -2deg; }
+
+/* The label: cream, ruled like a hand-written tape label, with a colour band across the top */
+.cassette__label {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: end;
+  column-gap: 0.6rem;
+  padding: 0.9rem 0.75rem 0.45rem;
+  border: 2px solid var(--c-void);
+  border-radius: 0.45rem;
+  background:
+    linear-gradient(var(--stripe), var(--stripe)) 0 0 / 100% 0.4rem no-repeat,
+    repeating-linear-gradient(transparent 0 1.05rem, color-mix(in srgb, var(--c-void) 14%, transparent) 1.05rem calc(1.05rem + 1px)),
+    var(--c-cream);
+  color: var(--c-void);
+}
+
+.cassette__side {
+  position: absolute;
+  top: -0.6rem;
+  right: 0.6rem;
+  padding: 0.15rem 0.45rem;
+  border-radius: var(--radius-pill);
+  background: var(--c-void);
+  color: var(--c-cream);
   font-family: var(--font-subhead);
-  font-size: 0.7rem;
-  letter-spacing: 0.18em;
+  font-size: 0.55rem;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--accent);
-  margin-bottom: 0.5rem;
+  rotate: 4deg;
 }
 
-.about__aside p {
+.cassette__num {
   font-family: var(--font-heading);
-  font-size: clamp(1.4rem, 3vw, 2rem);
-  text-transform: uppercase;
-  line-height: 1.1;
-  max-width: 16ch;
+  font-weight: normal;
+  font-size: clamp(2rem, 4.2vw, 3rem);
+  line-height: 0.9;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 2px 2px 0 var(--stripe);
 }
 
-@media (min-width: 860px) {
+.cassette__name {
+  padding-bottom: 0.2rem;
+  font-family: var(--font-subhead);
+  font-size: 0.64rem;
+  line-height: 1.25;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* The window: two spoked reels, the left one fat with wound tape, the tape running between them */
+.cassette__window {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 2.6rem;
+  margin-inline: 12%;
+  padding-inline: 0.7rem;
+  border: 2px solid var(--c-void);
+  border-radius: var(--radius-pill);
+  background:
+    linear-gradient(#5b1f0c, #5b1f0c) 50% 80% / 55% 3px no-repeat,
+    color-mix(in srgb, var(--c-void) 85%, var(--c-blue));
+}
+
+.cassette__reel {
+  --wound: 3px;
+  width: 1.5rem;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, var(--c-void) 0 17%, transparent 18% 44%, var(--c-cream) 45%),
+    repeating-conic-gradient(var(--c-void) 0 16deg, var(--c-cream) 16deg 60deg);
+  box-shadow: 0 0 0 var(--wound) #5b1f0c;
+  animation: cassette-spin 1.6s linear infinite paused;
+}
+
+.cassette__reel--full {
+  --wound: 6px;
+}
+
+/* The head: the notched tab along the bottom edge, with its two capstan holes */
+.cassette__head {
+  justify-self: center;
+  width: 58%;
+  height: 0.85rem;
+  border: 2px solid var(--c-void);
+  border-bottom: 0;
+  border-radius: 0.35rem 0.35rem 0 0;
+  background:
+    radial-gradient(circle, var(--c-void) 0 2.5px, transparent 3px) 22% 60% / 8px 8px no-repeat,
+    radial-gradient(circle, var(--c-void) 0 2.5px, transparent 3px) 78% 60% / 8px 8px no-repeat,
+    color-mix(in srgb, var(--body) 72%, var(--c-void));
+}
+
+@keyframes cassette-spin {
+  to { rotate: 1turn; }
+}
+
+/* Reels run while the number counts (scroll.js), on hover, and while music plays */
+.cassette.is-counting .cassette__reel,
+html.is-audio-playing .cassette__reel {
+  animation-play-state: running;
+}
+
+@media (hover: hover) {
+  .cassette:hover {
+    rotate: 0deg;
+    translate: -3px -4px;
+    box-shadow: 10px 10px 0 var(--shadow, var(--c-red));
+  }
+
+  .cassette:hover .cassette__reel {
+    animation-play-state: running;
+    animation-duration: 0.7s;
+  }
+}
+
+@media (max-width: 520px) {
+  .cassette {
+    padding: 0.55rem 0.55rem 0;
+  }
+
+  .cassette__label {
+    grid-template-columns: 1fr;
+    padding: 0.85rem 0.6rem 0.4rem;
+  }
+
+  .cassette__window {
+    height: 2.2rem;
+    margin-inline: 6%;
+    padding-inline: 0.55rem;
+  }
+
+  .cassette__reel {
+    width: 1.25rem;
+  }
+
+  .cassette__reel--full {
+    --wound: 4px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cassette {
+    transition: none;
+  }
+
+  .cassette__reel {
+    animation: none;
+  }
+}
+
+@media (min-width: 900px) {
   .about__grid {
-    grid-template-columns: 1.4fr 0.8fr;
-    align-items: end;
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    gap: var(--space-xl);
+  }
+
+  .about__portrait {
+    position: sticky;
+    top: calc(var(--nav-h) + 3rem);
+    margin: 0;
+  }
+}
+
+@media (max-width: 520px) {
+  .about__portrait {
+    width: min(100%, 20rem);
+  }
+
+  .about__stamp {
+    width: 7rem;
+  }
+
+  .about__stamp-city {
+    font-size: 1.1rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .about__photo,
+  .about__photo img,
+  .about__stamp,
+  .about__roles li {
+    transition: none;
   }
 }
 
@@ -188,22 +485,6 @@
 .connect .btn--primary:hover,
 .connect .btn--primary:focus-visible {
   box-shadow: 5px 5px 0 var(--c-orange);
-}
-
-.connect__proof {
-  max-width: 62ch;
-  margin-bottom: var(--space-md);
-  padding-top: 0.9rem;
-  border-top: 2px solid var(--c-void);
-  font-family: var(--font-subhead);
-  font-size: 0.74rem;
-  line-height: 1.7;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-
-.connect__proof:empty {
-  display: none;
 }
 
 /* Two wide streaming cards first, the four stickers under them */
@@ -368,7 +649,7 @@
   100% { transform: scale(1) rotate(0); }
 }
 
-/* The toaster bookend: Back to top. Toast slices (decoration) pop out of it on the first scroll-in */
+/* The toaster bookend: Back to top */
 .connect__end {
   display: flex;
   justify-content: flex-end;
@@ -384,15 +665,6 @@
   border-radius: var(--radius);
 }
 
-/* The slices hide behind the logo's cassettes and body (x 32–72%, below 16% of its height) at y:+40px,
-   then pop 100px up, clear of the toaster (connect.js) */
-.connect__toaster-art {
-  position: relative;
-  display: block;
-  width: 100%;
-  transform-origin: 50% 100%;
-}
-
 .connect__toaster-img {
   position: relative;
   z-index: 1;
@@ -400,33 +672,12 @@
   height: auto;
   filter: drop-shadow(5px 5px 0 var(--c-void));
   pointer-events: none;
-  transition: filter 0.3s var(--ease-out);
+  /* Hover moves via `translate`/`rotate` (not transform — GSAP owns that on click) and never animates
+     the filter: re-rastering a drop-shadowed SVG every frame is what made the old hover flicker */
+  transition:
+    translate 0.4s var(--ease-pop),
+    rotate 0.4s var(--ease-pop);
 }
-
-.connect__slice {
-  position: absolute;
-  z-index: 0;
-  top: calc(16% - 40px);
-  left: 31%;
-  width: 28%;
-  height: auto;
-  overflow: visible;
-  pointer-events: none;
-}
-
-.connect__slice--front {
-  top: calc(19% - 40px);
-  left: 45%;
-  width: 30%;
-}
-
-.kt-crust { fill: #5b1f0c; }
-.kt-face { fill: #b9491b; }
-.connect__slice--back .kt-face { fill: #983a15; }
-.kt-label { fill: #6a2410; }
-.kt-reel { fill: #e3a488; }
-.kt-win { fill: #3a1307; }
-.kt-shine { fill: none; stroke: #e7c2ae; stroke-width: 5; stroke-linecap: round; }
 
 .connect__toaster-hint {
   margin-top: 0.55rem;
@@ -437,38 +688,194 @@
   white-space: nowrap;
 }
 
-.connect__toaster:hover .connect__toaster-img {
-  filter: drop-shadow(7px 7px 0 var(--c-void));
+/* Hover / keyboard focus: the toaster lifts and leans */
+@media (hover: hover) {
+  .connect__toaster:hover .connect__toaster-img {
+    translate: 0 -6px;
+    rotate: -4deg;
+  }
 }
 
-/* In the phone flow: head-room above for the popped toast */
-.connect__end {
-  padding-top: 4.5rem;
+.connect__toaster:focus-visible .connect__toaster-img {
+  translate: 0 -6px;
+  rotate: -4deg;
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .connect__toaster-img {
+    transition: none;
+  }
+}
+
+
 
 @media (min-width: 900px) {
   /* The toaster sits bottom-right, beside the streaming cards and stickers */
+  /* Named areas, not row numbers: the toaster shares the cards' row whatever sits above them
+     (a hard-coded row left it alone in its own row, with an empty band under the cards) */
   .connect > .container {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "title  title"
+      "lede   ."
+      "book   ."
+      "links  toast"
+      "footer footer";
     column-gap: clamp(2rem, 4vw, 4rem);
   }
 
-  .connect > .container > * {
-    grid-column: 1;
-  }
-
-  .connect > .container > .connect__title,
-  .connect > .container > .site-footer {
-    grid-column: 1 / -1;
-  }
+  .connect > .container > .connect__title { grid-area: title; }
+  .connect > .container > .connect__lede { grid-area: lede; }
+  .connect > .container > .connect__book { grid-area: book; }
+  .connect > .container > .connect__links { grid-area: links; }
+  .connect > .container > .site-footer { grid-area: footer; }
 
   .connect > .container > .connect__end {
-    grid-column: 2;
-    grid-row: 5;
+    grid-area: toast;
     align-self: end;
     margin: 0 0 var(--space-lg);
     padding-top: 0;
+  }
+}
+
+/* ─── The finale fills exactly one screen at the page bottom, like the hero does at the top ───
+   Height-aware sizes (svh) squeeze the title, gaps and cards on short screens; on tall ones the spare
+   room opens up between the booking block and the cards, which sit on the footer. */
+.connect {
+  /* 1% of the screen this finale has to fit: the whole screen, minus the mini player while it's open */
+  --player-room: 0rem;
+  --h: calc((100svh - var(--player-room)) / 100);
+  --v-gap: clamp(0.75rem, calc(var(--h) * 3.2), var(--space-lg));
+  display: flex;
+  flex-direction: column;
+  min-height: 100svh;
+  padding-block: calc(5.25rem + 3.5vw) calc(clamp(0.75rem, calc(var(--h) * 2.5), var(--space-md)) + var(--player-room));
+}
+
+/* The fixed player pill (bottom-left, ~4.6rem incl. its 1rem offset) gets a band of its own under the
+   footer, taken out of the one-screen budget instead of making the finale taller than the screen */
+html.has-player .connect {
+  --player-room: 4.75rem;
+}
+
+html.has-player .connect .site-footer {
+  padding-bottom: 0;
+}
+
+.connect > .container {
+  flex: 1;
+}
+
+.connect__title {
+  margin-bottom: clamp(0.5rem, calc(var(--h) * 2.4), var(--space-md));
+}
+
+.connect__lede {
+  margin-bottom: clamp(0.5rem, calc(var(--h) * 2), var(--space-md));
+}
+
+.connect__book,
+.connect .social-grid {
+  margin-bottom: var(--v-gap);
+}
+
+.connect__stream {
+  margin-bottom: clamp(0.75rem, calc(var(--h) * 1.8), 1.4rem);
+}
+
+.stream-card {
+  min-height: clamp(4rem, calc(var(--h) * 8.5), 5.25rem);
+}
+
+.social-link {
+  min-height: clamp(3.1rem, calc(var(--h) * 6.5), 3.75rem);
+}
+
+@media (min-width: 900px) {
+  .connect > .container {
+    grid-template-rows: auto auto auto 1fr auto;
+  }
+
+  .connect__title {
+    font-size: clamp(3rem, min(10vw, calc(var(--h) * 12.5)), 8rem);
+  }
+
+  .connect > .container > .connect__links { align-self: end; }
+
+  .connect > .container > .connect__end {
+    margin-bottom: var(--v-gap);
+  }
+
+  .connect__toaster {
+    width: clamp(7rem, min(22vw, calc(var(--h) * 19)), 10.5rem);
+  }
+}
+
+/* Phones: the toaster moves up beside the lede + Book button, so the whole finale fits a ~820px-tall phone screen */
+@media (max-width: 899px) {
+  .connect {
+    padding-top: calc(4.75rem + 3.5vw);
+  }
+
+  .connect > .container {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: auto auto auto 1fr auto;
+    grid-template-areas:
+      "title  title"
+      "lede   toast"
+      "book   toast"
+      "links  links"
+      "footer footer";
+    column-gap: 0.75rem;
+  }
+
+  .connect > .container > .connect__title { grid-area: title; }
+  .connect > .container > .connect__lede { grid-area: lede; align-self: end; }
+  .connect > .container > .connect__book { grid-area: book; }
+  .connect > .container > .connect__links { grid-area: links; align-self: end; }
+  .connect > .container > .site-footer { grid-area: footer; }
+
+  .connect > .container > .connect__end {
+    grid-area: toast;
+    align-self: end;
+    margin: 0 0 var(--v-gap);
+    padding-top: 0;
+  }
+
+  .connect__toaster {
+    width: clamp(5.5rem, min(26vw, calc(var(--h) * 13)), 9rem);
+  }
+}
+
+/* Small phones: Spotify + Apple side by side as compact cards (label wraps, no arrow) — one row saved */
+@media (max-width: 520px) {
+  .connect__stream {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
+
+  .stream-card {
+    gap: 0.6rem;
+    min-height: 3.9rem;
+    padding: 0.5rem 0.7rem 0.5rem 0.5rem;
+    font-size: 0.68rem;
+    line-height: 1.25;
+  }
+
+  .stream-card__badge {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+
+  .stream-card__badge .icon {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  .stream-card__arrow {
+    display: none;
   }
 }
 
@@ -513,3 +920,68 @@
 .site-footer a:hover {
   text-decoration-color: var(--c-orange);
 }
+
+/* Icon-only socials: the same cream stickers (and coloured glyphs) as the Connect cards above */
+.site-footer__socials {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.site-footer .footer-social {
+  --icon-accent: var(--c-orange);
+  --icon-ghost: var(--c-red);
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  border: 3px solid var(--c-void);
+  border-radius: var(--radius);
+  background: var(--c-cream);
+  color: var(--c-void);
+  box-shadow: 4px 4px 0 var(--c-void);
+  text-decoration: none;
+  rotate: -3deg;
+  transition:
+    rotate 0.35s var(--ease-pop),
+    translate 0.3s var(--ease-out),
+    box-shadow 0.3s var(--ease-out);
+}
+
+.site-footer__socials li:nth-child(even) .footer-social { rotate: 3deg; }
+
+.footer-social__icon {
+  width: 1.6rem;
+  height: 1.6rem;
+  overflow: visible;
+}
+
+.site-footer .footer-social:hover,
+.site-footer .footer-social:focus-visible {
+  rotate: 0deg;
+  translate: -2px -2px;
+  box-shadow: 6px 6px 0 var(--c-void);
+}
+
+/* All seven on one row at 360px+ */
+@media (max-width: 520px) {
+  .site-footer__socials { gap: 0.5rem; }
+  .site-footer .footer-social { width: 2.6rem; height: 2.6rem; }
+  .footer-social__icon { width: 1.4rem; height: 1.4rem; }
+}
+
+.footer-social:hover .footer-social__icon,
+.footer-social:focus-visible .footer-social__icon {
+  animation: icon-boing 0.6s var(--ease-out);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-footer .footer-social {
+    transition: none;
+  }
+
+  .footer-social:hover .footer-social__icon {
+    animation: none;
+  }
+}
+

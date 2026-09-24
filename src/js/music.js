@@ -32,6 +32,7 @@ export function jumpToRelease(id) {
   rec.classList.remove("is-flash");
   void rec.offsetWidth;
   rec.classList.add("is-flash");
+  rail.dispatchEvent(new CustomEvent("krayaura:crate-jump", { detail: id })); // the timeline holds this dot
   return true;
 }
 
@@ -343,28 +344,62 @@ function initTimeline(root, rail) {
     line.style.setProperty("--lanes", deepest);
   };
 
+  const setCurrent = (id) => {
+    dots.forEach((d) => d.classList.remove("is-current"));
+    const dot = dots.get(id);
+    if (!dot) return;
+    dot.classList.add("is-current");
+    head.style.left = dot.style.left;
+  };
+
+  // A dot press / deep link holds its record as current (the rail can't bring the last few records to the
+  // left edge, so scroll position alone would pick another) until the visitor moves the crate themselves
+  let pinned = null;
+  rail.addEventListener("krayaura:crate-jump", (e) => {
+    pinned = e.detail;
+    setCurrent(pinned);
+  });
+  const release = () => (pinned = null);
+  ["pointerdown", "wheel", "touchstart", "keydown"].forEach((t) => rail.addEventListener(t, release, { passive: true }));
+
   let raf = 0;
   const update = () => {
     raf = 0;
-    // The "current" record is the first one mostly past the rail's left padding (the snap line)
-    const anchor = rail.getBoundingClientRect().left + (parseFloat(getComputedStyle(rail).paddingLeft) || 0);
-    const visible = [...rail.querySelectorAll(".record:not([hidden])")];
-    const best =
-      visible.find((el) => {
-        const r = el.getBoundingClientRect();
-        return r.left + r.width / 2 > anchor;
-      }) || visible[visible.length - 1];
-    dots.forEach((d) => d.classList.remove("is-current"));
-    const dot = best && dots.get(best.dataset.release);
-    if (dot) {
-      dot.classList.add("is-current");
-      head.style.left = dot.style.left;
-    }
+    if (pinned) return setCurrent(pinned);
+    // The anchor sweeps across the rail as it scrolls: at the start it's the left snap line (first record),
+    // at the end the right content edge (last record), so every release — the oldest ones included — gets
+    // its turn. Current = the visible record nearest the anchor.
+    const box = rail.getBoundingClientRect();
+    const cs = getComputedStyle(rail);
+    const padL = parseFloat(cs.paddingLeft) || 0;
+    const padR = parseFloat(cs.paddingRight) || 0;
+    const maxScroll = rail.scrollWidth - rail.clientWidth;
+    const p = maxScroll > 1 ? Math.min(1, Math.max(0, rail.scrollLeft / maxScroll)) : 0;
+    const anchor = box.left + padL + p * (rail.clientWidth - padL - padR);
+    let best = null;
+    let bestD = Infinity;
+    rail.querySelectorAll(".record:not([hidden])").forEach((el) => {
+      const r = el.getBoundingClientRect();
+      // Measured at the point that slides from its left edge (p = 0) to its right edge (p = 1), so the
+      // first record sits exactly on the anchor at the start and the last one at the end
+      const dist = Math.abs(r.left + r.width * p - anchor);
+      if (dist < bestD) {
+        bestD = dist;
+        best = el;
+      }
+    });
+    if (best) setCurrent(best.dataset.release);
   };
   rail.addEventListener("scroll", () => (raf ||= requestAnimationFrame(update)), { passive: true });
   window.addEventListener("resize", () => {
     raf ||= requestAnimationFrame(update);
     layoutLanes();
+  });
+  // A filter re-sorts / hides records: re-pick once the FLIP settles
+  rail.closest("[data-crate]")?.addEventListener("click", (e) => {
+    if (!e.target.closest("[data-filter]")) return;
+    release();
+    setTimeout(update, 700);
   });
   layoutLanes();
   update();

@@ -27,7 +27,7 @@ let queueRelease = null; // the release id when every queued key is from one rel
 let finished = false; // the last preview ran out and nothing was queued after it
 let finishedRelease = null; // …and it was the end of a whole-release run ("Full album")
 
-const ZERO = Object.freeze({ bass: 0, mid: 0, high: 0, energy: 0 });
+const ZERO = Object.freeze({ bass: 0, mid: 0, high: 0, energy: 0, flux: 0 });
 
 function queueInfo() {
   return { index: qi, length: queue.length, nextKey: queue[qi + 1] ?? null, releaseId: queueRelease };
@@ -108,7 +108,10 @@ function ensureGraph() {
     gain = ctx.createGain();
     analyser = ctx.createAnalyser();
     analyser.fftSize = 1024;
-    analyser.smoothingTimeConstant = 0.75;
+    analyser.smoothingTimeConstant = 0.6;
+    // Headroom: the default -30 dB ceiling clips loud masters, pinning the bass at max so no beat shows
+    analyser.minDecibels = -90;
+    analyser.maxDecibels = -12;
     source.connect(gain).connect(analyser).connect(ctx.destination);
     freq = new Uint8Array(analyser.frequencyBinCount);
   } catch (err) {
@@ -414,11 +417,32 @@ export const state = {
   },
 };
 
-/** Smoothed band levels, 0..1. Cheap enough to call every frame. */
+let lastLevels = ZERO;
+let lastLevelsAt = -1;
+let prevLow = null;
+
+/**
+ * Smoothed band levels, 0..1, plus `flux`: how much the low end (kick/808) rose since the previous
+ * frame — the beat, independent of how loud the track is mastered. Several visuals call this each
+ * frame, so one reading is cached per frame (a second call would otherwise see zero change).
+ */
 export function levels() {
   if (!analyser || !isPlaying()) return ZERO;
+  const now = performance.now();
+  if (now - lastLevelsAt < 8) return lastLevels;
+  lastLevelsAt = now;
   analyser.getByteFrequencyData(freq);
   const hz = ctx.sampleRate / analyser.fftSize;
+  const lo = Math.max(1, Math.floor(35 / hz));
+  const hi = Math.ceil(250 / hz);
+  if (!prevLow || prevLow.length !== hi - lo + 1) prevLow = new Float32Array(hi - lo + 1);
+  let flux = 0;
+  for (let i = lo; i <= hi; i++) {
+    const v = freq[i] / 255;
+    flux += Math.max(0, v - prevLow[i - lo]);
+    prevLow[i - lo] = v;
+  }
+  flux /= hi - lo + 1;
   const avg = (lo, hi) => {
     const a = Math.max(1, Math.floor(lo / hz));
     const b = Math.min(freq.length - 1, Math.ceil(hi / hz));
@@ -429,13 +453,15 @@ export function levels() {
   const bass = avg(35, 180);
   const mid = avg(250, 2000);
   const high = avg(2500, 9000);
-  // Curves: bass is the "kick", expanded so it reads as a punch
-  return {
-    bass: Math.min(1, Math.pow(bass, 1.6) * 1.8),
-    mid,
-    high: Math.min(1, high * 1.6),
-    energy: Math.min(1, bass * 0.5 + mid * 0.35 + high * 0.15) * 1.25,
+  // Curves: bass expanded so it reads as a punch (the headroom above keeps it off the ceiling)
+  lastLevels = {
+    bass: Math.min(1, Math.pow(bass, 1.4) * 1.9),
+    mid: Math.min(1, mid * 1.3),
+    high: Math.min(1, high * 1.8),
+    energy: Math.min(1, (bass * 0.5 + mid * 0.35 + high * 0.15) * 1.6),
+    flux,
   };
+  return lastLevels;
 }
 
 /** n log-spaced bars (0..1) for EQ visualisers */

@@ -19,8 +19,9 @@ export const site = {
   roles: ["Rapper", "Singer", "Producer", "Creative Director", "Graphic Designer"],
   location: "Pretoria, South Africa",
   handle: "@krayaura",
-  profileImage: `${MEDIA}/brand/channels4-profile.jpg`,
-  bannerImage: `${MEDIA}/brand/channels4-banner.jpg`,
+  // A 4:5 crop of him from the CRASH shoot (scripts/copy-media.py)
+  portrait: `${MEDIA}/brand/portrait.jpg`,
+  portraitSm: `${MEDIA}/brand/portrait-sm.jpg`,
   booking: {
     label: "Book / collab",
     // Opens the DM thread straight away (the app on phones)
@@ -30,8 +31,10 @@ export const site = {
   bio: [
     "I'm Koketso Ramogale — Krayaura — from Pretoria. I've been making beats since high school and produced for other artists before I believed in my own voice. I taught myself to mix, master, rap and sing.",
     "Inspired by the vibrant cartoons of the 2000s and my passion for the South African music industry, my creations radiate joy, nostalgia, and imagination.",
-    "I employ bold and warm colours, especially shades of orange, coupled with expressive strokes and captivating sans-serif fonts. My ultimate ambition is to leave a lasting mark on the South African music industry through my unique creative vision.",
+    "I employ bold and warm colours, especially shades of orange, coupled with expressive strokes and captivating sans-serif fonts.",
   ],
+  // His own words from the bio, pulled out as the About headline quote
+  quote: "My ultimate ambition is to leave a lasting mark on the South African music industry through my unique creative vision.",
   platforms: {
     spotify: SPOTIFY_ARTIST,
     apple: APPLE_ARTIST,
@@ -205,20 +208,3 @@ export const socials = [
   { label: "Apple Music", cta: "Add on Apple Music", icon: "apple", href: APPLE_ARTIST, primary: true },
   { label: "Behance", icon: "behance", href: BEHANCE },
 ];
-
-/** "15 releases since 2021 · CRASH, 14 tracks (Nov 2025) · with … · Pretoria, SA" — counted from the data */
-export function proofLine() {
-  const years = releases.map((r) => Number(r.year));
-  const guests = [...new Set(releases.flatMap((r) => [...(r.features || []), ...r.tracks.flatMap((t) => t.features || [])]))];
-  const crash = crashAlbum
-    ? `${crashAlbum.title.toUpperCase()}, ${crashAlbum.trackCount} tracks (${new Date(crashAlbum.date).toLocaleDateString("en-GB", { month: "short", year: "numeric" })})`
-    : "";
-  return [
-    `${releases.length} releases since ${Math.min(...years)}`,
-    crash,
-    guests.length ? `with ${guests.join(", ")}` : "",
-    "Pretoria, SA",
-  ]
-    .filter(Boolean)
-    .join(" · ");
-}

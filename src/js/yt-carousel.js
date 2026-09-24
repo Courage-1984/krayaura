@@ -160,24 +160,62 @@ export function initYtCarousel(root) {
     return e.clientX < r.left + r.width / 2 ? -1 : 1;
   };
 
-  let swipe = null;
+  /* Drag (mouse, pen, touch): the slides follow the pointer live; on release a short flick moves one
+     video, a long drag up to three. Starts only past a few px so plain clicks still work, and ignores
+     drags that begin on a playing embed (its iframe eats pointer events anyway). */
+  let drag = null;
   let swiped = false;
+  const slideStep = () => slides[index].getBoundingClientRect().width * 0.42; // ≈ one slide's travel
+  const setDrag = (px) => stage.style.setProperty("--drag", `${px}px`);
+
+  stage.addEventListener("dragstart", (e) => e.preventDefault()); // no native image dragging
 
   stage.addEventListener("pointerdown", (e) => {
-    swipe = { x: e.clientX, y: e.clientY };
+    if (e.button !== 0 || e.target.closest("iframe")) return;
+    drag = { id: e.pointerId, x: e.clientX, y: e.clientY, dx: 0, live: false, t: performance.now(), vx: 0, lx: e.clientX, lt: performance.now() };
     swiped = false;
   });
 
-  stage.addEventListener("pointerup", (e) => {
-    if (!swipe) return;
-    const dx = e.clientX - swipe.x;
-    const dy = e.clientY - swipe.y;
-    swipe = null;
-    if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) {
-      swiped = true;
-      go(index + (dx < 0 ? 1 : -1));
+  stage.addEventListener("pointermove", (e) => {
+    if (!drag || e.pointerId !== drag.id) return;
+    const dx = e.clientX - drag.x;
+    const dy = e.clientY - drag.y;
+    if (!drag.live) {
+      if (Math.abs(dx) < 6 || Math.abs(dx) < Math.abs(dy)) return; // not (yet) a horizontal drag
+      drag.live = true;
+      stage.classList.add("is-dragging");
+      stage.dataset.cursor = "Drag";
+      try {
+        stage.setPointerCapture(e.pointerId);
+      } catch {
+        /* pointer already gone */
+      }
     }
+    const now = performance.now();
+    drag.vx = (e.clientX - drag.lx) / Math.max(1, now - drag.lt); // px/ms, for flicks
+    drag.lx = e.clientX;
+    drag.lt = now;
+    drag.dx = dx;
+    const max = slideStep() * 3.2;
+    setDrag(Math.max(-max, Math.min(max, dx)) * 0.9);
   });
+
+  const endDrag = (e) => {
+    if (!drag || e.pointerId !== drag.id) return;
+    const { live, dx, vx } = drag;
+    drag = null;
+    if (!live) return;
+    swiped = true; // the click that follows a drag must not play / navigate
+    stage.classList.remove("is-dragging");
+    let steps = Math.round(-dx / slideStep());
+    if (!steps && (Math.abs(dx) > 40 || Math.abs(vx) > 0.45)) steps = dx < 0 ? 1 : -1;
+    steps = Math.max(-3, Math.min(3, steps));
+    setDrag(0); // eases back (translate transition) as the new layout slides in
+    if (steps) go(index + steps);
+    setTimeout(() => (swiped = false), 0);
+  };
+  stage.addEventListener("pointerup", endDrag);
+  stage.addEventListener("pointercancel", endDrag);
 
   stage.addEventListener("click", (e) => {
     if (swiped) {
@@ -190,6 +228,7 @@ export function initYtCarousel(root) {
   });
 
   stage.addEventListener("pointermove", (e) => {
+    if (drag?.live) return; // "Drag" label while dragging
     const side = sideOf(e);
     if (side === 0) delete stage.dataset.cursor;
     else stage.dataset.cursor = side < 0 ? "Prev" : "Next";

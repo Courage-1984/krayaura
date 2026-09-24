@@ -456,7 +456,8 @@
   }
 
   .crash__finale-big {
-    font-size: clamp(3.5rem, min(11vw, 17svh), 9.5rem);
+    /* Sized to the right-hand copy column: "FULL CREATOR" (4.23em) stays on one line in it */
+    font-size: clamp(3rem, min(6.8vw, 13svh), 7.25rem);
     text-shadow:
       1px 1px 0 var(--c-orange),
       2px 2px 0 var(--c-orange),
@@ -466,16 +467,19 @@
       9px 9px 0 color-mix(in srgb, var(--c-red) 80%, transparent);
   }
 
-  /* Lifted by crash.js into the pin, outside the viewport's fade mask: the finale lands centred */
+  /* Lifted by crash.js into the pin, outside the viewport's fade mask. It lands in the right-hand
+     copy column (same edges as the grid's 1.1fr track), so it never covers the album art on the left */
   .crash__pin > .crash__finale {
+    --col: min(1120px, calc(100% - 2.5rem)); /* .container width */
+    --gap: var(--space-xl); /* .crash__grid column gap */
     position: absolute;
-    inset-inline: 0;
+    left: calc((100% - var(--col)) / 2 + (var(--col) - var(--gap)) * 0.45 + var(--gap));
+    right: calc((100% - var(--col)) / 2);
     bottom: 12svh;
     z-index: 3;
     margin: 0;
-    padding-inline: 1rem;
-    text-align: center;
-    transform-origin: 50% 70%;
+    text-align: left;
+    transform-origin: 0% 70%;
     pointer-events: none;
   }
 
@@ -492,7 +496,7 @@
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     gap: 0.6rem 1rem;
   }
 

@@ -222,42 +222,6 @@
   border-radius: var(--radius);
 }
 
-.lightbox {
-  z-index: 205;
-}
-
-.lightbox__media.is-gallery {
-  aspect-ratio: auto;
-  background: none;
-}
-
-.lightbox__gallery {
-  display: flex;
-  gap: 0.75rem;
-  padding-block: 6px; /* overflow clips both axes: room for the ▶'s focus ring */
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  scrollbar-width: thin;
-  scrollbar-color: var(--c-gold) transparent;
-}
-
-.lightbox__gallery.is-dragging {
-  scroll-snap-type: none;
-}
-
-.lightbox__gallery figure {
-  flex: 0 0 88%;
-  margin: 0;
-  scroll-snap-align: start;
-}
-
-.lightbox__gallery img {
-  width: 100%;
-  aspect-ratio: 16 / 11;
-  object-fit: cover;
-  border-radius: var(--radius);
-}
-
 @media (prefers-reduced-motion: reduce) {
   .marquee {
     transform: rotate(-2deg);

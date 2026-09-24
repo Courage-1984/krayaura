@@ -33,6 +33,27 @@
   margin-inline: auto;
 }
 
+/* Dragging: slides follow the pointer 1:1 (no easing lag); vertical swipes still scroll the page */
+.yt-carousel__stage {
+  touch-action: pan-y;
+}
+
+.yt-carousel__stage.is-dragging {
+  cursor: grabbing;
+  user-select: none;
+}
+
+.yt-carousel__stage.is-dragging .yt-slide {
+  transition:
+    transform 0.7s var(--ease-out),
+    opacity 0.55s var(--ease-out),
+    filter 0.55s var(--ease-out);
+}
+
+.yt-slide img {
+  -webkit-user-drag: none;
+}
+
 .yt-slide {
   position: absolute;
   inset: 0 0 auto;
@@ -41,8 +62,11 @@
   margin-inline: auto;
   transition:
     transform 0.7s var(--ease-out),
+    translate 0.55s var(--ease-out),
     opacity 0.55s var(--ease-out),
     filter 0.55s var(--ease-out);
+  /* live drag offset (yt-carousel.js) — `translate` composes with each slide's 3D `transform` */
+  translate: var(--drag, 0px) 0;
   transform-style: preserve-3d;
   cursor: pointer;
   opacity: 0;

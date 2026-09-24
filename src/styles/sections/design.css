@@ -358,6 +358,126 @@
   }
 }
 
+/* ── Entrances (design.js adds .is-anim when motion is allowed, .is-in per row as it scrolls in) ──
+   Individual translate / scale / rotate so nothing fights the rows' own `transform` tilts and fans. */
+.pi-word {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.pi-ch {
+  display: inline-block;
+}
+
+.project-list.is-anim .project-item {
+  border-bottom-color: transparent;
+}
+
+.project-list.is-anim .project-item::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -2px;
+  height: 2px;
+  background: var(--c-void);
+  transform-origin: 0 50%;
+  scale: 0 1;
+  transition: scale 0.9s var(--ease-out);
+}
+
+.project-list.is-anim .project-item__num {
+  scale: 0;
+  rotate: -200deg;
+  transition: scale 0.6s var(--ease-pop) 0.1s, rotate 0.7s var(--ease-out) 0.1s;
+}
+
+.project-list.is-anim .pi-ch {
+  opacity: 0;
+  translate: 0 0.7em;
+  rotate: var(--tr, 0deg);
+  transition:
+    opacity 0.3s var(--ease-out),
+    translate 0.55s var(--ease-pop),
+    rotate 0.55s var(--ease-pop);
+  transition-delay: calc(0.18s + var(--c) * 28ms);
+}
+
+.project-list.is-anim .project-item__tag {
+  opacity: 0;
+  translate: 1.5rem 0;
+  transition: opacity 0.4s var(--ease-out) 0.45s, translate 0.6s var(--ease-pop) 0.45s;
+}
+
+.project-list.is-anim .project-item__desc {
+  opacity: 0;
+  translate: 0 0.8rem;
+  transition: opacity 0.6s var(--ease-out) 0.55s, translate 0.7s var(--ease-out) 0.55s;
+}
+
+/* The sticker gets slapped down, then its shadow kicks out from under it */
+.project-list.is-anim .project-item__sticker {
+  opacity: 0;
+  scale: 1.25;
+  rotate: -9deg;
+  translate: 0 -1.5rem;
+  transition:
+    opacity 0.25s var(--ease-out) 0.25s,
+    scale 0.6s var(--ease-pop) 0.25s,
+    rotate 0.7s var(--ease-pop) 0.25s,
+    translate 0.6s var(--ease-pop) 0.25s;
+}
+
+.project-list.is-anim > li:nth-child(even) .project-item__sticker {
+  rotate: 9deg;
+}
+
+.project-list.is-anim .project-item__sticker::before {
+  translate: -8px -8px;
+  transition: translate 0.45s var(--ease-pop) 0.7s;
+}
+
+/* Sleeves are dealt from the middle of the hand out into the fan */
+.project-list.is-anim .sleeve {
+  opacity: 0;
+  scale: 0.6;
+  translate: 0 35%;
+  transition:
+    transform 0.45s var(--ease-out),
+    opacity 0.3s var(--ease-out),
+    scale 0.6s var(--ease-pop),
+    translate 0.6s var(--ease-pop),
+    rotate 0.6s var(--ease-pop);
+  transition-delay: 0s, var(--deal), var(--deal), var(--deal), var(--deal);
+}
+
+.sleeve:nth-child(1) { --deal: 0.55s; }
+.sleeve:nth-child(2) { --deal: 0.45s; }
+.sleeve:nth-child(3) { --deal: 0.3s; }
+.sleeve:nth-child(4) { --deal: 0.45s; }
+.sleeve:nth-child(5) { --deal: 0.55s; }
+
+@media (min-width: 721px) {
+  .project-list.is-anim .sleeve {
+    translate: calc((2 - var(--i)) * 90%) 25%;
+    rotate: calc(var(--r) * -1);
+  }
+}
+
+.project-list.is-anim .project-item.is-in::before { scale: 1 1; }
+
+.project-list.is-anim .project-item.is-in .project-item__sticker::before {
+  translate: 0 0;
+}
+
+.project-list.is-anim .project-item.is-in :is(.project-item__num, .pi-ch, .project-item__tag, .project-item__desc,
+  .project-item__sticker, .sleeve) {
+  opacity: 1;
+  scale: 1;
+  rotate: 0deg;
+  translate: 0 0;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .project-item__sticker img,
   .sleeve,
@@ -379,16 +499,22 @@
     linear-gradient(145deg, var(--c-blue), var(--c-midnight));
 }
 
-/* Lightbox */
+/* ─── Lightbox: one sticker card that always fits the screen ──────────────────────────────────
+   Desktop: the work fills a stage on the left, the story sits in a sidebar (tag, title, scrolling
+   description, counter + CTA). Phones: title, stage, then a compact description. The panel itself never
+   scrolls: the stage takes whatever height is left, and each slide sizes itself to it (container units). */
 .lightbox {
+  --lb-pad: clamp(0.75rem, 2.5vw, 1.75rem);
   position: fixed;
   inset: 0;
-  z-index: 200;
-  background: color-mix(in srgb, var(--c-void) 92%, transparent);
-  backdrop-filter: blur(16px);
+  z-index: 205;
   display: grid;
   place-items: center;
-  padding: 1.5rem;
+  padding: var(--lb-pad);
+  background:
+    radial-gradient(circle, color-mix(in srgb, var(--c-orange) 22%, transparent) 1px, transparent 1.6px) 0 0 / 10px 10px,
+    color-mix(in srgb, var(--c-void) 90%, transparent);
+  backdrop-filter: blur(14px);
   opacity: 0;
   visibility: hidden;
   transition:
@@ -405,139 +531,175 @@
 }
 
 .lightbox__panel {
-  width: min(640px, 100%);
-  max-height: calc(100svh - 2rem);
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  background: var(--c-midnight);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-lg);
-  padding: 1.75rem;
-  padding-top: 3.5rem; /* a row for ×, so it never sits on the artwork or the next slide */
   position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  grid-template-areas:
+    "head"
+    "stage"
+    "info";
+  gap: 0.9rem;
+  width: min(1240px, 100%);
+  height: calc(100svh - var(--lb-pad) * 2 - 6px);
+  padding: 1rem;
+  border: 2px solid color-mix(in srgb, var(--c-cream) 16%, transparent);
+  border-radius: var(--radius-lg);
+  background: var(--c-midnight);
+  box-shadow: 6px 6px 0 var(--c-orange);
+  overflow: hidden;
+  scale: 0.94;
+  translate: 0 18px;
+  rotate: -0.6deg;
+  transition:
+    scale 0.45s var(--ease-pop),
+    translate 0.45s var(--ease-out),
+    rotate 0.45s var(--ease-pop);
 }
 
+.lightbox.is-open .lightbox__panel {
+  scale: 1;
+  translate: 0 0;
+  rotate: 0deg;
+}
+
+/* A gold sticker ×, spins a quarter on hover */
 .lightbox__close {
   position: absolute;
-  top: 1rem;
-  right: 1rem;
-  width: 2.25rem;
-  height: 2.25rem;
-  border-radius: 999px;
-  border: 1px solid var(--line);
-  font-size: 1.25rem;
+  z-index: 3;
+  top: 0.8rem;
+  right: 0.8rem;
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 2px solid var(--c-void);
+  border-radius: 50%;
+  background: var(--c-gold);
+  color: var(--c-void);
+  font-size: 1.5rem;
   line-height: 1;
+  box-shadow: 3px 3px 0 var(--c-void);
+  transition:
+    rotate 0.4s var(--ease-pop),
+    background 0.25s;
+}
+
+.lightbox__close:hover,
+.lightbox__close:focus-visible {
+  rotate: 90deg;
+  background: var(--c-orange);
+}
+
+.lightbox__head {
+  grid-area: head;
+  padding-right: 3.5rem; /* clear of the × */
+}
+
+.lightbox__meta {
+  display: inline-block;
+  margin-bottom: 0.45rem;
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--radius-pill);
+  background: var(--c-gold);
+  color: var(--c-void);
+  font-family: var(--font-subhead);
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
 }
 
 .lightbox__title {
   font-family: var(--font-heading);
-  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  font-size: clamp(1.5rem, 3.4vw, 2.5rem);
+  line-height: 0.95;
   text-transform: uppercase;
-  margin-bottom: 0.5rem;
-  padding-right: 2rem;
+  text-wrap: balance;
+  text-shadow: 3px 3px 0 var(--c-orange);
 }
 
-.lightbox__meta {
-  font-family: var(--font-subhead);
-  font-size: 0.72rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--accent);
-  margin-bottom: 1rem;
+/* ── The stage: the work, on a halftone void well ── */
+.lightbox__stage {
+  grid-area: stage;
+  position: relative;
+  min-height: 0;
+  border-radius: var(--radius);
+  background:
+    radial-gradient(circle, color-mix(in srgb, var(--c-cream) 7%, transparent) 1px, transparent 1.5px) 0 0 / 9px 9px,
+    var(--c-void);
+  overflow: hidden;
 }
 
-.lightbox__body {
-  color: var(--fg-muted);
-  margin-bottom: 1.5rem;
-  max-width: 68ch;
+.lightbox__media {
+  height: 100%;
 }
 
-.lightbox__body p + p {
-  margin-top: 0.8rem;
+/* A single image (Channel World): whole, never cropped */
+.lightbox__media > img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0.75rem;
+  object-fit: contain;
 }
 
-/* ── Case-study galleries (Behance): wider panel, every slide at its own aspect ratio ── */
-.lightbox.is-wide .lightbox__panel {
-  width: min(1080px, 100%);
-}
-
-.lightbox__gallery.lightbox__gallery--work {
-  --slide-h: min(58svh, 36rem);
+/* Galleries scroll sideways inside the stage; each slide = image + caption, sized to the stage */
+.lightbox__gallery {
+  --cap: 2.4rem; /* caption row under each image */
+  display: flex;
+  align-items: center;
   gap: 1rem;
-  container-type: inline-size; /* 100cqi = the gallery's width, for the slide sizing below */
+  height: 100%;
+  padding: 0.75rem 1rem 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  container-type: size; /* 100cqi / 100cqh = the gallery's box, for the slide sizing below */
 }
 
-.lightbox__gallery.lightbox__gallery--work .lightbox__slide {
+.lightbox__gallery.is-dragging {
+  scroll-snap-type: none;
+  user-select: none;
+}
+
+.lightbox__slide {
   flex: 0 0 auto;
+  margin: 0;
   max-width: 100%;
   scroll-snap-align: center;
 }
 
-/* Height = the slide height, or less when the image's width (height × --ar) would exceed the gallery —
-   so tall pages and wide spreads both fill their slot without letterbox bars. Width follows the ratio. */
-.lightbox__gallery.lightbox__gallery--work img {
+.lightbox__slide img {
   display: block;
-  height: var(--slide-h);
-  height: min(var(--slide-h), calc(100cqi / var(--ar, 1)));
+  border-radius: var(--radius-sm);
+  -webkit-user-drag: none;
+}
+
+/* Case studies: height fills the stage, or less when the width (height × --ar) would overflow it */
+.lightbox__gallery--work .lightbox__slide img {
+  height: min(calc(100cqh - var(--cap) - 1.5rem), calc((100cqi - 2rem) / var(--ar, 1)));
   width: auto;
   max-width: 100%;
-  aspect-ratio: auto;
-  object-fit: contain;
-  border-radius: var(--radius);
   background: color-mix(in srgb, var(--c-cream) 5%, transparent);
 }
 
-.lightbox__gallery--work figcaption {
-  max-width: 100%;
-}
-
-/* A single artwork: centred, nothing to swipe */
-.lightbox__gallery.lightbox__gallery--work:has(> .lightbox__slide:only-child) {
+.lightbox__gallery--work:has(> .lightbox__slide:only-child) {
   justify-content: center;
 }
 
-.lightbox__count {
-  flex: none;
-  font-family: var(--font-subhead);
-  font-size: 0.66rem;
-  letter-spacing: 0.16em;
-  color: var(--c-gold);
-  font-variant-numeric: tabular-nums;
+/* Cover art: square sleeves as big as the stage allows, a hard shadow like the crate */
+.lightbox__gallery--sleeves .lightbox__slide {
+  width: min(calc(100cqh - var(--cap) - 1.9rem), 78cqi, 36rem);
 }
 
-@media (max-width: 720px) {
-  .lightbox__gallery.lightbox__gallery--work {
-    --slide-h: min(50svh, 26rem);
-  }
-}
-
-.lightbox__media {
-  aspect-ratio: 16 / 10;
-  margin-bottom: 1.25rem;
-  background: var(--c-royal);
-  overflow: hidden;
-  border-radius: var(--radius);
-}
-
-.lightbox__media img {
+.lightbox__gallery--sleeves img {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-/* Cover-art gallery: one square sleeve per slide, caption + its preview ▶ underneath */
-/* (doubled class: brand.css's generic .lightbox__gallery rules load later) */
-.lightbox__gallery.lightbox__gallery--sleeves .lightbox__slide {
-  flex-basis: min(78%, 27rem, 46svh);
-}
-
-.lightbox__gallery.lightbox__gallery--sleeves img {
-  aspect-ratio: 1;
-}
-
-/* A slide is image + caption: .lightbox__media img's height:100% would push the caption out of view */
-.lightbox__slide img {
   height: auto;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border: 3px solid var(--c-void);
+  box-shadow: 5px 5px 0 var(--c-orange);
 }
 
 .lightbox__slide figcaption {
@@ -545,29 +707,269 @@
   align-items: center;
   justify-content: space-between;
   gap: 0.75rem;
-  margin-top: 0.75rem;
+  min-height: var(--cap);
+  padding-top: 0.5rem;
 }
 
 .lightbox__caption {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   font-family: var(--font-subhead);
-  font-size: 0.7rem;
-  letter-spacing: 0.16em;
+  font-size: 0.66rem;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--fg-muted);
 }
 
+/* Prev / next: cream sticker buttons riding the stage's edges */
+.lightbox__nav {
+  position: absolute;
+  z-index: 2;
+  top: calc(50% - 1.4rem - 1.2rem);
+  display: grid;
+  place-items: center;
+  width: 2.8rem;
+  height: 2.8rem;
+  border: 2px solid var(--c-void);
+  border-radius: 50%;
+  background: var(--c-cream);
+  color: var(--c-void);
+  font-size: 1.15rem;
+  box-shadow: 3px 3px 0 var(--c-orange);
+  transition:
+    translate 0.3s var(--ease-pop),
+    background 0.25s,
+    opacity 0.25s;
+}
+
+.lightbox__nav[hidden] { display: none; }
+
+.lightbox__nav--prev { left: 0.75rem; }
+.lightbox__nav--next { right: 0.75rem; }
+
+.lightbox__nav:hover:not(:disabled),
+.lightbox__nav:focus-visible {
+  background: var(--c-gold);
+}
+
+.lightbox__nav--prev:hover:not(:disabled) { translate: -3px 0; }
+.lightbox__nav--next:hover:not(:disabled) { translate: 3px 0; }
+
+.lightbox__nav:disabled {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ── Info: description (scrolls on its own when long), then counter + CTA ── */
+.lightbox__info {
+  grid-area: info;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: 0.9rem;
+  min-height: 0;
+}
+
+.lightbox__body {
+  min-height: 0;
+  max-height: 22svh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-right: 0.6rem;
+  color: var(--fg-muted);
+  font-size: 0.98rem;
+  line-height: 1.55;
+}
+
+.lightbox__body:focus-visible {
+  outline: 2px solid var(--c-gold);
+  outline-offset: 4px;
+  border-radius: var(--radius-sm);
+}
+
+.lightbox__body p + p {
+  margin-top: 0.75rem;
+}
+
+.lightbox__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.lightbox__counter {
+  font-family: var(--font-subhead);
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  color: var(--fg-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.lightbox__counter b {
+  font-family: var(--font-heading);
+  font-weight: normal;
+  font-size: 1.6rem;
+  letter-spacing: 0;
+  color: var(--c-gold);
+  vertical-align: -0.12em;
+}
+
+.lightbox__cta {
+  margin-left: auto;
+}
+
+/* Desktop: stage left, a sidebar for the story on the right */
+@media (min-width: 900px) {
+  .lightbox__panel {
+    grid-template-columns: minmax(0, 1fr) clamp(17rem, 26vw, 22rem);
+    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-areas:
+      "stage head"
+      "stage info";
+    column-gap: 1.5rem;
+    row-gap: 1rem;
+    height: min(calc(100svh - var(--lb-pad) * 2 - 6px), 54rem);
+    padding: 1.25rem;
+  }
+
+  .lightbox__head {
+    padding-top: 0.4rem;
+  }
+
+  .lightbox__body {
+    max-height: none;
+  }
+
+  .lightbox__foot {
+    flex-wrap: wrap;
+    padding-top: 1rem;
+    border-top: 2px solid color-mix(in srgb, var(--c-cream) 10%, transparent);
+  }
+
+  .lightbox__cta {
+    width: 100%;
+    margin-left: 0;
+    justify-content: center;
+  }
+}
+
+/* Short landscape phones: no room for a description row — the CTA still shows */
+@media (max-width: 899px) and (max-height: 560px) {
+  .lightbox__body {
+    display: none;
+  }
+}
+
+@media (max-width: 520px) {
+  .lightbox__panel {
+    padding: 0.8rem;
+    gap: 0.7rem;
+  }
+
+  .lightbox__close {
+    top: 0.6rem;
+    right: 0.6rem;
+  }
+
+  .lightbox__nav {
+    width: 2.4rem;
+    height: 2.4rem;
+  }
+
+  .lightbox__gallery {
+    padding-inline: 0.6rem;
+  }
+
+  .lightbox__body {
+    max-height: 18svh;
+    font-size: 0.92rem;
+  }
+
+  .lightbox__cta {
+    padding-inline: 1.1rem;
+    font-size: 0.66rem;
+  }
+}
+
+/* ── On-brand scrollbars for everything that scrolls in here: gold thumbs on faint rounded tracks ── */
+.lightbox :is(.lightbox__gallery, .lightbox__body) {
+  scrollbar-width: thin;
+  scrollbar-color: var(--c-gold) color-mix(in srgb, var(--c-cream) 8%, transparent);
+}
+
+@supports selector(::-webkit-scrollbar) {
+  .lightbox :is(.lightbox__gallery, .lightbox__body) {
+    scrollbar-width: auto;
+    scrollbar-color: auto;
+  }
+
+  .lightbox__gallery::-webkit-scrollbar {
+    height: 10px;
+  }
+
+  .lightbox__body::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .lightbox :is(.lightbox__gallery, .lightbox__body)::-webkit-scrollbar-track {
+    border-radius: var(--radius-pill);
+    background: color-mix(in srgb, var(--c-cream) 8%, transparent);
+  }
+
+  /* The gallery's track is inset from the stage's rounded corners, with a gap under the captions */
+  .lightbox__gallery::-webkit-scrollbar-track {
+    margin: 0 clamp(1rem, 12%, 6rem) 0;
+    border: 2px solid var(--c-void);
+  }
+
+  .lightbox :is(.lightbox__gallery, .lightbox__body)::-webkit-scrollbar-thumb {
+    border: 2px solid var(--c-void);
+    border-radius: var(--radius-pill);
+    background: var(--c-gold);
+  }
+
+  .lightbox__body::-webkit-scrollbar-thumb {
+    border-color: var(--c-midnight);
+  }
+
+  .lightbox :is(.lightbox__gallery, .lightbox__body)::-webkit-scrollbar-thumb:hover {
+    background: var(--c-orange);
+  }
+
+  .lightbox :is(.lightbox__gallery, .lightbox__body)::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lightbox__panel {
+    scale: 1;
+    translate: 0 0;
+    rotate: 0deg;
+    transition: none;
+  }
+
+  .lightbox__close,
+  .lightbox__nav {
+    transition: none;
+  }
+}
+
+/* Cover-art ▶ under each sleeve */
 .lightbox__play {
   --icon-accent: currentColor;
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
   flex: none;
-  min-height: 2.75rem;
-  padding: 0 1.1rem 0 0.9rem;
-  border: 1px solid color-mix(in srgb, var(--c-cream) 28%, transparent);
+  min-height: 2.4rem;
+  padding: 0 1rem 0 0.8rem;
+  border: 2px solid color-mix(in srgb, var(--c-cream) 28%, transparent);
   border-radius: var(--radius-pill);
   font-family: var(--font-subhead);
-  font-size: 0.7rem;
+  font-size: 0.68rem;
   letter-spacing: 0.16em;
   text-transform: uppercase;
   transition:
@@ -578,8 +980,8 @@
 }
 
 .lightbox__play .icon {
-  width: 1.1rem;
-  height: 1.1rem;
+  width: 1.05rem;
+  height: 1.05rem;
 }
 
 .lightbox__play:hover {

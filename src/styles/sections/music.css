@@ -61,6 +61,35 @@
   scrollbar-color: var(--c-gold) transparent;
 }
 
+/* Chrome / Edge / Safari: inset the full-bleed rail's scrollbar to the content column. Track margins only
+   exist on ::-webkit-scrollbar, which Chrome ignores while scrollbar-width/-color are set, so unset them
+   here; Firefox keeps the thin gold bar above (it has no way to inset one) */
+@supports selector(::-webkit-scrollbar) {
+  .track-rail {
+    scrollbar-width: auto;
+    scrollbar-color: auto;
+  }
+
+  .track-rail::-webkit-scrollbar {
+    height: 8px;
+  }
+
+  .track-rail::-webkit-scrollbar-track {
+    margin-inline: max(1.25rem, calc(50vw - 560px));
+    border-radius: var(--radius-pill);
+    background: color-mix(in srgb, var(--c-cream) 10%, transparent);
+  }
+
+  .track-rail::-webkit-scrollbar-thumb {
+    border-radius: var(--radius-pill);
+    background: var(--c-gold);
+  }
+
+  .track-rail::-webkit-scrollbar-thumb:hover {
+    background: var(--c-orange);
+  }
+}
+
 .track-rail.is-dragging {
   scroll-snap-type: none;
   scroll-behavior: auto;

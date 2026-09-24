@@ -47,9 +47,47 @@ export function initNav({ lenis = null, reducedMotion = false } = {}) {
       scrolled = s;
       header.dataset.state = s ? "scrolled" : "top";
     }
-    progress.style.transform = `scaleX(${Math.min(1, Math.max(0, p || 0))})`;
+    // pathLength=1: offset 1 = empty, 0 = full. At the very top it's hidden (a round cap would leave a dot)
+    const f = Math.min(1, Math.max(0, p || 0));
+    progress.style.strokeDashoffset = String(1 - f);
+    progress.style.opacity = f < 0.004 ? "0" : "1";
     surfaces(y);
   };
+
+  /* The meter's path hugs the capsule's lower outline: from half-way up the left end, round the bottom-left
+     corner, along the bottom, and round up into the right end. Rebuilt when the capsule resizes. */
+  const brownSvg = nav.querySelector("[data-nav-brown]");
+  const track = nav.querySelector("[data-nav-track]");
+  const gradient = brownSvg?.querySelector("linearGradient");
+  // Out of the capsule (it clips to inside its own border) and laid over its border box
+  if (brownSvg) nav.after(brownSvg);
+  const drawBrown = () => {
+    const w = nav.offsetWidth;
+    const h = nav.offsetHeight;
+    if (!brownSvg) return;
+    brownSvg.style.display = w && h ? "" : "none"; // phones: no capsule, no meter
+    if (!w || !h) return;
+    Object.assign(brownSvg.style, { left: `${nav.offsetLeft}px`, top: `${nav.offsetTop}px`, width: `${w}px`, height: `${h}px` });
+    // Centred ON the capsule's 1px border line
+    const border = parseFloat(getComputedStyle(nav).borderBottomWidth) || 1;
+    const inset = border / 2;
+    const r = Math.max(0, Math.min(parseFloat(getComputedStyle(nav).borderBottomLeftRadius) || h / 2, h / 2) - inset);
+    const cy = h - inset - r; // centre height of both end arcs
+    const yb = h - inset;
+    // Starts / ends part-way round each end: SPAN of the quarter arc from the bottom (90° = half-way up)
+    const SPAN = (55 * Math.PI) / 180;
+    const sx = r * Math.sin(SPAN);
+    const sy = cy + r * Math.cos(SPAN);
+    const d = `M ${inset + r - sx} ${sy} A ${r} ${r} 0 0 0 ${inset + r} ${yb} L ${w - inset - r} ${yb} A ${r} ${r} 0 0 0 ${w - inset - r + sx} ${sy}`;
+    brownSvg.setAttribute("viewBox", `0 0 ${w} ${h}`);
+    track.setAttribute("d", d);
+    progress.setAttribute("d", d);
+    gradient?.setAttribute("x2", String(w));
+  };
+  drawBrown();
+  const brownRO = new ResizeObserver(drawBrown);
+  brownRO.observe(nav);
+  brownRO.observe(nav.parentElement); // the capsule can move without resizing (header layout changes)
 
   /* ── 1b. What's under the stickers: over the orange Design flood and the gold Connect finale the
      orange / gold chip (and the brand's orange shadow) would melt into the page, so header.css turns them

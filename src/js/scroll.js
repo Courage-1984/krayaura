@@ -49,6 +49,27 @@ export function initScroll() {
     el.addEventListener("focusin", () => tween.progress() < 1 && tween.play(), { passive: true });
   });
 
+  // About stats count up as they arrive (years count from 2000, not 0). The final number is already in
+  // the DOM, so reduced motion and no-JS both read it straight away.
+  if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    document.querySelectorAll("[data-count]").forEach((el) => {
+      const to = Number(el.dataset.count);
+      const from = el.hasAttribute("data-plain") ? 2000 : 0;
+      const n = { v: from };
+      el.textContent = String(from);
+      gsap.to(n, {
+        v: to,
+        duration: 1.6,
+        ease: "power2.out",
+        snap: { v: 1 },
+        scrollTrigger: { trigger: el, start: "top 90%", once: true },
+        onStart: () => el.closest(".cassette")?.classList.add("is-counting"), // the reels roll while it counts
+        onUpdate: () => (el.textContent = String(n.v)),
+        onComplete: () => el.closest(".cassette")?.classList.remove("is-counting"),
+      });
+    });
+  }
+
   // Records get dealt into the crate like cards
   const rail = document.querySelector("[data-track-rail]");
   if (rail) {
