@@ -65,10 +65,15 @@ html.is-menu-open .nav-pill {
   box-shadow: 3px 3px 0 var(--c-orange);
 }
 
+/* The toaster is drawn in midnight, the pill's own colour, so it would vanish into it: trace it in its own
+   purple trim and give it the site's hard orange extrusion */
 .brand-mark__toaster {
+  --trim: #3d2bbc; /* Toaster-01.svg's trim lines */
   width: 36px;
   height: auto;
   overflow: visible;
+  filter: drop-shadow(1px 0 0 var(--trim)) drop-shadow(-1px 0 0 var(--trim)) drop-shadow(0 1px 0 var(--trim))
+    drop-shadow(0 -1px 0 var(--trim)) drop-shadow(2px 2px 0 var(--c-orange));
   transition: rotate 0.35s var(--ease-out);
 }
 
@@ -81,10 +86,10 @@ html.is-menu-open .nav-pill {
   rotate: -6deg;
 }
 
-/* SVG user units: 60 up the slot axis (x = 0.28 · rise) */
+/* SVG user units: 105 up the toaster's verticals (x = -0.05 · rise) */
 .brand-mark:hover .brand-mark__pop,
 .brand-mark:focus-visible .brand-mark__pop {
-  transform: translate(17px, -60px);
+  transform: translate(-5px, -105px);
 }
 
 /* 2 · Slot capsule: links sit in a toaster slot; the active one gets a slice of toast */

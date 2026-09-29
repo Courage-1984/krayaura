@@ -25,7 +25,7 @@ export function initNav({ lenis = null, reducedMotion = false } = {}) {
   const play = header.querySelector("[data-nav-play]");
   const playLabel = play.querySelector("[data-nav-play-label]");
   const eq = [...play.querySelectorAll(".nav-play__eq i")];
-  const hop = header.querySelector("[data-brand-hop]");
+  const hops = [...header.querySelectorAll("[data-brand-hop]")]; // one per cassette (each clipped by its slot)
   const toggle = header.querySelector(".nav-toggle");
   const toggleLabel = toggle.querySelector("[data-toggle-label]");
   const cards = [...drawer.querySelectorAll(".drawer-card")];
@@ -212,16 +212,17 @@ export function initNav({ lenis = null, reducedMotion = false } = {}) {
     if (!html.classList.contains("hero-controls-visible")) {
       for (let i = 0; i < 4; i++) eq[i].style.transform = `scaleY(${Math.min(1, 0.25 + s.eq[i] * 0.95)})`;
     }
-    if (hop && !reducedMotion) {
-      const h = s.bass * 40; // user units up the slot axis
-      hop.setAttribute("transform", `translate(${(h * 0.28).toFixed(1)} ${(-h).toFixed(1)})`);
+    if (hops.length && !reducedMotion) {
+      const h = s.bass * 70; // user units up the toaster (its verticals lean: x = -0.05 · rise)
+      const t = `translate(${(h * -0.05).toFixed(1)} ${(-h).toFixed(1)})`;
+      hops.forEach((g) => g.setAttribute("transform", t));
     }
   });
 
   /* ── 4. Mobile drawer ── */
   const main = document.querySelector("main");
   const drawerToaster = drawer.querySelector(".nav-drawer__toaster");
-  const drawerSlices = drawer.querySelector("[data-drawer-slices]");
+  const drawerSlices = [...drawer.querySelectorAll("[data-drawer-slices]")];
   const fades = drawer.querySelectorAll("[data-drawer-fade]");
   const outside = () => [main, document.querySelector(".mini-player"), header.querySelector(".brand-mark"), play];
   let open = false;
@@ -241,7 +242,7 @@ export function initNav({ lenis = null, reducedMotion = false } = {}) {
         .timeline()
         .fromTo(drawer, { clipPath: `circle(0% at ${at})` }, { clipPath: `circle(150% at ${at})`, duration: 0.5, ease: "power3.inOut" })
         .fromTo(drawerToaster, { yPercent: 70 }, { yPercent: 0, duration: 0.45, ease: "back.out(1.4)" }, 0.12)
-        .fromTo(drawerSlices, { x: 0, y: 0 }, { x: 20, y: -70, duration: 0.22, ease: "power2.out", yoyo: true, repeat: 1 }, 0.4)
+        .fromTo(drawerSlices, { x: 0, y: 0 }, { x: -6, y: -125, duration: 0.22, ease: "power2.out", yoyo: true, repeat: 1, stagger: 0.04 }, 0.4)
         // opacity, not autoAlpha: the first card takes focus before it's fully in
         .fromTo(cards, { y: 80, opacity: 0, scale: 0.92 }, { y: 0, opacity: 1, scale: 1, duration: 0.5, ease: "back.out(1.7)", stagger: { each: 0.06, from: "end" } }, 0.3)
         .fromTo(fades, { y: 14, opacity: 0 }, { y: 0, opacity: 1, duration: 0.35, stagger: 0.05 }, 0.5);

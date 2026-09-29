@@ -343,7 +343,7 @@ html.is-audio-playing .hero__echo {
   position: absolute;
   z-index: 3;
   width: var(--tw);
-  aspect-ratio: 526.8 / 516.93;
+  aspect-ratio: 914 / 883; /* the sprite's viewBox (scripts/toaster-sprite.mjs) */
   /* right edge 0.07em inside the last A (its side bearing is 0.058em) */
   left: calc(var(--wm) * 3.2266 - var(--tw));
   /* its bottom (the toaster's front corner) sinks --sink below the cap line */
@@ -400,7 +400,7 @@ html.is-audio-playing .hero__echo {
 
 .toaster,
 .toaster__rig,
-.toaster__slots,
+.toaster__slot,
 .toaster__slice,
 .toaster__lever {
   position: absolute;
@@ -423,28 +423,37 @@ html.is-audio-playing .hero__echo {
   overflow: visible;
 }
 
-/* Same line as #kr-slot-clip, in % of the stage: cassettes below it are inside the toaster.
-   Static clip on a wrapper, so the slices themselves move on the compositor. */
-.toaster__slots {
+/* Same lines as #kr-clip-back / #kr-clip-front, in % of the stage (scripts/toaster-sprite.mjs prints
+   them): each cassette is hidden below its own slot's front lip. Static clip on a wrapper, so the
+   slices themselves move on the compositor. */
+.toaster__slot--back {
+  clip-path: polygon(-15% -100%, 115% -100%, 115% 3.5%, 62.3% 24.3%, 25% 39%, 15.2% 36.8%, -15% 29.9%);
+}
+
+.toaster__slot--front {
   clip-path: polygon(
-    -12% -90%,
-    112% -90%,
-    112% 39.66%,
-    82.57% 40.24%,
-    43.28% 48.75%,
-    37.21% 45.65%,
-    28.47% 44.11%,
-    23.16% 41.78%,
-    -12% 41.78%
+    -15% -100%,
+    115% -100%,
+    115% 7.8%,
+    72.1% 26.8%,
+    69.6% 27.9%,
+    63.3% 30.5%,
+    55.1% 34%,
+    46.9% 37.6%,
+    40.4% 40.5%,
+    37.6% 42.1%,
+    29.6% 40.7%,
+    -15% 32.5%
   );
 }
 
+/* Pivots: the centre of each slot */
 .toaster__slice--back {
-  transform-origin: 46.5% 25.1%;
+  transform-origin: 39.4% 30.6%;
 }
 
 .toaster__slice--front {
-  transform-origin: 62.6% 33.9%;
+  transform-origin: 51.7% 33.7%;
 }
 
 html.is-audio-playing .toaster__slice {
@@ -474,8 +483,8 @@ html.is-audio-playing .toaster__slice {
 .toaster__lever-btn {
   position: absolute;
   z-index: 4;
-  left: 19.2%;
-  top: 65%;
+  left: 15.8%;
+  top: 61.7%;
   width: max(44px, 16%);
   height: max(44px, 12%);
   translate: -50% -50%;

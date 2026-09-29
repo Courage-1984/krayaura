@@ -43,6 +43,7 @@ Everything in `public/media` and `src/data` is generated — edit the sources, t
 | `python scripts/fetch-discography.py` | `assets/spotify_&_apple_music_links.md`, iTunes API, Spotify oEmbed | `src/data/discography.json`, missing covers → `assets/itunes_covers/` |
 | `python scripts/copy-media.py` | `assets/new_images/`, `assets/itunes_covers/`, `assets/behance/`, channel art | resized `public/media/**`, `src/data/behance.json` |
 | `python scripts/make-brand-assets.py` | logo, fonts, Crash cover | `public/favicon.*`, `public/icons/*`, `public/media/brand/share.jpg` |
+| `node scripts/toaster-sprite.mjs` | `assets/logos/Toaster-01.svg`, `assets/logos/Cassete-01.svg` | the toaster sprite + its viewBoxes in `index.html` (hero, header, menu); prints the slot clips / pivots `hero.css` and `toaster.js` mirror |
 
 New release out? Add its Spotify + Apple links to `assets/spotify_&_apple_music_links.md`, then run
 `fetch-discography.py` and `copy-media.py`. The crate, timeline, tracklists and previews update themselves.

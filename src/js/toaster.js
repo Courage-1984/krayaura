@@ -20,15 +20,16 @@ gsap.registerPlugin(ScrollTrigger);
  *   .hero__echo     CSS `translate` (per-frame kick)
  */
 
-/* Toaster geometry, in the logo's viewBox units (526.8 × 516.93) */
-const VB_W = 526.8;
-const VB_H = 516.93;
-const SLOT_LEAN = 0.28; // the slots lean: a cassette rising 1 unit also moves 0.28 right
-const LEVER_LEAN = 0.27; // the lever track leans the other way
+/* Toaster geometry, in the sprite's viewBox units (914 × 883, scripts/toaster-sprite.mjs) */
+const VB_W = 914;
+const VB_H = 883;
+const SLOT_LEAN = -0.05; // his toaster's verticals lean: a cassette rising 1 unit also moves 0.05 left
+const LEVER_LEAN = 0.05; // the paddle slides down its track, drifting 0.05 left per unit
+const LEVER_DOWN = 70; // charged: the paddle slammed down its track
 const REST = 0;
-const POPPED = 40; // cassettes stick out while a track plays
-const WARM = -20; // paused: half sunk, "keeping warm"
-const SUNK = -150; // charged: all the way down, only the tape curls show
+const POPPED = 60; // cassettes stick out while a track plays
+const WARM = -35; // paused: half sunk, "keeping warm"
+const SUNK = -200; // charged: all the way down, only the tape loops show
 
 /** A slice moved `u` units up its slot (negative = down), as % of its full-stage layer */
 const slot = (u) => ({ yPercent: (-u / VB_H) * 100, xPercent: ((u * SLOT_LEAN) / VB_W) * 100 });
@@ -145,11 +146,11 @@ export function initToaster({ heroApi, reducedMotion = false }) {
     hero.classList.add("is-used");
     if (!animate()) {
       gsap.set(slices, { ...slot(SUNK), rotation: 0 });
-      gsap.set(lever, leverAt(26));
+      gsap.set(lever, leverAt(LEVER_DOWN));
       return;
     }
     timeline()
-      .to(lever, { ...leverAt(26), duration: 0.12, ease: "power4.in" }, 0)
+      .to(lever, { ...leverAt(LEVER_DOWN), duration: 0.12, ease: "power4.in" }, 0)
       .to(back, { ...slot(SUNK), rotation: 0, duration: 0.14, ease: "power3.in" }, 0)
       .to(front, { ...slot(SUNK), rotation: 0, duration: 0.14, ease: "power3.in" }, 0.03)
       .to(rig, { scaleX: 1.03, scaleY: 0.94, duration: 0.12, ease: "power2.out" }, 0)
@@ -186,8 +187,8 @@ export function initToaster({ heroApi, reducedMotion = false }) {
       .to(rig, { scaleX: 0.96, scaleY: 1.07, duration: 0.1, ease: "power2.out" }, 0)
       .to(rig, { scaleX: 1, scaleY: 1, duration: 0.7, ease: "elastic.out(1, 0.4)" }, 0.1)
       .to(lever, { ...leverAt(0), duration: 0.4, ease: "back.out(3)" }, 0)
-      .to(back, { ...slot(150), rotation: -8, duration: 0.38, ease: "power2.out" }, 0)
-      .to(front, { ...slot(115), rotation: 6, duration: 0.36, ease: "power2.out" }, 0.04)
+      .to(back, { ...slot(260), rotation: -8, duration: 0.38, ease: "power2.out" }, 0)
+      .to(front, { ...slot(200), rotation: 6, duration: 0.36, ease: "power2.out" }, 0.04)
       .to(back, { ...slot(POPPED), rotation: 0, duration: 0.5, ease: "bounce.out" }, 0.38)
       .to(front, { ...slot(POPPED), rotation: 0, duration: 0.5, ease: "bounce.out" }, 0.4);
     dip(t, 0.022 * wm, 0.1);
@@ -309,10 +310,10 @@ export function initToaster({ heroApi, reducedMotion = false }) {
     serve.bar.style.transform = `scaleX(${state.progress})`; // information, so it runs with reduced motion too
     if (reducedMotion) return;
     // Cassettes rest just proud of the slots and jump out on each beat
-    const hop = (0.12 * s.bass + 0.88 * s.kick) * 40 * unit;
+    const hop = (0.12 * s.bass + 0.88 * s.kick) * 70 * unit;
     back.style.translate = `${hop * SLOT_LEAN}px ${-hop}px`;
     // the front one lags a hair behind, so the pair reads as two bouncing slices, not one block
-    const hopFront = (0.12 * s.bass + 0.88 * Math.min(1, s.kick * 0.9)) * 34 * unit;
+    const hopFront = (0.12 * s.bass + 0.88 * Math.min(1, s.kick * 0.9)) * 60 * unit;
     front.style.translate = `${hopFront * SLOT_LEAN}px ${-hopFront}px`;
     const o = (0.03 + s.kick * 0.075) * wm; // CRASH's title trail kicks away from KRAYAURA on the beat
     echo.style.translate = `${o}px ${o}px`;
@@ -349,9 +350,9 @@ export function initToaster({ heroApi, reducedMotion = false }) {
     const anticipate = (on) => {
       if (mode !== "rest" && mode !== "warm") return;
       const base = mode === "warm" ? WARM : REST;
-      gsap.to(lever, { ...leverAt(on ? 8 : 0), duration: on ? 0.18 : 0.4, ease: on ? "power2.out" : "back.out(3)", overwrite: "auto" });
+      gsap.to(lever, { ...leverAt(on ? 14 : 0), duration: on ? 0.18 : 0.4, ease: on ? "power2.out" : "back.out(3)", overwrite: "auto" });
       gsap.to(slices, {
-        ...slot(on ? base - 10 : base),
+        ...slot(on ? base - 18 : base),
         duration: on ? 0.2 : 0.45,
         ease: on ? "power2.out" : "back.out(3)",
         stagger: 0.03,
@@ -412,7 +413,7 @@ export function initToaster({ heroApi, reducedMotion = false }) {
         .addLabel("land")
         .to(rig, { scaleX: 1.08, scaleY: 0.9, duration: 0.07, ease: "power2.out" }, "land")
         .to(rig, { scaleX: 1, scaleY: 1, duration: 0.5, ease: "elastic.out(1, 0.45)" }, "land+=0.07")
-        .to(slices, { ...slot(34), duration: 0.16, ease: "power2.out", stagger: 0.03 }, "land")
+        .to(slices, { ...slot(60), duration: 0.16, ease: "power2.out", stagger: 0.03 }, "land")
         .to(slices, { ...slot(REST), duration: 0.45, ease: "bounce.out", stagger: 0.03 }, "land+=0.16");
       dip(t, 0.016 * wm, t.labels.land);
     });
@@ -441,7 +442,7 @@ export function initToaster({ heroApi, reducedMotion = false }) {
       .to(rig, { scaleX: 1.12, scaleY: 0.85, duration: 0.08, ease: "power2.out" }, "land")
       .to(rig, { scaleX: 1, scaleY: 1, duration: 0.6, ease: "elastic.out(1, 0.45)" }, "land+=0.08")
       .fromTo(shadow, { scaleX: 0, autoAlpha: 0 }, { scaleX: 1, autoAlpha: 1, duration: 0.4, ease: "power2.out" }, "land")
-      .to(slices, { ...slot(40), duration: 0.14, ease: "power2.out", stagger: 0.03 }, "land")
+      .to(slices, { ...slot(70), duration: 0.14, ease: "power2.out", stagger: 0.03 }, "land")
       .to(slices, { ...slot(REST), duration: 0.5, ease: "bounce.out", stagger: 0.03 }, "land+=0.14")
       .fromTo(serve.root, { scale: 1.35, rotation: -12, autoAlpha: 0 }, { scale: 1, rotation: 0, autoAlpha: 1, duration: 0.35, ease: "power4.out" }, "land+=0.1")
       .fromTo(statement, { y: 24, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.5, ease: "power3.out", stagger: 0.08 }, "land+=0.12")
