@@ -55,7 +55,7 @@
   fill: color-mix(in srgb, var(--c-orange) 25%, transparent);
 }
 
-/* Sits to the right of "Book / collab", arrowhead pointing back at the button */
+/* Sits to the right of the Connect button, arrowhead pointing back at it */
 .doodle--arrow {
   position: absolute;
   left: calc(100% + 0.6rem);
@@ -65,7 +65,7 @@
   transform: translateY(-65%) scaleX(-1) rotate(-10deg);
 }
 
-.connect [data-booking] {
+.connect [data-contact-menu] {
   position: relative;
 }
 
@@ -114,51 +114,91 @@
 /* ─── Marquee band ──────────────────────────────────────────────────────── */
 
 .marquee {
+  --marquee-h: 5.5rem;
   position: relative;
   z-index: 4;
   overflow: hidden;
-  padding-block: 1rem;
-  background: var(--c-orange);
+  min-height: var(--marquee-h);
+  padding-block: 0.55rem;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      var(--c-orange) 0 18px,
+      color-mix(in srgb, var(--c-orange-bright) 80%, var(--c-orange)) 18px 20px
+    );
   color: var(--c-void);
-  transform: rotate(-2deg) scale(1.04);
-  /* The -2° tilt lifts the band's right end by ~tan(2°)·50vw — clear that so it never
-     overlaps the hero, then leave breathing room before the music section */
-  margin-top: calc(1.75vw + clamp(1.5rem, 4vw, 3rem));
+  transform: rotate(-1.4deg) scale(1.03);
+  margin-top: 0;
   margin-bottom: clamp(0.5rem, 2vw, 1.5rem);
-  box-shadow: 0 8px 0 var(--c-void), 0 12px 0 var(--c-gold);
+  box-shadow: 0 6px 0 var(--c-void), 0 10px 0 var(--c-gold);
 }
 
 .marquee__track {
   display: flex;
   width: max-content;
   will-change: transform;
+  align-items: center;
 }
 
 .marquee__run {
   display: flex;
   align-items: center;
+  gap: 0.75rem;
   flex: none;
+  padding-inline: 0.4rem;
 }
 
-.marquee__word {
+.marquee__ticket {
+  --hop: 0;
+  display: grid;
+  gap: 0.08rem;
+  padding: 0.28rem 0.85rem 0.32rem;
+  border: 2px solid var(--c-void);
+  background: var(--c-cream);
+  box-shadow: 3px 3px 0 var(--c-void);
+  translate: 0 calc(var(--hop) * -1px);
+  rotate: -1.5deg;
+}
+
+.marquee__ticket--mia {
+  background: #000;
+  color: var(--mia-white);
+  border-color: var(--mia-blue);
+  box-shadow: 3px 3px 0 var(--mia-blue);
+  rotate: 2deg;
+}
+
+.marquee__ticket-kicker {
+  font-family: var(--font-subhead);
+  font-size: 0.55rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+
+.marquee__ticket-title {
   font-family: var(--font-heading);
-  font-size: clamp(1.8rem, 5vw, 3.2rem);
+  font-size: clamp(1.05rem, 2.8vw, 1.55rem);
   line-height: 1;
   text-transform: uppercase;
   white-space: nowrap;
-  padding-inline: 1.1rem;
 }
 
-.marquee__word.is-outline {
-  color: transparent;
-  -webkit-text-stroke: 2px var(--c-void);
+.marquee__ticket-title.is-mia,
+.marquee__ticket-title .mia-mark {
+  font-family: var(--font-mia);
+  font-weight: 400;
+  text-transform: none;
+  font-size: clamp(1.35rem, 3.2vw, 1.9rem);
+  color: var(--mia-white);
 }
 
 .marquee__sep {
   --icon-accent: var(--c-cream);
-  width: clamp(1.6rem, 3.5vw, 2.4rem);
-  height: clamp(1.6rem, 3.5vw, 2.4rem);
+  width: clamp(1.2rem, 2.6vw, 1.8rem);
+  height: clamp(1.2rem, 2.6vw, 1.8rem);
   color: var(--c-void);
+  margin-inline: 0.35rem;
 }
 
 /* ─── Sticker hover, site-wide ──────────────────────────────────────────── */
@@ -224,6 +264,10 @@
 
 @media (prefers-reduced-motion: reduce) {
   .marquee {
-    transform: rotate(-2deg);
+    transform: rotate(-1.4deg);
+  }
+
+  .marquee__ticket {
+    translate: none;
   }
 }

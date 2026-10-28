@@ -1,75 +1,94 @@
-/* ─── Hero: "Fresh out the toaster" ────────────────────────────────────────
-   A 2000s cartoon title card: 14 rays (one per CRASH track) fan out of an orange sun that rises
-   behind the toaster, and the toaster sits on KRAYAURA as if the letters were the counter.
-
-   Bolde 700 metrics (measured): "KRAYAURA" = 3.297em wide at letter-spacing -0.01em,
-   caps 0.511em tall; with line-height 0.66 the cap line sits 0.139em below the line-box top
-   and the baseline 0.01em above its bottom. The counter (cap line) is therefore
-   0.521em above the bottom of the h1 box, so every position below is plain CSS, no JS layout.
-   (These vars use cqi, so they're only read by descendants of .hero, the container.) */
+/* ─── Hero: "Now serving M.I.A." ───────────────────────────────────────────
+   The M.I.A. cover (black and white) is the backdrop; the giant dripping-marker M.I.A. in the headline dances to
+   the music. The cover uses the same --lit response (lift, scale, blue glow, red edge). The toaster is pinned
+   to the bottom-right corner of the first screen, in front of a blue sun. No CRASH rays, no KRAYAURA wordmark up here any more.
+   Colours: black, white, M.I.A. blue, and red only as the accent. (.hero uses cqi, so these vars are only
+   read by its descendants: the section is the size container.) */
 
 .hero {
-  --gutter: 16px;
+  --gutter: var(--page-gutter);
   --inner: calc(100cqi - var(--gutter) * 2);
-  --wm: min(calc(var(--inner) / 3.32), 43svh); /* wordmark font-size: fills the row, capped by height */
-  --tw: min(72cqi, 36svh, 320px); /* toaster stage width */
-  --sink: calc(var(--tw) * 0.02); /* front corner sinks 2% into the letters */
-  --pad-b: 16px;
-  --nav-clear: 84px; /* 10px + 52px header + air */
-  --counter: calc(var(--pad-b) + var(--wm) * 0.521); /* cap line, measured up from the hero bottom */
+  /* M.I.A. font-size. The dripping word is ~1.20em wide (the old brush was ~1.08em), so 0.64
+     keeps it the same fraction of the column. Capped by the height. */
+  --mia: min(calc(var(--inner) * 0.64), 25svh);
+  /* Toaster sits in the viewport's bottom-right, larger than a badge on the cover */
+  --tw: min(44cqi, 24svh, 200px);
+  --sink: calc(var(--tw) * 0.02);
+  /* front corner sinks 2% into the counter */
+  --counter: clamp(36px, 6svh, 56px);
+  /* the counter's height, up from the hero bottom */
+  --marquee-h: 5.5rem;
+  --cover-max: calc(100svh - var(--marquee-h) - var(--hero-pad-top) - var(--hero-pad-bottom));
 
   position: relative;
-  overflow: hidden;
-  isolation: isolate;
+  overflow: visible;
   container-type: inline-size;
-  background: var(--c-void);
+  background: #000;
+  min-height: calc(100svh - var(--marquee-h));
 }
 
-.hero__canvas,
-.hero__fallback {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
+/* Cover lives in the visual column. --lit (toaster.js) is the same music bus as the M.I.A. letters. */
+.hero__banner {
+  --lit: 0;
+  position: relative;
+  z-index: 1;
+  grid-area: stack;
+  width: 100%;
+  aspect-ratio: 1;
+  translate: 0 calc(var(--lit) * -5.5%);
+  scale: calc(1 + var(--lit) * 0.1);
+  transform-origin: 50% 88%;
+  pointer-events: none;
+  overflow: visible;
+  border-radius: var(--radius-lg);
+  box-shadow:
+    8px 8px 0 var(--mia-blue),
+    0 0 calc(var(--lit) * 8cqi) rgb(16 162 255 / calc(var(--lit) * 0.95)),
+    calc(var(--lit) * -0.6cqi) 0 0 rgb(255 16 34 / calc(var(--lit) * 0.9));
+}
+
+html.is-audio-playing .hero__banner {
+  will-change: translate, scale;
+}
+
+.hero__banner picture {
+  display: block;
   width: 100%;
   height: 100%;
+  overflow: hidden;
+  border-radius: inherit;
 }
 
-/* Reduced motion / no WebGL: the same fan of rays as a static conic gradient, same origin */
-.hero__fallback {
-  display: none;
-  background:
-    radial-gradient(
-      circle at var(--ox, 72%) var(--oy, 58%),
-      color-mix(in srgb, var(--c-red) 40%, var(--c-orange)) 0,
-      color-mix(in srgb, var(--c-orange) 30%, transparent) calc(var(--or, 160px) * 1.4),
-      transparent calc(var(--or, 160px) * 2.4)
-    ),
-    repeating-conic-gradient(
-      from -100deg at var(--ox, 72%) var(--oy, 58%),
-      color-mix(in srgb, var(--c-royal) 75%, var(--c-midnight)) 0deg 7.14deg,
-      transparent 7.14deg 14.29deg
-    ),
-    linear-gradient(180deg, var(--c-midnight), var(--c-void) 80%);
+.hero__banner img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Artwork is already B&W with a blue M.I.A. mark — don't grey that away into the black page */
+  filter: brightness(1.12) contrast(1.08);
 }
 
-.hero.reduced-motion .hero__canvas {
-  display: none;
+/* Blue light behind the toaster; the energy of the music turns it up */
+.hero__glow {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.35;
+  background: radial-gradient(ellipse 55% 50% at 74% 78%,
+      color-mix(in srgb, var(--mia-blue) 55%, transparent),
+      transparent 70%);
 }
 
-.hero.reduced-motion .hero__fallback {
-  display: block;
-}
-
-/* Legibility for the copy over the rays */
+/* Legibility for the copy column only — the cover in the visual lane stays unwashed */
 .hero__veil {
   position: absolute;
   inset: 0;
-  z-index: 1;
+  z-index: 0;
   pointer-events: none;
-  background: linear-gradient(180deg, color-mix(in srgb, var(--c-void) 72%, transparent) 0 28%, transparent 52%);
+  background: linear-gradient(180deg, rgb(0 0 0 / 0.55) 0, transparent 48%);
 }
 
-/* The counter: rays and sun stop at the cap line, the letters stand on a dark floor */
+/* The counter: the toaster stands on it */
 .hero__floor {
   position: absolute;
   z-index: 1;
@@ -77,8 +96,8 @@
   right: 0;
   bottom: 0;
   height: var(--counter);
-  background: var(--c-void);
-  box-shadow: 0 -2px 0 color-mix(in srgb, var(--c-cream) 10%, transparent);
+  background: #000;
+  box-shadow: 0 -2px 0 color-mix(in srgb, var(--mia-white) 16%, transparent);
   pointer-events: none;
 }
 
@@ -86,83 +105,38 @@
   position: relative;
   z-index: 2;
   width: var(--inner);
-  min-height: 100svh;
+  min-height: calc(100svh - var(--marquee-h));
   margin-inline: auto;
-  padding-top: var(--nav-clear);
-  padding-bottom: var(--pad-b);
-  display: grid;
-  grid-template-areas:
-    "copy"
-    "shelf";
-  grid-template-rows: auto 1fr;
+  padding-top: max(var(--hero-pad-top), calc(var(--nav-h) + 16px));
+  padding-bottom: var(--hero-pad-bottom);
+  display: flex;
+  flex-direction: column-reverse;
+  gap: var(--hero-gap);
 }
 
-/* ─── Wordmark (the counter) ─── */
-
-.hero__shelf {
-  grid-area: shelf;
-  align-self: end;
-  justify-self: start;
-  padding-top: calc(var(--tw) * 1.2); /* mobile: room for the sun + popped cassettes above the counter */
-}
-
-.hero__wordmark {
+.hero__visual {
   position: relative;
-  isolation: isolate; /* keeps the echo's z-index:-1 behind the letters, not behind the page */
-  font-size: var(--wm);
-  line-height: 0.66;
-  letter-spacing: -0.01em;
-  white-space: nowrap;
-  color: var(--c-cream);
-}
-
-.hero__letters {
-  display: block;
-  text-shadow: 0.035em 0.035em 0 var(--c-royal); /* hard cartoon extrusion */
-}
-
-.hero__letters > span {
-  display: inline-block;
-}
-
-/* inline-block letters lose the font's kerning, so the three pairs Bolde kerns are put back by hand
-   (measured in Chrome from Bolde 700's GPOS). Keeps the word 3.297em wide and matching .hero__echo. */
-.hero__letters > span:nth-child(3) {
-  margin-right: -0.156em; /* A→Y */
-}
-
-.hero__letters > span:nth-child(4) {
-  margin-right: -0.157em; /* Y→A */
-}
-
-.hero__letters > span:nth-child(5) {
-  margin-right: -0.039em; /* A→U */
-}
-
-/* CRASH's glowing title trail, as an orange outline that pulls away on the kick (JS writes `translate`) */
-.hero__echo {
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  color: transparent;
-  -webkit-text-stroke: 0.014em var(--c-orange);
-  translate: 0.035em 0.035em;
-  opacity: 0;
-  transition: opacity 0.45s var(--ease-soft);
-}
-
-html.is-audio-playing .hero__echo {
-  opacity: 1;
-  will-change: translate;
+  z-index: 1;
+  display: grid;
+  /* Column is the cover box, so the toaster's place-self:end lands on the art's corner */
+  grid-template-columns: minmax(0, min(100%, var(--cover-max)));
+  grid-template-areas: "stack";
+  justify-content: center;
+  align-items: center;
+  min-width: 0;
 }
 
 /* ─── Copy ─── */
 
 .hero__copy {
-  grid-area: copy;
   position: relative;
-  z-index: 4;
-  align-self: start;
+  z-index: 2;
+  min-width: 0;
+  pointer-events: none;
+}
+
+.hero__copy>* {
+  pointer-events: auto;
 }
 
 /* "Now serving" ticket: the share-card sticker, later the now-playing readout */
@@ -174,7 +148,7 @@ html.is-audio-playing .hero__echo {
   align-items: center;
   column-gap: 0.9rem;
   width: fit-content;
-  margin-bottom: 1.1rem;
+  margin-bottom: 24px;
   color: var(--c-cream);
 }
 
@@ -182,15 +156,23 @@ html.is-audio-playing .hero__echo {
   grid-row: 1 / span 4;
   width: var(--cover);
   aspect-ratio: 1;
-  overflow: hidden;
-  border: 3px solid var(--c-cream);
+  overflow: visible;
+  border: 3px solid var(--mia-white);
   border-radius: var(--radius-sm);
-  background: var(--c-midnight);
-  box-shadow: 5px 5px 0 var(--c-orange);
+  background: #000;
+  box-shadow: 5px 5px 0 var(--mia-blue);
   rotate: -5deg;
   transition:
     rotate 0.3s var(--ease-out),
     box-shadow 0.3s var(--ease-out);
+}
+
+.serve__cover picture {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: inherit;
 }
 
 .serve__cover img {
@@ -202,28 +184,29 @@ html.is-audio-playing .hero__echo {
 .serve:hover .serve__cover,
 .serve:focus-visible .serve__cover {
   rotate: -2deg;
-  box-shadow: 7px 7px 0 var(--c-orange);
+  box-shadow: 7px 7px 0 var(--mia-blue);
 }
 
 .serve__pill {
   justify-self: start;
   padding: 0.32rem 0.7rem 0.28rem;
   border-radius: var(--radius-pill);
-  background: var(--c-red);
-  color: var(--c-void); /* 4.9:1 — cream on red would only be 3.3:1 */
+  background: var(--mia-red);
+  color: var(--c-void);
+  /* 4.9:1: cream on red would only be 3.3:1 */
   font-family: var(--font-subhead);
   font-weight: 700;
   font-size: 0.62rem;
   line-height: 1;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  box-shadow: 2px 2px 0 var(--c-gold);
+  box-shadow: 2px 2px 0 var(--mia-white);
   rotate: -3deg;
 }
 
 .serve.is-live .serve__pill {
-  background: var(--c-gold);
-  box-shadow: 2px 2px 0 var(--c-red);
+  background: var(--mia-white);
+  box-shadow: 2px 2px 0 var(--mia-red);
 }
 
 .serve__title {
@@ -237,6 +220,15 @@ html.is-audio-playing .hero__echo {
   text-transform: uppercase;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+/* The idle title is the album name: in the brush font, like everywhere else on the site */
+.serve__title.is-mia {
+  font-family: var(--font-mia);
+  font-weight: 400;
+  font-size: 1.7rem;
+  line-height: 1;
+  text-transform: none;
 }
 
 .serve__meta {
@@ -253,63 +245,61 @@ html.is-audio-playing .hero__echo {
   margin-top: 0.4rem;
   overflow: hidden;
   border-radius: var(--radius-pill);
-  background: color-mix(in srgb, var(--c-cream) 12%, transparent);
+  background: color-mix(in srgb, var(--c-cream) 14%, transparent);
 }
 
 .serve__brown i {
   display: block;
   height: 100%;
-  background: var(--browning);
+  background: linear-gradient(90deg, var(--mia-white), var(--mia-blue) 60%, var(--mia-red));
   transform-origin: left;
   transform: scaleX(0);
 }
 
-.hero__statement {
+/* "Breathing Through My Art" over the giant M.I.A. */
+.hero__heading {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.hero__sub {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
   font-family: var(--font-subhead);
   font-weight: 700;
-  font-size: clamp(1.75rem, 3.4vw, 3.25rem);
-  line-height: 1.04;
-  letter-spacing: -0.01em;
-  color: var(--c-cream);
+  font-size: clamp(0.78rem, 3.4cqi, 1.05rem);
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--mia-white);
 }
 
-.hero__statement > span {
+.hero__sub::before {
+  content: "";
+  flex: none;
+  width: 2rem;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--mia-red);
+}
+
+.hero__title {
   display: block;
-}
-
-.hero__hot {
-  position: relative;
-  font-style: normal;
+  margin: 0 0 24px -0.04em;
+  /* room for the blue drop-shadow; the M leans in a touch */
+  font-family: var(--font-mia);
+  font-weight: 400;
+  font-size: var(--mia);
+  line-height: 1;
+  /* the face's own ascent/descent already include the drips */
   white-space: nowrap;
-  color: var(--c-orange);
-}
-
-.doodle--hot {
-  position: absolute;
-  left: -3%;
-  bottom: -0.3em;
-  width: 106%;
-  height: 0.34em;
-}
-
-/* .hero__hot prefix: brand.css (loaded later) styles every .doodle path */
-.hero__hot .doodle--hot path {
-  stroke-width: 4;
-}
-
-.hero__hot .doodle--hot path + path {
-  stroke: var(--c-gold);
-  stroke-width: 2.5;
-}
-
-/* Hand-placed doodles animate from JS (initDoodles skips [data-manual]); drawn by default */
-.doodle[data-manual] path {
-  stroke-dasharray: 1;
-  stroke-dashoffset: 0;
+  color: var(--mia-white);
 }
 
 .hero__roles {
-  margin-top: 0.9rem;
+  margin: 0;
   font-family: var(--font-subhead);
   font-size: 0.66rem;
   letter-spacing: 0.14em;
@@ -319,14 +309,14 @@ html.is-audio-playing .hero__echo {
 
 .hero__cta {
   display: flex;
-  gap: 0.75rem;
-  margin-top: 1.25rem;
+  gap: var(--cta-gap);
+  margin-top: 32px;
 }
 
 .hero__cta .btn {
   flex: 1 1 0;
-  min-height: 3rem;
-  padding-inline: 1rem;
+  min-height: 0;
+  padding: 12px 24px;
 }
 
 .hero__cta .btn--listen {
@@ -337,23 +327,25 @@ html.is-audio-playing .hero__echo {
   --icon-accent: var(--c-red);
 }
 
-/* ─── The stage: sun + toaster, parked on the counter ─── */
-
+/* Sun + toaster, pinned to the bottom-right corner of the first screen. The hero is shorter than
+   the viewport by the marquee, so the stage drops to 100svh. */
 .hero__stage {
   position: absolute;
-  z-index: 3;
+  z-index: 6;
+  right: 0;
+  bottom: calc(100% - 100svh);
   width: var(--tw);
-  aspect-ratio: 914 / 883; /* the sprite's viewBox (scripts/toaster-sprite.mjs) */
-  /* right edge 0.07em inside the last A (its side bearing is 0.058em) */
-  left: calc(var(--wm) * 3.2266 - var(--tw));
-  /* its bottom (the toaster's front corner) sinks --sink below the cap line */
-  bottom: calc(var(--counter) - var(--sink));
+  max-width: none;
+  aspect-ratio: 914 / 883;
+  /* the sprite's viewBox (scripts/toaster-sprite.mjs) */
+  margin: 0;
 }
 
-/* Only the part above the counter shows, so it reads as a sun rising behind the letters */
+/* Only the part above the counter shows, so it reads as a sun rising behind the toaster */
 .hero__sun {
   position: absolute;
-  left: -17.5%; /* centred, without translate: toaster.js reads its offsets for the ray origin */
+  left: -17.5%;
+  /* centred, without translate: toaster.js reads its offsets */
   bottom: var(--sink);
   width: 135%;
   height: calc(var(--tw) * 1.145);
@@ -366,13 +358,11 @@ html.is-audio-playing .hero__echo {
   inset: 0 0 auto;
   aspect-ratio: 1;
   border-radius: 50%;
-  background: radial-gradient(
-    circle at 46% 40%,
-    var(--c-orange-bright) 0 28%,
-    var(--c-orange) 58%,
-    color-mix(in srgb, var(--c-orange) 78%, var(--c-red)) 100%
-  );
-  box-shadow: inset 0 0 0 calc(var(--tw) * 0.014) color-mix(in srgb, var(--c-red) 45%, var(--c-orange));
+  background: radial-gradient(circle at 46% 40%,
+      color-mix(in srgb, var(--mia-blue) 70%, var(--mia-white)) 0 24%,
+      var(--mia-blue) 56%,
+      var(--mia-blue-deep) 100%);
+  box-shadow: inset 0 0 0 calc(var(--tw) * 0.014) color-mix(in srgb, var(--mia-white) 55%, var(--mia-blue));
 }
 
 /* Comic halftone on the sun's lower-left, like his print work */
@@ -381,7 +371,7 @@ html.is-audio-playing .hero__echo {
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  background-image: radial-gradient(circle, color-mix(in srgb, var(--c-void) 45%, transparent) 1.2px, transparent 1.8px);
+  background-image: radial-gradient(circle, rgb(0 0 0 / 0.5) 1.2px, transparent 1.8px);
   background-size: 10px 10px;
   mask-image: radial-gradient(circle at 18% 78%, #000 0 22%, transparent 58%);
   opacity: 0.55;
@@ -395,7 +385,7 @@ html.is-audio-playing .hero__echo {
   height: calc(var(--tw) * 0.09);
   border-radius: 50%;
   translate: -50% 45%;
-  background: radial-gradient(closest-side, color-mix(in srgb, var(--c-void) 75%, transparent), transparent);
+  background: radial-gradient(closest-side, rgb(0 0 0 / 0.75), transparent);
 }
 
 .toaster,
@@ -405,6 +395,10 @@ html.is-audio-playing .hero__echo {
 .toaster__lever {
   position: absolute;
   inset: 0;
+}
+
+.toaster__lever {
+  pointer-events: none;
 }
 
 .toaster {
@@ -431,20 +425,18 @@ html.is-audio-playing .hero__echo {
 }
 
 .toaster__slot--front {
-  clip-path: polygon(
-    -15% -100%,
-    115% -100%,
-    115% 7.8%,
-    72.1% 26.8%,
-    69.6% 27.9%,
-    63.3% 30.5%,
-    55.1% 34%,
-    46.9% 37.6%,
-    40.4% 40.5%,
-    37.6% 42.1%,
-    29.6% 40.7%,
-    -15% 32.5%
-  );
+  clip-path: polygon(-15% -100%,
+      115% -100%,
+      115% 7.8%,
+      72.1% 26.8%,
+      69.6% 27.9%,
+      63.3% 30.5%,
+      55.1% 34%,
+      46.9% 37.6%,
+      40.4% 40.5%,
+      37.6% 42.1%,
+      29.6% 40.7%,
+      -15% 32.5%);
 }
 
 /* Pivots: the centre of each slot */
@@ -463,32 +455,36 @@ html.is-audio-playing .toaster__slice {
 .toaster__ding {
   position: absolute;
   top: -4%;
-  right: -2%;
+  right: 0;
   padding: 0.38em 0.75em 0.32em;
   border-radius: var(--radius-pill);
-  background: var(--c-gold);
-  color: var(--c-void);
+  background: var(--mia-white);
+  color: #000;
   font-family: var(--font-heading);
   font-weight: 700;
   font-size: clamp(1.1rem, calc(var(--tw) * 0.075), 2.2rem);
   line-height: 1;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  box-shadow: 4px 4px 0 var(--c-red);
-  visibility: hidden; /* GSAP autoAlpha */
+  box-shadow: 4px 4px 0 var(--mia-red);
+  visibility: hidden;
+  /* GSAP autoAlpha */
   pointer-events: none;
 }
 
-/* Real button over the painted lever; ≥44px even on the small toaster */
+/* Real button over the painted paddle; rides with the lever layer (toaster.js GSAP) */
 .toaster__lever-btn {
   position: absolute;
   z-index: 4;
-  left: 15.8%;
-  top: 61.7%;
-  width: max(44px, 16%);
-  height: max(44px, 12%);
+  left: 17%;
+  top: 58%;
+  width: max(52px, 24%);
+  height: max(64px, 22%);
   translate: -50% -50%;
   border-radius: var(--radius-pill);
+  touch-action: none;
+  cursor: pointer;
+  pointer-events: auto;
 }
 
 .toaster__lever-btn:focus-visible {
@@ -500,54 +496,62 @@ html.is-audio-playing .toaster__slice {
   display: none;
 }
 
-/* ─── Desktop: copy left, toaster right, the name spans the whole row ─── */
+/* ─── Desktop: copy left, toaster right ─── */
 
 @media (min-width: 860px) {
   .hero {
-    --gutter: 32px;
-    --inner: min(1280px, 100cqi - 64px);
-    --tw: min(34cqi, 48svh, 520px);
-    --pad-b: clamp(16px, 3svh, 32px);
-    --nav-clear: 104px;
-  }
-
-  .hero__inner {
-    grid-template-rows: 1fr auto;
-  }
-
-  .hero__shelf {
-    padding-top: 0;
+    --inner: calc(100cqi - var(--gutter) * 2);
+    --mia: min(calc(var(--inner) * 0.25), 36svh);
+    --tw: min(16cqi, 28svh, 300px);
+    --counter: clamp(40px, 7svh, 72px);
   }
 
   .hero__veil {
-    background: linear-gradient(90deg, color-mix(in srgb, var(--c-void) 62%, transparent) 0 22%, transparent 58%);
+    background: linear-gradient(90deg, rgb(0 0 0 / 0.55) 0, rgb(0 0 0 / 0.2) 36%, transparent 48%);
+  }
+
+  .hero__inner {
+    display: grid;
+    flex-direction: unset;
+    grid-template-columns: minmax(0, 1fr) minmax(18rem, 1fr);
+    grid-template-areas: "copy visual";
+    align-items: center;
   }
 
   .hero__copy {
+    grid-area: copy;
     align-self: center;
-    /* stops 2.5rem short of the sun's left edge (stage left − 17.5% of the stage) */
-    max-width: min(40rem, calc(var(--wm) * 3.2266 - var(--tw) * 1.175 - 2.5rem));
-    padding-block: 1.5rem 2.5rem;
+  }
+
+  .hero__visual {
+    grid-area: visual;
+    z-index: 3;
+    justify-content: start;
+  }
+
+  .hero__glow {
+    background: radial-gradient(ellipse 55% 50% at 90% 90%,
+        color-mix(in srgb, var(--mia-blue) 55%, transparent),
+        transparent 70%);
   }
 
   .serve {
-    --cover: 104px;
+    --cover: 96px;
     column-gap: 1.2rem;
-    margin-bottom: 1.75rem;
   }
 
   .serve__cover {
     border-width: 4px;
     border-radius: var(--radius);
-    box-shadow: 6px 6px 0 var(--c-orange);
+    box-shadow: 6px 6px 0 var(--mia-blue);
   }
 
   .serve__pill {
     font-size: 0.66rem;
   }
 
-  .serve__title {
-    font-size: 1.55rem;
+  .serve__title.is-mia {
+    font-size: 2.1rem;
   }
 
   .serve__meta {
@@ -558,40 +562,33 @@ html.is-audio-playing .toaster__slice {
     width: 11rem;
   }
 
+  .hero__sub {
+    font-size: clamp(0.9rem, 1.5cqi, 1.25rem);
+  }
+
   .hero__roles {
-    margin-top: 1.1rem;
     font-size: 0.78rem;
     letter-spacing: 0.2em;
   }
 
   .hero__cta {
     flex-wrap: wrap;
-    margin-top: 1.75rem;
   }
 
   .hero__cta .btn {
     flex: none;
-    min-height: 3.25rem;
-    padding-inline: 1.45rem;
+  }
+}
+
+@media (min-width: 1600px) {
+  .hero__inner {
+    grid-template-columns: minmax(22rem, 0.85fr) minmax(24rem, 1.15fr);
   }
 }
 
 @media (min-width: 860px) and (max-height: 720px) {
-  .hero {
-    --nav-clear: 88px;
-  }
-
-  .hero__copy {
-    padding-block: 0.5rem 1.5rem;
-  }
-
   .serve {
-    --cover: 80px;
-    margin-bottom: 1.25rem;
-  }
-
-  .hero__statement {
-    font-size: clamp(1.75rem, 3vw, 2.4rem);
+    --cover: 72px;
   }
 }
 
@@ -599,7 +596,8 @@ html.is-audio-playing .toaster__slice {
   .hero__hint {
     position: absolute;
     z-index: 2;
-    right: calc(100% - 3%); /* the arrow tip touches the toaster's side, level with the lever */
+    right: calc(100% - 3%);
+    /* the arrow tip touches the toaster's side, level with the lever */
     top: 55%;
     width: max-content;
     display: flex;
@@ -609,16 +607,16 @@ html.is-audio-playing .toaster__slice {
     transition: opacity 0.3s var(--ease-soft);
   }
 
-  /* A little void sticker: the rays behind it are orange, so orange text would vanish */
+  /* A little black sticker over the cover */
   .hero__hint span {
     padding: 0.4rem 0.75rem 0.35rem;
     border-radius: var(--radius-pill);
-    background: color-mix(in srgb, var(--c-void) 85%, transparent);
+    background: rgb(0 0 0 / 0.85);
     color: var(--c-cream);
     font-family: var(--font-subhead);
     font-style: italic;
     font-size: 0.85rem;
-    box-shadow: 3px 3px 0 var(--c-orange);
+    box-shadow: 3px 3px 0 var(--mia-blue);
     rotate: -3deg;
   }
 
@@ -629,7 +627,8 @@ html.is-audio-playing .toaster__slice {
   .doodle--hint {
     width: 4.25rem;
     height: 2.5rem;
-    scale: 1 -1; /* curve down onto the lever */
+    scale: 1 -1;
+    /* curve down onto the lever */
   }
 
   .hero__hint .doodle--hint path {
@@ -638,13 +637,75 @@ html.is-audio-playing .toaster__slice {
   }
 }
 
-@media (max-width: 859px) and (max-height: 700px) {
+/* Keep Listen + lever in the first screen on phones (strict ATF CTAs) */
+@media (max-width: 859px) {
   .hero {
-    --tw: min(64cqi, 32svh, 300px);
+    --hero-pad-bottom: clamp(24px, 4svh, 44px);
+    --hero-gap: clamp(10px, 2.5svh, 18px);
+    --hero-pad-top: clamp(36px, 4.5vw, 56px);
+    --mia: min(calc(var(--inner) * 0.54), 19svh);
+  }
+
+  .hero__visual {
+    grid-template-columns: minmax(0, min(100%, var(--cover-max), 30svh));
+  }
+
+  .serve {
+    margin-bottom: 10px;
   }
 
   .hero__roles {
+    font-size: 0.68rem;
+  }
+
+  .hero__cta .btn {
+    min-height: 2.55rem;
+    padding-block: 0.6rem;
+    font-size: 0.72rem;
+  }
+}
+
+@media (max-width: 859px) and (max-height: 620px) {
+  .hero {
+    --mia: min(calc(var(--inner) * 0.4), 12svh);
+    --tw: min(28cqi, 14svh, 108px);
+    --hero-pad-bottom: clamp(10px, 2svh, 20px);
+    --hero-gap: clamp(4px, 1svh, 8px);
+    --hero-pad-top: clamp(24px, 3.5vw, 40px);
+  }
+
+  .hero__visual {
+    grid-template-columns: minmax(0, min(100%, var(--cover-max), 16svh));
+  }
+
+  .hero__roles,
+  .hero__sub {
     display: none;
+  }
+
+  .serve {
+    margin-bottom: 4px;
+    --cover: 48px;
+  }
+
+  .hero__cta .btn {
+    min-height: 2.25rem;
+    padding-block: 0.45rem;
+  }
+
+  .toaster__lever-btn {
+    z-index: 8;
+  }
+}
+
+/* Desktop hero grid before M.I.A./Crash pin at 900px — tighten the 861–899 band */
+@media (min-width: 861px) and (max-width: 899px) {
+  .hero {
+    --tw: min(14cqi, 24svh, 240px);
+  }
+
+  .hero__inner {
+    gap: clamp(24px, 4vw, 40px);
   }
 }
 
@@ -677,7 +738,8 @@ html.is-audio-playing .toaster__slice {
 
 .btn--primary:hover {
   background: var(--accent-hot);
-  color: var(--c-void); /* was cream: 3.3:1 on red; void is 4.9:1 */
+  color: var(--c-void);
+  /* was cream: 3.3:1 on red; void is 4.9:1 */
 }
 
 .btn--ghost {

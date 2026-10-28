@@ -1,8 +1,9 @@
 """
-Black Pro's four .woff2 files declare OS/2 table version 5 but ship a 96-byte (version 4) table.
-Chrome's font sanitizer (OTS) rejects them, so every "Black Pro" heading on the site silently
-falls back to system-ui. This relabels the table as version 4 (no glyph or metric changes).
-Run once:  python scripts/fix-black-pro.py      (needs: pip install fonttools brotli)
+Black Pro's four .woff2 files declared OS/2 table version 5 but shipped a 96-byte (version 4) table.
+Chrome's font sanitizer (OTS) rejected them. This relabeled the table as version 4.
+
+Black Pro has been replaced by Poppins (`python scripts/build-fonts.py`). If those woff2 files
+are gone, this script has nothing to do.
 """
 import struct
 from pathlib import Path
@@ -10,8 +11,11 @@ from pathlib import Path
 from fontTools.ttLib import TTFont, newTable
 
 FONTS = Path(__file__).resolve().parent.parent / "src" / "fonts"
+paths = sorted(FONTS.glob("black-pro-*.woff2"))
+if not paths:
+    raise SystemExit("No black-pro woff2 files. That face was replaced by Poppins; see scripts/build-fonts.py.")
 
-for path in sorted(FONTS.glob("black-pro-*.woff2")):
+for path in paths:
     font = TTFont(path, lazy=True)
     raw = bytearray(font.reader["OS/2"])
     version = struct.unpack(">H", raw[:2])[0]

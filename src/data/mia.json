@@ -1,0 +1,129 @@
+{
+  "date": "2026-11-05",
+  "cover": "covers/mia.jpg",
+  "tracks": [
+    {
+      "n": 1,
+      "title": "Where Are You?",
+      "features": [
+        "LeratoApple"
+      ],
+      "note": null,
+      "durationMs": 97248,
+      "preview": "audio/mia/01.mp3"
+    },
+    {
+      "n": 2,
+      "title": "Division",
+      "features": [
+        "HeIsGem"
+      ],
+      "note": null,
+      "durationMs": 170472,
+      "preview": "audio/mia/02.mp3"
+    },
+    {
+      "n": 3,
+      "title": "Last Time",
+      "features": [],
+      "note": null,
+      "durationMs": 164616,
+      "preview": "audio/mia/03.mp3"
+    },
+    {
+      "n": 4,
+      "title": "What Do I Say?",
+      "features": [
+        "Bongz_G"
+      ],
+      "note": null,
+      "durationMs": 63816,
+      "preview": "audio/mia/04.mp3"
+    },
+    {
+      "n": 5,
+      "title": "The Recipe",
+      "features": [],
+      "note": null,
+      "durationMs": 189120,
+      "preview": "audio/mia/05.mp3"
+    },
+    {
+      "n": 6,
+      "title": "Missing Piece (Interlude)",
+      "features": [],
+      "note": null,
+      "durationMs": 106704,
+      "preview": "audio/mia/06.mp3"
+    },
+    {
+      "n": 7,
+      "title": "Show Off Every Side",
+      "features": [],
+      "note": "Co-produced by Miso",
+      "durationMs": 136656,
+      "preview": "audio/mia/07.mp3"
+    },
+    {
+      "n": 8,
+      "title": "I'm So Hypnotized",
+      "features": [],
+      "note": null,
+      "durationMs": 192048,
+      "preview": "audio/mia/08.mp3"
+    },
+    {
+      "n": 9,
+      "title": "Where You Been At?",
+      "features": [],
+      "note": null,
+      "durationMs": 144048,
+      "preview": "audio/mia/09.mp3"
+    },
+    {
+      "n": 10,
+      "title": "Distance",
+      "features": [],
+      "note": null,
+      "durationMs": 170160,
+      "preview": "audio/mia/10.mp3"
+    },
+    {
+      "n": 11,
+      "title": "We Need Some Drums",
+      "features": [
+        "Kieth Haynes"
+      ],
+      "note": null,
+      "durationMs": 68616,
+      "preview": "audio/mia/11.mp3"
+    },
+    {
+      "n": 12,
+      "title": "Am I Paranoid?",
+      "features": [],
+      "note": null,
+      "durationMs": 164616,
+      "preview": "audio/mia/12.mp3"
+    },
+    {
+      "n": 13,
+      "title": "Think About You",
+      "features": [
+        "Michelle Wella",
+        "Jupiter Collins"
+      ],
+      "note": null,
+      "durationMs": 165651,
+      "preview": "audio/mia/13.mp3"
+    },
+    {
+      "n": 14,
+      "title": "Breathing Through My Rhymes",
+      "features": [],
+      "note": null,
+      "durationMs": 261864,
+      "preview": "audio/mia/14.mp3"
+    }
+  ]
+}

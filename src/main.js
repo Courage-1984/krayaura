@@ -11,23 +11,46 @@ import "./styles/sections/crate.css";
 import "./styles/sections/player.css";
 import "./styles/sections/brand.css";
 import "./styles/sections/intro.css";
+import "./styles/sections/mia.css";
+import "./styles/sections/contact.css";
 
-import { site, socials, releaseById, releases, crashAlbum, videos } from "./js/content.js";
+import { site, socials, releaseById, aboutStats } from "./js/content.js";
+import { markMia } from "./js/mia-letters.js";
+import { initContactMenus } from "./js/contact-menu.js";
 import { icon } from "./js/icons.js";
 import { initHeroWebGL } from "./js/hero-webgl.js";
 import { initScroll, initMagneticButtons } from "./js/scroll.js";
 import { initCursor } from "./js/cursor.js";
 import { renderMusic, jumpToRelease } from "./js/music.js";
-import { renderDesign } from "./js/design.js";
-import { initCrash } from "./js/crash.js";
 import { initMiniPlayer } from "./js/mini-player.js";
+import { refreshPlayState } from "./js/audio.js";
 import { initDoodles } from "./js/doodles.js";
 import { initMarquee } from "./js/marquee.js";
 import { runIntro } from "./js/intro.js";
 import { initToaster } from "./js/toaster.js";
 import { initNav } from "./js/nav.js";
-import { initConnect } from "./js/connect.js";
 import { openRecordSheet } from "./js/record-sheet.js";
+
+/** Load a chunk when the section is near, on idle, or when a matching nav link is pressed. */
+function loadWhen(el, loader, { margin = "1200px", timeout = 4000 } = {}) {
+  let p;
+  const start = () => (p ||= loader());
+  if (el) {
+    const io = new IntersectionObserver(
+      (ents) => {
+        if (ents.some((e) => e.isIntersecting)) {
+          io.disconnect();
+          start();
+        }
+      },
+      { rootMargin: margin }
+    );
+    io.observe(el);
+  }
+  const ric = window.requestIdleCallback || ((cb, opts) => setTimeout(cb, opts?.timeout ?? 1));
+  ric(() => start(), { timeout });
+  return start;
+}
 
 const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -41,45 +64,47 @@ function hydrateStaticCopy() {
 
   const roles = document.querySelector("[data-roles]");
   if (roles) {
-    roles.innerHTML = site.roles.map((r) => `<li>${r}</li>`).join("");
+    roles.innerHTML = site.roleClusters
+      .map(
+        (c) => `
+        <section class="about__cluster about__cluster--${c.id}">
+          <p class="about__cluster-stamp">${c.label}</p>
+          <ul>
+            ${c.items.map((r) => `<li>${r}</li>`).join("")}
+          </ul>
+        </section>`
+      )
+      .join("");
   }
+
+  const quote = document.querySelector("[data-about-quote]");
+  if (quote) quote.innerHTML = `<p>${site.bioQuote}</p>`;
 
   const bio = document.querySelector("[data-bio]");
   if (bio) {
-    bio.innerHTML = site.bio.map((p) => `<p>${p}</p>`).join("");
+    bio.innerHTML = site.bioChapters
+      .map(
+        (c) => `
+        <article class="about__chapter">
+          <p class="about__chapter-label">${c.label}</p>
+          <p>${markMia(c.text)}</p>
+        </article>`
+      )
+      .join("");
   }
-
-  const city = document.querySelector("[data-location-city]");
-  if (city) city.textContent = site.location.split(",")[0];
 
   const handle = document.querySelector("[data-about-handle]");
   if (handle) handle.textContent = site.handle;
 
-  const portrait = document.querySelector("[data-about-portrait]");
-  if (portrait) {
-    portrait.srcset = `${site.portraitSm} 480w, ${site.portrait} 900w`;
-    portrait.sizes = "(min-width: 900px) 30rem, 80vw";
-    portrait.src = site.portrait;
-  }
-
-  const quote = document.querySelector("[data-about-quote]");
-  if (quote) quote.innerHTML = `<p>${site.quote}</p>`;
-
-  // Counted from the data, so they stay true as he drops more
+  // The client's own figures (content.js). Cassette tapes (the ones that pop out of his toaster), in his
+  // colours; A/B sides alternate
   const stats = document.querySelector("[data-about-stats]");
   if (stats) {
-    const first = Math.min(...releases.map((r) => Number(String(r.date || r.year).slice(0, 4))).filter(Boolean));
-    // Cassette tapes (the ones that pop out of his toaster), in his colours; A/B sides alternate
     const tapes = ["orange", "gold", "red", "blue"];
-    stats.innerHTML = [
-      [releases.length, "Releases"],
-      [crashAlbum?.trackCount ?? 14, "Tracks on CRASH"],
-      [videos.length, "Videos"],
-      [first, "Dropping since", true],
-    ]
+    stats.innerHTML = aboutStats
       .map(
-        ([n, label, plain], i) => `
-        <li class="cassette cassette--${tapes[i]}">
+        ({ n, label, plain }, i) => `
+        <li class="cassette cassette--${tapes[i % tapes.length]}">
           <div class="cassette__label">
             <span class="cassette__side" aria-hidden="true">Side ${i % 2 ? "B" : "A"}</span>
             <strong class="cassette__num" data-count="${n}"${plain ? " data-plain" : ""}>${n}</strong>
@@ -95,18 +120,7 @@ function hydrateStaticCopy() {
       .join("");
   }
 
-  const booking = document.querySelector("[data-booking]");
-  if (booking) {
-    booking.href = site.booking.href;
-    booking.textContent = site.booking.label;
-  }
-
-  const bookingNote = document.querySelector("[data-booking-note]");
-  if (bookingNote) {
-    bookingNote.textContent = site.booking.note;
-  }
-
-  // Connect: Spotify + Apple as the two wide cards, the rest as stickers (Linktree lives in the footer)
+  // Connect: Spotify + Apple as the two wide cards, the rest as stickers
   const external = 'target="_blank" rel="noopener noreferrer"';
   const streamRoot = document.querySelector("[data-stream-cards]");
   if (streamRoot) {
@@ -138,10 +152,10 @@ function hydrateStaticCopy() {
       .join("");
   }
 
-  // Footer: icon-only strip, every platform plus Linktree
+  // Footer: icon-only strip, every platform
   const footerSocials = document.querySelector("[data-footer-socials]");
   if (footerSocials) {
-    footerSocials.innerHTML = [...socials, { label: "Linktree", icon: "linktree", href: "https://linktr.ee/krayaura" }]
+    footerSocials.innerHTML = socials
       .map(
         (s) => `
         <li><a class="footer-social" href="${s.href}" ${external} aria-label="${s.label}" data-cursor="${s.label}">
@@ -158,14 +172,12 @@ function hydrateStaticCopy() {
 async function boot() {
   hydrateStaticCopy();
   const music = renderMusic(document.querySelector("#music"));
-  initCrash(document.querySelector("#crash"));
-  renderDesign(document.querySelector("#design"), document.querySelector("#lightbox"));
   initMiniPlayer();
+  refreshPlayState();
+  initContactMenus();
 
-  const hero = document.querySelector(".hero");
-  const heroApi = initHeroWebGL(document.querySelector("#hero-canvas"), { reducedMotion });
-  // No WebGL (or reduced motion) → the static CSS fan of rays shows instead
-  if (hero && !heroApi.ok) hero.classList.add("reduced-motion");
+  // The hero is now the M.I.A. cover banner (CSS) lit by the music, so the old WebGL shader is no longer drawn
+  const heroApi = initHeroWebGL(null, { reducedMotion });
   const toaster = initToaster({ heroApi, reducedMotion });
 
   initCursor();
@@ -174,7 +186,40 @@ async function boot() {
   initMagneticButtons();
   initDoodles();
   initMarquee(document.querySelector("[data-marquee]"), lenis);
-  initConnect({ lenis, reducedMotion });
+
+  const loadAlbums = loadWhen(document.querySelector("#albums"), async () => {
+    const [{ initMia }, { initCrash }, { initAlbumStickyPlay }] = await Promise.all([
+      import("./js/mia.js"),
+      import("./js/crash.js"),
+      import("./js/album-sticky-play.js"),
+    ]);
+    initMia(document.querySelector("#mia"), { reducedMotion });
+    initCrash(document.querySelector("#crash"));
+    initAlbumStickyPlay();
+    refreshPlayState();
+  });
+  const loadDesign = loadWhen(document.querySelector("#design"), async () => {
+    const { renderDesign } = await import("./js/design.js");
+    renderDesign(document.querySelector("#design"), document.querySelector("#lightbox"));
+  });
+  const loadAbout = loadWhen(document.querySelector("#about"), async () => {
+    const { initAboutCarousel } = await import("./js/about-carousel.js");
+    initAboutCarousel(document.querySelector("#about"), { reducedMotion });
+  });
+  const loadConnect = loadWhen(document.querySelector("#connect"), async () => {
+    const { initConnect } = await import("./js/connect.js");
+    initConnect({ lenis, reducedMotion });
+  });
+
+  const preload = [
+    ['a[href="#mia"], a[href="#crash"], a[href="#albums"]', loadAlbums],
+    ['a[href="#design"]', loadDesign],
+    ['a[href="#about"]', loadAbout],
+    ['a[href="#connect"]', loadConnect],
+  ];
+  preload.forEach(([sel, load]) => {
+    document.querySelectorAll(sel).forEach((a) => a.addEventListener("pointerdown", load, { once: true }));
+  });
 
   // Modals (record sheet, mobile menu) freeze the page scroll
   window.addEventListener("krayaura:modal", (e) => {
@@ -229,7 +274,7 @@ async function boot() {
     const m = /^#([rv])\/([\w-]+)/.exec(location.hash);
     if (!m) return;
     const [, kind, id] = m;
-    // Measure with the real fonts (the headings reflow when Bolde lands), but don't wait long
+    // Measure with the real fonts (the headings reflow when Righteous lands), but don't wait long
     await Promise.race([document.fonts?.ready, new Promise((r) => setTimeout(r, 1200))]);
     if (kind === "r" && releaseById[id]) {
       // The whole crate should be on screen (phones: the section head is taller than the viewport allows)

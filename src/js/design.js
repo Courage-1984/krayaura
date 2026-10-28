@@ -1,5 +1,10 @@
 import { projects, releaseById, MEDIA } from "./content.js";
-import behance from "../data/behance.json";
+import { coverPicture, hydratePicture, mediaPathPicture, pictureHTML, thumbRel } from "./media-picture.js";
+import behanceData from "../data/behance.json";
+import portfolio from "../data/portfolio.json";
+
+// Case-study galleries by id: the Behance projects plus the Professional Portfolio pages (portfolio.json)
+const behance = { ...behanceData, ...portfolio };
 import { initDragRail } from "./drag-rail.js";
 import { refreshPlayState } from "./audio.js";
 import { icon } from "./icons.js";
@@ -20,6 +25,10 @@ function lettersHTML(title) {
 // The media column is 32% of the 1120px container on desktop, full width on phones
 const MEDIA_SIZES = "(max-width: 720px) calc(100vw - 2.5rem), min(32vw, 360px)";
 
+function galleryImages(project) {
+  return (project.gallery && behance[project.gallery]?.images) || [];
+}
+
 /** The row's work, always in flow: one sticker image, or a fan of sleeves that each open the gallery */
 function mediaHTML(project) {
   if (project.releases) {
@@ -28,16 +37,43 @@ function mediaHTML(project) {
         const r = releaseById[id];
         if (!r) return "";
         return `<button type="button" class="sleeve" data-sleeve="${i}" aria-label="${r.title} cover art: open the gallery" aria-haspopup="dialog">
-            <img src="${r.coverSm}" alt="" width="480" height="480" loading="lazy" decoding="async" draggable="false" />
+            ${coverPicture(r.cover, r.coverSm, { width: 480, height: 480, alt: "" })}
           </button>`;
       })
       .join("");
     return `<div class="project-item__media project-item__sleeves">${sleeves}</div>`;
   }
   if (!project.cover) return "";
-  const srcset = project.srcset ? ` srcset="${project.srcset}" sizes="${MEDIA_SIZES}"` : "";
+  const pages = galleryImages(project);
+  if (pages.length > 1) {
+    const stack = pages
+      .map(
+        (img, i) =>
+          `<span class="project-item__scrub-page${i === 0 ? " is-on" : ""}" data-scrub-page="${i}" aria-hidden="${i === 0 ? "false" : "true"}">${mediaPathPicture(MEDIA, thumbRel(img.src), {
+            sizes: MEDIA_SIZES,
+            width: img.w,
+            height: img.h,
+            alt: "",
+            loading: "lazy",
+            deferSrc: i > 0,
+          })}</span>`
+      )
+      .join("");
+    const ticks = pages.map((_, i) => `<i${i === 0 ? ' class="is-on is-now"' : ""}></i>`).join("");
+    return `<figure class="project-item__media project-item__sticker project-item__scrub" data-scrub="${escapeHTML(project.id)}" style="aspect-ratio:${project.width} / ${project.height}" aria-label="${escapeHTML(project.title)}: hover to flip through ${pages.length} pages">
+      ${stack}
+      <span class="project-item__scrub-hint">Hover to flip pages</span>
+      <span class="project-item__scrub-bar" data-scrub-bar aria-hidden="true">${ticks}</span>
+      <span class="project-item__scrub-count" data-scrub-count>1 / ${pages.length}</span>
+    </figure>`;
+  }
   return `<figure class="project-item__media project-item__sticker" style="aspect-ratio:${project.width} / ${project.height}">
-      <img src="${project.cover}"${srcset} alt="" width="${project.width}" height="${project.height}" loading="lazy" decoding="async" draggable="false" />
+      ${pictureHTML(project.cover, {
+        sizes: project.srcset ? MEDIA_SIZES : "",
+        width: project.width,
+        height: project.height,
+        alt: "",
+      })}
     </figure>`;
 }
 
@@ -131,6 +167,8 @@ export function renderDesign(root, lightbox) {
     openProject(open.dataset.projectId, sleeve || open, sleeve ? Number(sleeve.dataset.sleeve) : 0);
   });
 
+  initHoverScrub(list, openProject);
+
   lightbox?.querySelector("[data-lightbox-close]")?.addEventListener("click", closeLightbox);
   lightbox?.addEventListener("click", (e) => {
     if (e.target === lightbox) closeLightbox();
@@ -150,6 +188,62 @@ export function renderDesign(root, lightbox) {
         f[0].focus();
       }
     }
+  });
+}
+
+/** YouTube-timeline hover scrub on the two portfolio covers (fine pointer, motion allowed). */
+function initHoverScrub(list, openProject) {
+  const fine = window.matchMedia("(hover: hover) and (pointer: fine)");
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
+  if (!fine.matches || reduce.matches) return;
+
+  list.querySelectorAll("[data-scrub]").forEach((el) => {
+    const pages = [...el.querySelectorAll("[data-scrub-page]")];
+    const count = el.querySelector("[data-scrub-count]");
+    if (pages.length < 2) return;
+    el.classList.add("is-live");
+    const ticks = [...el.querySelectorAll("[data-scrub-bar] i")];
+    let idx = 0;
+
+    const show = (i) => {
+      i = Math.max(0, Math.min(pages.length - 1, i));
+      pages.forEach((p, k) => {
+        p.classList.toggle("is-on", k === i);
+        p.setAttribute("aria-hidden", String(k !== i));
+      });
+      ticks.forEach((t, k) => {
+        t.classList.toggle("is-on", k <= i);
+        t.classList.toggle("is-now", k === i);
+      });
+      idx = i;
+      if (count) count.textContent = `${i + 1} / ${pages.length}`;
+    };
+
+    const fromX = (e) => {
+      const r = el.getBoundingClientRect();
+      const x = Math.min(Math.max(0, e.clientX - r.left), Math.max(0, r.width - 0.001));
+      return Math.floor((x / r.width) * pages.length);
+    };
+
+    const hydrate = () => el.querySelectorAll("[data-defer-src]").forEach(hydratePicture);
+    el.addEventListener("pointerenter", hydrate, { once: true });
+    el.addEventListener("focusin", hydrate, { once: true });
+    el.addEventListener("pointermove", (e) => {
+      if (e.pointerType && e.pointerType !== "mouse") return;
+      hydrate();
+      el.classList.add("is-scrubbing");
+      show(fromX(e));
+    });
+    el.addEventListener("pointerleave", () => {
+      el.classList.remove("is-scrubbing");
+      show(0);
+    });
+    el.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const open = el.closest(".project-item")?.querySelector(".project-item__open");
+      if (open) openProject(open.dataset.projectId, el, idx);
+    });
   });
 }
 
@@ -240,8 +334,14 @@ function workSlide(project, img, i) {
   const caption = img.caption || project.title;
   return `
       <figure class="lightbox__slide">
-        <img src="${MEDIA}/${img.src}" alt="${escapeHTML(caption)}" width="${img.w}" height="${img.h}" style="--ar:${(img.w / img.h).toFixed(4)}"
-          loading="${i < 2 ? "eager" : "lazy"}" decoding="async" draggable="false" />
+        ${mediaPathPicture(MEDIA, img.src, {
+          thumb: true,
+          alt: escapeHTML(caption),
+          width: img.w,
+          height: img.h,
+          style: `--ar:${(img.w / img.h).toFixed(4)}`,
+          loading: i < 2 ? "eager" : "lazy",
+        })}
         <figcaption>
           <span class="lightbox__caption">${escapeHTML(caption)}</span>
         </figcaption>
@@ -261,8 +361,14 @@ function releaseSlide(r, eager) {
     : "";
   return `
       <figure class="lightbox__slide">
-        <img src="${r.cover}" srcset="${r.coverSm} 480w, ${r.cover} 1200w" sizes="(max-width: 720px) 80vw, 36rem"
-          alt="${r.title} cover art" width="1200" height="1200" loading="eager" fetchpriority="${eager ? "high" : "low"}" decoding="async" draggable="false" />
+        ${coverPicture(r.cover, r.coverSm, {
+          sizes: "(max-width: 720px) 80vw, 36rem",
+          alt: `${r.title} cover art`,
+          width: 1200,
+          height: 1200,
+          loading: "eager",
+          fetchpriority: eager ? "high" : "low",
+        })}
         <figcaption>
           <span class="lightbox__caption">${r.title} · ${r.type === "album" ? "Album" : "Single"} · ${r.year}</span>
           ${play}
@@ -306,11 +412,16 @@ function populateLightbox(lightbox, project, index = 0) {
   } else {
     media.classList.remove("is-gallery");
     media.innerHTML = project.cover
-      ? `<img src="${project.cover}"${project.srcset ? ` srcset="${project.srcset}" sizes="(max-width: 720px) 100vw, 640px"` : ""} alt="${project.title}" />`
+      ? pictureHTML(project.cover, {
+          sizes: project.srcset ? "(max-width: 720px) 100vw, 640px" : "",
+          alt: project.title,
+        })
       : `<div class="project-item__preview-fallback">${project.title.slice(0, 1)}</div>`;
   }
-  wireGallery(lightbox, media.querySelector("[data-gallery]"), sleeves.length ? index : 0);
+  wireGallery(lightbox, media.querySelector("[data-gallery]"), index);
   const link = lightbox.querySelector("[data-lightbox-link]");
   link.href = project.href;
-  link.textContent = project.tag === "Behance" ? "Full project on Behance ↗" : "View project ↗";
+  link.textContent = project.linkLabel || (project.tag === "Behance" ? "Full project on Behance ↗" : "View project ↗");
+  if (project.linkLabel) link.setAttribute("download", ""); // the PDF: save it rather than navigate
+  else link.removeAttribute("download");
 }

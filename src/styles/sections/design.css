@@ -7,6 +7,7 @@
   --accent: var(--c-void);
   --fg-muted: var(--c-void);
   --line: var(--c-void);
+  overflow-x: clip;
   background: var(--c-orange);
   color: var(--c-void);
   clip-path: polygon(0 var(--slant), 100% 0, 100% calc(100% - var(--slant)), 0 100%);
@@ -199,6 +200,122 @@
 .project-item:hover .project-item__sticker img,
 .project-item:focus-within .project-item__sticker img {
   transform: translate(-4px, -4px);
+}
+
+.project-item:hover .project-item__sticker.is-live img,
+.project-item:focus-within .project-item__sticker.is-live img {
+  transform: none;
+}
+
+/* YouTube-style hover scrub: stacked gallery pages, pointer X → page index */
+.project-item__scrub {
+  overflow: hidden;
+}
+
+.project-item__scrub-page {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.project-item__scrub-page.is-on {
+  opacity: 1;
+}
+
+.project-item__scrub-page picture,
+.project-item__scrub-page img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.project-item__sticker.is-live {
+  z-index: 2;
+  cursor: ew-resize;
+}
+
+.project-item__scrub-hint,
+.project-item__scrub-bar,
+.project-item__scrub-count {
+  display: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .project-item__sticker.is-live .project-item__scrub-hint,
+  .project-item__sticker.is-live .project-item__scrub-bar,
+  .project-item__sticker.is-live .project-item__scrub-count {
+    display: flex;
+  }
+}
+
+.project-item__scrub-hint {
+  position: absolute;
+  z-index: 3;
+  top: 0.55rem;
+  left: 50%;
+  translate: -50% 0;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.28rem 0.65rem;
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--c-void) 82%, transparent);
+  color: var(--c-cream);
+  font-family: var(--font-subhead);
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  pointer-events: none;
+  box-shadow: 2px 2px 0 var(--c-void);
+  transition: opacity 0.2s;
+}
+
+.project-item__sticker.is-live.is-scrubbing .project-item__scrub-hint {
+  opacity: 0;
+}
+
+.project-item__scrub-bar {
+  position: absolute;
+  z-index: 3;
+  left: 0.55rem;
+  right: 0.55rem;
+  bottom: 2.15rem;
+  align-items: stretch;
+  gap: 3px;
+  height: 5px;
+  pointer-events: none;
+}
+
+.project-item__scrub-bar i {
+  flex: 1;
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--c-cream) 38%, transparent);
+}
+
+.project-item__scrub-bar i.is-on {
+  background: color-mix(in srgb, var(--c-cream) 78%, transparent);
+}
+
+.project-item__scrub-bar i.is-now {
+  background: var(--c-gold);
+}
+
+.project-item__scrub-count {
+  position: absolute;
+  z-index: 3;
+  right: 0.55rem;
+  bottom: 0.45rem;
+  align-items: center;
+  padding: 0.18rem 0.45rem;
+  border-radius: 0.3rem;
+  background: color-mix(in srgb, var(--c-void) 78%, transparent);
+  color: var(--c-cream);
+  font-family: var(--font-subhead);
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
 }
 
 /* ── Cover art: five sleeves, each its own button (above the card's stretched ::after) ── */

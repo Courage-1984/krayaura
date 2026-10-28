@@ -22,8 +22,8 @@ export function runIntro() {
   const logo = el.querySelector(".intro__logo");
   const word = el.querySelector(".intro__word span");
   const ready = Promise.race([
-    Promise.all([document.fonts?.ready, new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)))]),
-    new Promise((r) => setTimeout(r, 1600)),
+    new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r))),
+    new Promise((r) => setTimeout(r, 300)),
   ]);
 
   return new Promise((resolve) => {

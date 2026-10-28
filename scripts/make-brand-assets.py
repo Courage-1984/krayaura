@@ -127,15 +127,15 @@ print("public/favicon.ico, public/icons/*")
 
 # ── Social share card 1200×630 ──────────────────────────────────────────────────
 fonts = root / "src" / "fonts"
-bolde = data_uri(fonts / "bolde-bold.woff2", "font/woff2")
-black = data_uri(fonts / "black-pro-bold.woff2", "font/woff2")
+heading = data_uri(fonts / "righteous-latin.woff2", "font/woff2")
+subhead = data_uri(fonts / "poppins-latin-700.woff2", "font/woff2")
 cover = data_uri(pub / "media" / "covers" / "crash.jpg", "image/jpeg")
 
 share_html = f"""<!doctype html><html><head><meta charset="utf-8"><style>
-@font-face {{ font-family: Bolde; src: url({bolde}) format("woff2"); font-weight: 700; }}
-@font-face {{ font-family: BlackPro; src: url({black}) format("woff2"); font-weight: 700; }}
+@font-face {{ font-family: Righteous; src: url({heading}) format("woff2"); font-weight: 700; size-adjust: 70%; }}
+@font-face {{ font-family: Poppins; src: url({subhead}) format("woff2"); font-weight: 700; }}
 * {{ margin:0; box-sizing:border-box; }}
-body {{ width:1200px; height:630px; overflow:hidden; background:{VOID}; color:{CREAM}; font-family:BlackPro, sans-serif; }}
+body {{ width:1200px; height:630px; overflow:hidden; background:{VOID}; color:{CREAM}; font-family:Poppins, sans-serif; }}
 .card {{ position:relative; width:1200px; height:630px; overflow:hidden;
   background:
     radial-gradient(circle at 18% 55%, rgba(242,106,31,.38), transparent 42%),
@@ -151,7 +151,7 @@ body {{ width:1200px; height:630px; overflow:hidden; background:{VOID}; color:{C
   padding:12px 22px; border-radius:999px; font-size:22px; letter-spacing:.14em; text-transform:uppercase; box-shadow:5px 5px 0 {VOID}; }}
 .copy {{ position:absolute; left:590px; right:56px; top:88px; }}
 .logo {{ width:92px; height:auto; filter:drop-shadow(5px 5px 0 {ORANGE}); }}
-.word {{ font-family:Bolde; font-size:138px; line-height:.82; text-transform:uppercase; letter-spacing:-.02em; margin-top:18px; }}
+.word {{ font-family:Righteous; font-size:138px; line-height:.82; text-transform:uppercase; letter-spacing:-.02em; margin-top:18px; font-synthesis:none; }}
 .under {{ display:block; width:420px; height:30px; margin-top:6px; }}
 .kick {{ display:inline-block; margin-top:26px; background:{GOLD}; color:{VOID}; padding:12px 20px; border-radius:999px;
   font-size:22px; letter-spacing:.14em; text-transform:uppercase; white-space:nowrap; box-shadow:5px 5px 0 {ORANGE}; }}

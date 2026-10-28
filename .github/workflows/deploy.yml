@@ -38,6 +38,15 @@ jobs:
         with:
           path: dist
 
+      - name: Build live (Apache public_html)
+        run: npm run build:live
+
+      - name: Upload Apache artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: apache-public_html
+          path: dist-live
+
   deploy:
     needs: build
     runs-on: ubuntu-latest

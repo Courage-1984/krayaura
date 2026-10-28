@@ -1,20 +1,27 @@
 """Build web-sized media in public/media from the source files in assets/.
 
-Originals stay in assets/; only resized copies ship. Requires Pillow.
+Originals stay in assets/; only resized copies ship. Requires Pillow (+ pillow-avif-plugin for AVIF).
 """
 import json
 import re
 import shutil
+import subprocess
+import sys
 from pathlib import Path
 
 from PIL import Image
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from lib.optimize_image import export_from_path, export_raster, fit_long_side  # noqa: E402
 
 root = Path(__file__).resolve().parent.parent
 pub = root / "public" / "media"
 (pub / "covers").mkdir(parents=True, exist_ok=True)
 (pub / "brand").mkdir(parents=True, exist_ok=True)
 
-COVER_SIZE = 1200  # cards render ≤ 320px, Crash cover ≤ 448px, lightbox ≤ 640px — 2× DPR safe
+COVER_SIZE = 1200  # lightbox ≤ 640px — 2× DPR safe
+GALLERY_LONG_SIDE = 1400
+BEHANCE_COVER = 720
 
 
 def slug(name: str) -> str:
@@ -24,17 +31,8 @@ def slug(name: str) -> str:
     return f"{s}.{ext.lower()}"
 
 
-def save_resized(src: Path, dest: Path, width: int) -> None:
-    im = Image.open(src).convert("RGB")
-    if im.width > width:
-        im = im.resize((width, round(im.height * width / im.width)), Image.LANCZOS)
-    im.save(dest, quality=84, optimize=True, progressive=True)
-    print(dest.relative_to(root), f"{im.width}x{im.height}", f"{dest.stat().st_size // 1024}KB")
-
-
 (pub / "covers" / "sm").mkdir(parents=True, exist_ok=True)
 
-# Designer originals first; iTunes artwork (from fetch-discography.py) only fills gaps
 cover_sources = sorted((root / "assets" / "new_images" / "covers").glob("*"))
 cover_sources += sorted((root / "assets" / "itunes_covers").glob("*"))
 done = set()
@@ -43,48 +41,8 @@ for f in cover_sources:
     if not f.is_file() or name in done:
         continue
     done.add(name)
-    save_resized(f, pub / "covers" / name, COVER_SIZE)
-    save_resized(f, pub / "covers" / "sm" / name, 480)  # crate sleeves, mini-player, tracklists
-
-for f in (root / "assets" / "new_images").glob("*.jpg"):
-    dest = pub / "brand" / slug(f.name)
-    shutil.copy2(f, dest)
-    print(dest.relative_to(root))
-
-# About portrait: a 4:5 crop of him from the full-res CRASH shoot (the 160px channel avatar is too small)
-crash_src = root / "assets" / "new_images" / "covers" / "crash.jpg"
-if crash_src.exists():
-    shoot = Image.open(crash_src).convert("RGB").crop((820, 1020, 2300, 2870))
-    for w, name in ((900, "portrait.jpg"), (480, "portrait-sm.jpg")):
-        im = shoot.resize((w, round(w * shoot.height / shoot.width)), Image.LANCZOS)
-        dest = pub / "brand" / name
-        im.save(dest, quality=84, optimize=True, progressive=True)
-        print(dest.relative_to(root), f"{im.width}x{im.height}", f"{dest.stat().st_size // 1024}KB")
-
-# Full channel art (2560×1440) → sized for the Channel World preview + lightbox
-banner = root / "assets" / "current_reference_images" / "You-tuber-banner.jpg"
-if banner.exists():
-    for w in (1600, 800):
-        save_resized(banner, pub / "brand" / f"channel-banner-{w}.jpg", w)
-
-# Behance projects → resized gallery images + manifest (src/data/behance.json)
-#   assets/behance/<project>/cover.jpg        list preview
-#   assets/behance/<project>/<NN-name>.jpg    gallery slides, in file-name order
-#   assets/behance/<project>/captions.json    optional {"<file name>": "<caption>"}
-#   assets/behance/<project>/description.txt  optional; paragraphs separated by a blank line
-# Loose files in assets/behance/ itself (raw page captures) are sources only and are ignored here.
-GALLERY_LONG_SIDE = 1600  # slides render ≤ ~36rem tall / ≤ 1000px wide — 2× DPR safe
-
-
-def save_fitted(src: Path, dest: Path, long_side: int):
-    im = Image.open(src).convert("RGB")
-    scale = long_side / max(im.size)
-    if scale < 1:
-        im = im.resize((round(im.width * scale), round(im.height * scale)), Image.LANCZOS)
-    im.save(dest, quality=84, optimize=True, progressive=True)
-    print(dest.relative_to(root), f"{im.width}x{im.height}", f"{dest.stat().st_size // 1024}KB")
-    return im.size
-
+    export_from_path(f, pub / "covers" / name, width=COVER_SIZE)
+    export_from_path(f, pub / "covers" / "sm" / name, width=480)
 
 Image.MAX_IMAGE_PIXELS = None
 behance_src = root / "assets" / "behance"
@@ -93,7 +51,7 @@ if behance_src.exists():
     for proj in sorted(p for p in behance_src.iterdir() if p.is_dir()):
         dest_dir = pub / "behance" / proj.name
         if dest_dir.exists():
-            shutil.rmtree(dest_dir)  # re-crops / deletions upstream must not leave stale slides
+            shutil.rmtree(dest_dir)
         dest_dir.mkdir(parents=True, exist_ok=True)
         cap_file = proj / "captions.json"
         captions = json.loads(cap_file.read_text(encoding="utf-8")) if cap_file.exists() else {}
@@ -103,9 +61,11 @@ if behance_src.exists():
                 continue
             out_name = f"{slug(f.stem + '.jpg')}"
             if f.stem == "cover":
-                save_resized(f, dest_dir / out_name, 900)
-                continue
-            w, h = save_fitted(f, dest_dir / out_name, GALLERY_LONG_SIDE)
+                w, h = export_from_path(f, dest_dir / out_name, width=BEHANCE_COVER)
+            else:
+                im = Image.open(f).convert("RGB")
+                im = fit_long_side(im, GALLERY_LONG_SIDE)
+                w, h = export_raster(im, dest_dir / out_name)
             images.append({
                 "src": f"behance/{proj.name}/{out_name}",
                 "w": w,
@@ -122,10 +82,6 @@ if behance_src.exists():
 (root / "src" / "data" / "behance.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
 print("behance manifest:", {k: len(v["images"]) for k, v in manifest.items()})
 
-# Ambient video loops: assets/video/<name>.(mp4|mov|webm) → web mp4 (H.264) + webm (VP9) + poster,
-# silent, capped at 1280px wide. "<name>-portrait" files become the mobile source of <name>.
-import subprocess
-
 video_src = root / "assets" / "video"
 video_out = pub / "video"
 videos = {}
@@ -137,7 +93,6 @@ if video_src.exists() and ffmpeg:
             continue
         name = slug(f.stem + ".x").rsplit(".", 1)[0]
         if "cover" in name:
-            # Covers are square: generators only do 16:9 / 9:16, so centre-crop the square back out
             vf = "crop='min(iw,ih)':'min(iw,ih)',scale='min(1080,iw)':-2"
         elif "portrait" in name:
             vf = "scale=-2:'min(1280,ih)'"
@@ -145,11 +100,12 @@ if video_src.exists() and ffmpeg:
             vf = "scale='min(1280,iw)':-2"
         base = ["-y", "-hide_banner", "-loglevel", "error", "-i", str(f), "-an", "-vf", f"{vf},fps=30"]
         mp4, webm, poster = video_out / f"{name}.mp4", video_out / f"{name}.webm", video_out / f"{name}.jpg"
-        subprocess.run([ffmpeg, *base, "-c:v", "libx264", "-preset", "slow", "-crf", "27", "-pix_fmt", "yuv420p",
+        subprocess.run([ffmpeg, *base, "-c:v", "libx264", "-preset", "slow", "-crf", "28", "-pix_fmt", "yuv420p",
                         "-movflags", "+faststart", str(mp4)], check=True)
-        subprocess.run([ffmpeg, *base, "-c:v", "libvpx-vp9", "-b:v", "0", "-crf", "38", "-row-mt", "1", str(webm)], check=True)
+        subprocess.run([ffmpeg, *base, "-c:v", "libvpx-vp9", "-b:v", "0", "-crf", "40", "-row-mt", "1", str(webm)], check=True)
         subprocess.run([ffmpeg, "-y", "-hide_banner", "-loglevel", "error", "-i", str(mp4), "-frames:v", "1",
                         "-q:v", "4", str(poster)], check=True)
+        export_from_path(poster, poster)
         key = name.replace("-portrait", "")
         entry = videos.setdefault(key, {})
         entry["portrait" if "portrait" in name else "landscape"] = {

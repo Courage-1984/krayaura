@@ -2,10 +2,10 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { onChange } from "./audio.js";
 import { onSignal } from "./signal.js";
-import { socials, releaseById } from "./content.js";
+import { socials, releaseById, heroAlbum } from "./content.js";
 import { icon } from "./icons.js";
 
-const SECTIONS = ["music", "crash", "design", "about", "connect"];
+const SECTIONS = ["music", "visuals", "albums", "design", "about", "connect"];
 const DRAWER_SOCIALS = ["instagram", "tiktok", "youtube", "spotify", "apple", "behance"];
 
 /**
@@ -31,6 +31,7 @@ export function initNav({ lenis = null, reducedMotion = false } = {}) {
   const cards = [...drawer.querySelectorAll(".drawer-card")];
 
   header.querySelectorAll("[data-icon]").forEach((el) => (el.innerHTML = icon(el.dataset.icon)));
+  drawer.querySelectorAll("[data-icon]").forEach((el) => (el.innerHTML = icon(el.dataset.icon)));
   drawer.querySelector("[data-drawer-socials]").innerHTML = socials
     .filter((s) => DRAWER_SOCIALS.includes(s.icon))
     .map(
@@ -195,17 +196,17 @@ export function initNav({ lenis = null, reducedMotion = false } = {}) {
 
   /* ── 3. Play chip: toggles whatever is loaded (audio.js runs the click through data-play-key) ── */
   onChange(({ current, playing, finished, finishedRelease }) => {
-    // "Play CRASH" starts the album run; once something's loaded the chip only pauses / resumes it.
+    // "Play M.I.A." starts the album run; once something's loaded the chip only pauses / resumes it.
     // A whole-release run that has played out starts over from its first track, as a run again.
     const again = current && finished && finishedRelease ? releaseById[finishedRelease] : null;
-    play.dataset.playKey = again ? (again.playables[0]?.key ?? current.key) : (current?.key ?? "crash:1");
-    if (!current) play.dataset.queue = "crash";
+    play.dataset.playKey = again ? (again.playables[0]?.key ?? current.key) : (current?.key ?? `${heroAlbum.id}:1`);
+    if (!current) play.dataset.queue = heroAlbum.id;
     else if (again) play.dataset.queue = again.id;
     else delete play.dataset.queue;
     const verb = !current ? "Play" : playing ? "Pause" : finished ? "Play again" : "Resume";
-    const label = current ? verb : "Play CRASH";
+    const label = current ? verb : "Play M.I.A.";
     if (playLabel.textContent !== label) playLabel.textContent = label;
-    play.setAttribute("aria-label", !current ? "Play CRASH" : again ? `Play ${again.title} again` : `${verb} ${current.title}`);
+    play.setAttribute("aria-label", !current ? "Play M.I.A." : again ? `Play ${again.title} again` : `${verb} ${current.title}`);
   });
 
   onSignal((s) => {

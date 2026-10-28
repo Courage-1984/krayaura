@@ -3,6 +3,7 @@ import { releases, popular, site } from "./content.js";
 import { initYtCarousel } from "./yt-carousel.js";
 import { initDragRail } from "./drag-rail.js";
 import { icon } from "./icons.js";
+import { coverPicture } from "./media-picture.js";
 import { register, play, state, levels, onChange } from "./audio.js";
 import { openRecordSheet } from "./record-sheet.js";
 
@@ -15,6 +16,11 @@ const FILTERS = [
 
 const fine = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
 const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+const vinylSet = (jpg) => {
+  const b = jpg.replace(/\.(jpe?g)$/i, "");
+  return `image-set(url("${b}.avif") type("image/avif"), url("${b}.webp") type("image/webp"), url("${jpg}") type("image/jpeg"))`;
+};
 
 let crateRail = null;
 
@@ -61,7 +67,8 @@ export function renderMusic(root) {
     initTimeline(root.querySelector("[data-timeline]"), rail);
   }
 
-  const video = root.querySelector("[data-video]");
+  // The carousel now lives in its own #visuals section, outside #music
+  const video = document.querySelector("[data-video]");
   return { video: video ? initYtCarousel(video) : null };
 }
 
@@ -75,11 +82,11 @@ function recordHTML(r) {
     <article class="record" data-release="${r.id}" data-tone="${r.tone}" data-type="${r.type}" data-year="${r.year}">
       <div class="record__stage">
         <div class="record__vinyl" aria-hidden="true">
-          <span class="record__label" style="background-image:url('${r.coverSm}')"></span>
+          <span class="record__label" style="background-image:${vinylSet(r.coverSm)}"></span>
         </div>
         <button type="button" class="record__sleeve" data-open-release="${r.id}" data-cursor="Open"
           aria-label="Open ${r.title} — ${r.meta}, ${r.year}">
-          <img src="${r.coverSm}" alt="" loading="lazy" draggable="false" width="480" height="480" />
+          ${coverPicture(r.cover, r.coverSm, { width: 480, height: 480, alt: "" })}
         </button>
         ${hot}
         ${

@@ -78,7 +78,7 @@ export function initDoodles() {
   });
 
   // The CRASH title burst and line strikes are added and drawn by crash.js (the pin's "ding")
-  document.querySelector("[data-booking]")?.parentElement?.insertAdjacentHTML("beforeend", doodle("arrow", "doodle--arrow"));
+  document.querySelector(".connect__book")?.insertAdjacentHTML("beforeend", doodle("arrow", "doodle--arrow"));
   // Design: big void loops like his portfolio cover, across the top and (turned over) under the CTA
   const design = document.querySelector(".design");
   design?.insertAdjacentHTML("afterbegin", doodle("loops", "doodle--loops doodle--design"));

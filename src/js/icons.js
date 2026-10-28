@@ -35,6 +35,14 @@ const glyphs = {
     <path d="M18.5 18.5h9A4.5 4.5 0 1 0 26.2 21.7" />
     <path class="i-accent" d="M20 11.6h6" />`,
 
+  mail: `
+    <rect x="4" y="7.5" width="24" height="17" rx="4.5" />
+    <path class="i-accent" d="M6.5 10.8 16 17.6l9.5-6.8" />`,
+
+  whatsapp: `
+    <path d="M16 4.5a11.5 11.5 0 0 0-9.9 17.3L4.5 27.5l5.9-1.5A11.5 11.5 0 1 0 16 4.5z" />
+    <path class="i-accent" d="M12.2 11.4c-.7 1.4-.2 3.2 1.6 5.2s3.8 2.8 5.2 2.3l1.2-1.5-2.4-1.3-1 .9c-.9-.4-2-1.4-2.5-2.4l.9-.9z" />`,
+
   play: `
     <path class="i-fill i-accent" d="M11.5 8.6v14.8L23.8 16z" />`,
 
@@ -44,6 +52,14 @@ const glyphs = {
   next: `
     <path class="i-fill i-accent" d="M9 9v14l11-7z" />
     <path d="M23.5 9v14" />`,
+
+  shuffle: `
+    <path d="M6 10h5.2l10.3 12H26" />
+    <path class="i-accent" d="M21.5 7.5 26 10l-4.5 2.5" />
+    <path d="M6 22h5.2l3.2-3.8" />
+    <path d="M16.8 13.6 21.5 22H26" />
+    <path class="i-accent" d="M21.5 19.5 26 22l-4.5 2.5" />
+    <path d="M21.5 10H26" />`,
 
   share: `
     <path d="M16 4.5v14" />

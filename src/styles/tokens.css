@@ -15,6 +15,15 @@
   --c-orange: #f26a1f;
   --c-orange-bright: #f68b0a;
 
+  /* M.I.A. identity (the client's separate CI for the album): black, white and this blue, with red as the only
+     accent. The blue is the one on the cover wordmark. Used only where M.I.A. is the focus (hero, #mia). */
+  --mia-black: #000;
+  --mia-white: #f6f6f6;
+  --mia-blue: #10a2ff;
+  --mia-blue-deep: #0a6cc4;
+  --mia-red: var(--c-red);
+  --font-mia: "A Dripping Marker", "Righteous", system-ui, sans-serif;
+
   /* Surfaces */
   --bg: var(--c-void);
   --bg-elevated: var(--c-midnight);
@@ -26,9 +35,9 @@
   --sticker: 6px 6px 0 var(--c-orange);
   --line: color-mix(in srgb, var(--c-cream) 12%, transparent);
 
-  /* Brand type: Bolde | Black Pro | body stand-in until licensed Proxima Nova */
-  --font-heading: "Bolde", system-ui, sans-serif;
-  --font-subhead: "Black Pro", system-ui, sans-serif;
+  /* Brand type: Righteous | Poppins | body stand-in until licensed Proxima Nova */
+  --font-heading: "Righteous", system-ui, sans-serif;
+  --font-subhead: "Poppins", system-ui, sans-serif;
   --font-body: "Source Sans 3", "Proxima Nova", system-ui, sans-serif;
 
   --space-xs: 0.5rem;
@@ -45,6 +54,13 @@
   --radius-pill: 999px;
 
   --nav-h: 4.5rem;
+  /* Fluid page/hero spacing: interpolates, no layout snaps. 5vw is ~32px at 640 and grows on desktop. */
+  --page-gutter: clamp(16px, 5vw, 96px);
+  --hero-pad-top: clamp(48px, 7vw, 96px);
+  --hero-pad-bottom: clamp(80px, 10vw, 128px);
+  --hero-gap: clamp(32px, 6.25vw, 64px);
+  --nav-link-gap: clamp(24px, 2.5vw, 32px);
+  --cta-gap: clamp(16px, 2vw, 24px);
   /* Toast browning: page progress in the nav, preview progress in the hero */
   --browning: linear-gradient(90deg, var(--c-cream), var(--c-gold) 40%, var(--c-orange) 70%, var(--c-red));
   /* Cartoon overshoot for CSS-only pops (brand toaster, menu bars, nav chip) */
@@ -58,75 +74,113 @@
 */
 
 @font-face {
-  font-family: "Bolde";
-  src: url("../fonts/bolde-light.woff2") format("woff2");
-  font-weight: 300;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Bolde";
-  src: url("../fonts/bolde-regular.woff2") format("woff2");
+  font-family: "Source Sans 3";
+  src: url("../fonts/source-sans-3-latin-400.woff2") format("woff2");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: "Bolde";
-  src: url("../fonts/bolde-italic.woff2") format("woff2");
+  font-family: "Source Sans 3";
+  src: url("../fonts/source-sans-3-latin-600.woff2") format("woff2");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Headings. Righteous is a single cut: the same file serves 400 and 700, and the upright
+   outlines also answer italic, so the browser does not faux-bold or faux-italic it.
+   size-adjust brings it in line with the Bolde Bold widths these font-sizes were written for. */
+@font-face {
+  font-family: "Righteous";
+  src: url("../fonts/righteous-latin.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  size-adjust: 70%;
+}
+
+@font-face {
+  font-family: "Righteous";
+  src: url("../fonts/righteous-latin.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+  size-adjust: 70%;
+}
+
+@font-face {
+  font-family: "Righteous";
+  src: url("../fonts/righteous-latin.woff2") format("woff2");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+  size-adjust: 70%;
+}
+
+@font-face {
+  font-family: "Righteous";
+  src: url("../fonts/righteous-latin.woff2") format("woff2");
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+  size-adjust: 70%;
+}
+
+@font-face {
+  font-family: "Poppins";
+  src: url("../fonts/poppins-latin-400.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Poppins";
+  src: url("../fonts/poppins-latin-400-italic.woff2") format("woff2");
   font-weight: 400;
   font-style: italic;
   font-display: swap;
 }
 
 @font-face {
-  font-family: "Bolde";
-  src: url("../fonts/bolde-bold.woff2") format("woff2");
+  font-family: "Poppins";
+  src: url("../fonts/poppins-latin-500.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Poppins";
+  src: url("../fonts/poppins-latin-700.woff2") format("woff2");
   font-weight: 700;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: "Bolde";
-  src: url("../fonts/bolde-hollow.woff2") format("woff2");
-  font-weight: 800;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Black Pro";
-  src: url("../fonts/black-pro-regular.woff2") format("woff2");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Black Pro";
-  src: url("../fonts/black-pro-italic.woff2") format("woff2");
-  font-weight: 400;
-  font-style: italic;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Black Pro";
-  src: url("../fonts/black-pro-bold.woff2") format("woff2");
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Black Pro";
-  src: url("../fonts/black-pro-bold-italic.woff2") format("woff2");
+  font-family: "Poppins";
+  src: url("../fonts/poppins-latin-700-italic.woff2") format("woff2");
   font-weight: 700;
   font-style: italic;
   font-display: swap;
+}
+
+/* The M.I.A. wordmark. Only ever used for the word "M.I.A." (.mia-mark and the M.I.A. titles).
+   Caps top out near 62% of the em and the drips reach about 24% below the baseline;
+   these overrides crop the em so the drips stay inside the line box. */
+@font-face {
+  font-family: "A Dripping Marker";
+  src: url("../fonts/a-dripping-marker.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  ascent-override: 65%;
+  descent-override: 28%;
+  line-gap-override: 0%;
+  unicode-range: U+002E, U+0041, U+0049, U+004D;
 }
 
 /* Proxima Nova: do NOT load Fontspring-DEMO files — they watermark spaces/hyphens.

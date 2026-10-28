@@ -623,7 +623,7 @@
   grid-column: 4;
 }
 
-/* Body face: Black Pro's digits read 2:50 as a blur at this size */
+/* Body face: the subhead's digits read 2:50 as a blur at this size */
 .tracklist__time {
   grid-column: 5;
   font-family: var(--font-body);

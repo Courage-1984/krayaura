@@ -1,0 +1,4 @@
+Pillow>=10.0
+pillow-avif-plugin>=1.4.0
+PyMuPDF>=1.24.0
+fonttools[brotli]>=4.0

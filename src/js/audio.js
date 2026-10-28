@@ -26,21 +26,23 @@ let qi = -1; // index of `current` in the queue
 let queueRelease = null; // the release id when every queued key is from one release
 let finished = false; // the last preview ran out and nothing was queued after it
 let finishedRelease = null; // …and it was the end of a whole-release run ("Full album")
+let shuffled = false;
 
 const ZERO = Object.freeze({ bass: 0, mid: 0, high: 0, energy: 0, flux: 0 });
 
 function queueInfo() {
-  return { index: qi, length: queue.length, nextKey: queue[qi + 1] ?? null, releaseId: queueRelease };
+  return { index: qi, length: queue.length, nextKey: queue[qi + 1] ?? null, releaseId: queueRelease, keys: queue.length ? [...queue] : [] };
 }
 
 function snapshot() {
-  return { current, playing: isPlaying(), buffering, failed, finished, finishedRelease, queue: queueInfo() };
+  return { current, playing: isPlaying(), buffering, failed, finished, finishedRelease, shuffled, queue: queueInfo() };
 }
 
 function emit() {
   const s = snapshot();
   listeners.forEach((cb) => cb(s));
   syncButtons(s);
+  syncShuffle();
   syncMediaSession();
 }
 
@@ -195,8 +197,16 @@ export function playQueue(keys, startKey) {
     qi = list.indexOf(start);
     const ids = new Set(list.map((k) => k.split(":")[0]));
     queueRelease = ids.size === 1 ? [...ids][0] : null;
+    if (shuffled) applyShuffle(start);
   }
-  play(registry.get(start));
+  const target = registry.get(start);
+  // play() on the track that's already up would pause it — keep it going when only the queue changed
+  if (current?.key === start) {
+    if (!isPlaying()) play(target);
+    else emit();
+    return;
+  }
+  play(target);
 }
 
 export function clearQueue() {
@@ -213,14 +223,15 @@ const titleOf = (k) => (registry.get(k)?.title ?? k).toLowerCase().replace(/[^a-
  * once, as `keep` (the pressed record) if that's one of them, else as its first record.
  */
 export function queueFor(q, keep = null) {
-  if (q !== "crate") return [...registry.keys()].filter((k) => k.startsWith(`${q}:`));
+  const playable = (k) => registry.get(k)?.preview;
+  if (q !== "crate") return [...registry.keys()].filter((k) => k.startsWith(`${q}:`) && playable(k));
   const keys = [...document.querySelectorAll(".record:not([hidden]) .record__play[data-play-key]")].map((b) => b.dataset.playKey);
   const pick = new Map(); // title → the key that plays it
   keys.forEach((k) => {
     const t = titleOf(k);
     if (!pick.has(t) || k === keep) pick.set(t, k);
   });
-  return keys.filter((k) => pick.get(titleOf(k)) === k);
+  return keys.filter((k) => pick.get(titleOf(k)) === k && playable(k));
 }
 
 export function lookup(key) {
@@ -261,6 +272,66 @@ export function step(dir = 1, { wrap = false } = {}) {
 export function playKey(key) {
   const p = registry.get(key);
   if (p) play(p);
+}
+
+function fisherYates(list) {
+  const a = [...list];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+/** Keep `keepKey` first, shuffle the rest. */
+function applyShuffle(keepKey = current?.key) {
+  if (queue.length < 2) return;
+  const keep = queue.includes(keepKey) ? keepKey : queue[Math.max(0, qi)];
+  queue = [keep, ...fisherYates(queue.filter((k) => k !== keep))];
+  qi = 0;
+}
+
+function restoreOrder() {
+  const id = queueRelease || current?.releaseId;
+  if (!id) return;
+  const keys = queueFor(id);
+  if (keys.length < 2) return;
+  const keep = current?.key;
+  queue = keys;
+  qi = keep && keys.includes(keep) ? keys.indexOf(keep) : 0;
+  queueRelease = id;
+}
+
+let shuffleBusy = false; // one click can hit capture + a leftover bubble/HMR listener
+
+/**
+ * Toggle shuffle for the current run. Turning on Fisher-Yates the remaining keys with the
+ * current track first. Turning off rebuilds album/crate order around the current key.
+ * `queueId` (mia / crash) starts that album shuffled when it isn't the run already playing.
+ */
+export function toggleShuffle(queueId = null) {
+  if (shuffleBusy) return false;
+  shuffleBusy = true;
+  queueMicrotask(() => {
+    shuffleBusy = false;
+  });
+
+  const keys = queueId ? queueFor(queueId) : queue.length >= 2 ? queue : current ? queueFor(current.releaseId) : [];
+  if (keys.length < 2) return false;
+
+  const onThis = shuffled && (!queueId || queueRelease === queueId || current?.releaseId === queueId);
+  if (onThis) {
+    shuffled = false;
+    restoreOrder();
+    emit();
+    return true;
+  }
+
+  shuffled = true;
+  // Already on this album: keep it playing, only the upcoming order changes (and the tracklist).
+  const keep = keys.includes(current?.key) ? current.key : keys[Math.floor(Math.random() * keys.length)];
+  playQueue(keys, keep);
+  return true;
 }
 
 export function pause() {
@@ -363,6 +434,7 @@ export function onChange(cb) {
 /** Re-apply .is-current / .is-playing to [data-play-key] buttons rendered after the last change (sheet, gallery) */
 export function refreshPlayState() {
   syncButtons({ current, playing: isPlaying() });
+  syncShuffle();
 }
 
 export function register(playables) {
@@ -396,6 +468,9 @@ export const state = {
   /** { index, length, nextKey, releaseId }; length 0 = no run */
   get queue() {
     return queueInfo();
+  },
+  get shuffled() {
+    return shuffled;
   },
   /** 0..1 through the preview */
   get progress() {
@@ -497,11 +572,35 @@ function syncButtons({ current: cur, playing }) {
   window.dispatchEvent(new Event("krayaura:cursor-refresh"));
 }
 
-// One delegated handler for every play button on the site
-document.addEventListener("click", (e) => {
+function syncShuffle() {
+  document.querySelectorAll("[data-shuffle]").forEach((btn) => {
+    const q = btn.dataset.shuffleQueue;
+    const keys = q ? queueFor(q) : queue;
+    const can = (q ? keys : queue.length >= 2 ? queue : current ? queueFor(current.releaseId) : []).length >= 2;
+    btn.disabled = !can;
+    const onThis = shuffled && (!q || queueRelease === q || current?.releaseId === q);
+    btn.setAttribute("aria-pressed", String(!!onThis));
+  });
+}
+
+/** Shuffle chips can call this directly (mini-player). */
+export function onShuffleClick(queueId = null) {
+  return toggleShuffle(queueId || null);
+}
+
+function onAudioClick(e) {
+  const shuffleBtn = e.target.closest("[data-shuffle]");
+  if (shuffleBtn) {
+    if (shuffleBtn.disabled) return;
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    toggleShuffle(shuffleBtn.dataset.shuffleQueue || null);
+    return;
+  }
   const btn = e.target.closest("[data-play-key]");
   if (!btn) return;
   e.preventDefault();
+  e.stopImmediatePropagation();
   const key = btn.dataset.playKey;
   // Pausing / resuming the track that's up never touches the run it's in, whichever button does it
   // (the crate ▶, hero Listen, a tracklist or sheet row, the nav chip, the gallery ▶)
@@ -510,13 +609,31 @@ document.addEventListener("click", (e) => {
     return;
   }
   if (btn.dataset.queue) {
-    playQueue(queueFor(btn.dataset.queue, key), key);
+    const keys = queueFor(btn.dataset.queue, key);
+    // Whole-album Play (cover, sticky, Listen) while shuffled: start at a random track.
+    // A tracklist row still means "this song, then a new shuffle around it".
+    const start = shuffled && !btn.classList.contains("tracklist__row") && keys.length > 1 ? keys[Math.floor(Math.random() * keys.length)] : key;
+    playQueue(keys, start);
     return;
   }
   // A plain button starting another track ends the run
   if (current?.key !== key) dropQueue();
   playKey(key);
-});
+}
+
+// Capture + window handle so Vite HMR can detach the previous module's listener (a leftover
+// bubble handler was toggling a dead `shuffled` flag, so shuffle looked broken).
+if (window.__krOnAudioClick) {
+  document.removeEventListener("click", window.__krOnAudioClick, true);
+  document.removeEventListener("click", window.__krOnAudioClick);
+}
+if (window.__krAudioClicks) {
+  document.removeEventListener("click", window.__krAudioClicks, true);
+  document.removeEventListener("click", window.__krAudioClicks);
+  window.__krAudioClicks = null;
+}
+window.__krOnAudioClick = onAudioClick;
+document.addEventListener("click", onAudioClick, true);
 
 // Console/QA hook: always in dev, opt-in on the live site with ?debug
 if (import.meta.env.DEV || new URLSearchParams(location.search).has("debug")) {
@@ -524,7 +641,7 @@ if (import.meta.env.DEV || new URLSearchParams(location.search).has("debug")) {
   const seek = (t) => {
     if (el && Number.isFinite(el.duration)) el.currentTime = t < 0 ? Math.max(0, el.duration + t) : t;
   };
-  window.__krAudio = { state, levels, bands, seek, playQueue, clearQueue, queueFor };
+  window.__krAudio = { state, levels, bands, seek, playQueue, clearQueue, queueFor, toggleShuffle };
 }
 
 // iOS WebKit can suspend the AudioContext (all audio runs through it) in the background: keep pausing there

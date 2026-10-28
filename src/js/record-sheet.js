@@ -1,5 +1,6 @@
 import gsap from "gsap";
 import { releaseById } from "./content.js";
+import { coverPicture } from "./media-picture.js";
 import { icon } from "./icons.js";
 import { tracklistHTML, releaseLinksHTML } from "./tracklist.js";
 import { onChange, bands, levels, state, play, refreshPlayState } from "./audio.js";
@@ -105,8 +106,14 @@ export function openRecordSheet(id, trigger, { deepLink = false } = {}) {
             <span class="sheet__label" style="background-image:url('${r.coverSm}')"></span>
           </div>
         </div>
-        <img class="sheet__sleeve" src="${r.cover}" srcset="${r.coverSm} 480w, ${r.cover} 1200w" sizes="(min-width: 860px) 240px, 45vw"
-          width="1200" height="1200" decoding="async" alt="${r.title} cover art" />
+        ${coverPicture(r.cover, r.coverSm, {
+          className: "sheet__sleeve",
+          sizes: "(min-width: 860px) 240px, 45vw",
+          width: 1200,
+          height: 1200,
+          alt: `${r.title} cover art`,
+          loading: "eager",
+        })}
       </div>
     </div>
     <div class="sheet__info">
@@ -117,7 +124,7 @@ export function openRecordSheet(id, trigger, { deepLink = false } = {}) {
       ${needle}
       <div class="sheet__links">${releaseLinksHTML(r, { big: true })}</div>
       ${tracklistHTML(r, { className: "tracklist sheet__tracks" })}
-      <p class="sheet__note">30-second previews · full songs on Spotify &amp; Apple Music</p>
+      <p class="sheet__note">${r.upcoming ? "30-second previews · the full album is out 5 November 2026" : "30-second previews · full songs on Spotify &amp; Apple Music"}</p>
     </div>
   `;
   refreshPlayState(); // the fresh rows show what's already playing (EQ bars, orange title)

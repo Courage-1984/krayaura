@@ -320,6 +320,8 @@ export function initCrash(root) {
         start: "top top",
         end: () => `+=${Math.round(window.innerHeight * 2.4)}`,
         pin: true,
+        pinSpacing: true,
+        zIndex: 1,
         scrub: 0.6,
         invalidateOnRefresh: true,
       },

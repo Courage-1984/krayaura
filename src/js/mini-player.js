@@ -1,4 +1,4 @@
-import { onChange, state, bands, stop, step, lookup, resume } from "./audio.js";
+import { onChange, state, bands, stop, step, lookup, resume, queueFor } from "./audio.js";
 import { releaseById } from "./content.js";
 import { icon } from "./icons.js";
 
@@ -29,6 +29,7 @@ export function initMiniPlayer() {
       <span data-mp-icon>${icon("pause")}</span>
     </button>
     <button type="button" class="mini-player__next" data-mp-next aria-label="Next track" hidden>${icon("next")}</button>
+    <button type="button" class="mini-player__shuffle" data-shuffle data-mp-shuffle aria-label="Shuffle" aria-pressed="false" hidden>${icon("shuffle")}</button>
     <div class="mini-player__links" data-mp-links></div>
     <a class="mini-player__full" data-mp-full target="_blank" rel="noopener noreferrer">
       <span class="mini-player__full-icon" data-mp-full-icon></span><span class="mini-player__full-label" data-mp-full-label>Full song</span><span class="mini-player__full-arrow" aria-hidden="true">↗</span>
@@ -53,6 +54,7 @@ export function initMiniPlayer() {
   const toggle = $("[data-mp-toggle]");
   const iconSlot = $("[data-mp-icon]");
   const next = $("[data-mp-next]");
+  const shuffleBtn = $("[data-mp-shuffle]");
   const links = $("[data-mp-links]");
   const full = $("[data-mp-full]");
   const fullIcon = $("[data-mp-full-icon]");
@@ -63,6 +65,8 @@ export function initMiniPlayer() {
   // "Play again" after a whole-release run replays the run, not just its last track (audio.js resume())
   toggle.addEventListener("click", resume);
   next.addEventListener("click", () => step(1));
+  // Shuffle is [data-shuffle]: audio.js's capture click handles it. A second listener here
+  // used to toggle on then immediately off in the same click.
 
   // × hides the pill (inert) while it may hold focus: hand focus back first, or it drops to <body> and the
   // next Tab starts over at the top. Where it came from → the play button that started this → the nav chip.
@@ -111,7 +115,7 @@ export function initMiniPlayer() {
   let linksSig = "";
   let wasDone = false;
   let iconName = "pause";
-  onChange(({ current, playing, finished, finishedRelease, queue }) => {
+  onChange(({ current, playing, finished, finishedRelease, queue, shuffled }) => {
     const open = !!current;
     const isDone = open && finished;
     const queued = open && queue.length > 0;
@@ -135,6 +139,7 @@ export function initMiniPlayer() {
       linksSig = "";
       if (wasDone) kicker.textContent = "";
       wasDone = false;
+      shuffleBtn.hidden = true;
       return;
     }
 
@@ -160,14 +165,23 @@ export function initMiniPlayer() {
     if (!up && document.activeElement === next) toggle.focus({ preventScroll: true });
     next.hidden = !up;
     if (up) next.setAttribute("aria-label", `Next: ${up.title}`);
+    const canShuffle = (queued ? queue.length : queueFor(current.releaseId).length) >= 2;
+    shuffleBtn.hidden = !canShuffle;
+    shuffleBtn.disabled = !canShuffle;
+    shuffleBtn.setAttribute("aria-pressed", String(!!shuffled && canShuffle));
+    const albumN = Number(current.key.split(":")[1]);
+    const n = queue.releaseId && albumN > 0 ? albumN : queue.index + 1;
     sub.textContent = queued
-      ? [`${pad(queue.index + 1)} / ${pad(queue.length)}`, up && `Up next: ${up.title}`].filter(Boolean).join(" · ")
+      ? [`${pad(n)} / ${pad(queue.length)}`, up && `Up next: ${up.title}`].filter(Boolean).join(" · ")
       : [current.features?.length ? `ft. ${current.features.join(" & ")}` : "", current.subtitle].filter(Boolean).join(" · ");
+    // Unreleased music (M.I.A.) has no full-song links yet: don't send people looking for them
+    const doneFrom = (isDone && finishedRelease ? releaseById[finishedRelease] : null) || current;
+    const doneText = doneFrom.spotify || doneFrom.apple ? "Preview's done — hear the full song" : "Preview's done — out 5 November";
     if (isDone !== wasDone || !kicker.childNodes.length) {
       // (the " · preview" tail drops on phones, where the row is full)
-      kicker.innerHTML = isDone ? "Preview's done — hear the full song" : `Now playing<span class="mini-player__kicker-x"> · preview</span>`;
+      kicker.innerHTML = isDone ? doneText : `Now playing<span class="mini-player__kicker-x"> · preview</span>`;
     }
-    if (isDone && !wasDone) say("Preview's done — hear the full song");
+    if (isDone && !wasDone) say(doneText);
     wasDone = isDone;
 
     // Full-song links: the track's, or the release's once a whole run has finished

@@ -2,7 +2,8 @@
 
 .crash {
   position: relative;
-  overflow: clip;
+  overflow-x: clip;
+  overflow-y: visible;
   background:
     radial-gradient(ellipse 70% 60% at 15% 40%, color-mix(in srgb, var(--c-orange) 18%, transparent), transparent 60%),
     var(--c-void);
@@ -330,9 +331,9 @@
 }
 
 /* One gold word on a stepped orange extrusion + a red drop: no void layer, so no detached ghost.
-   Phones: stacks FULL / CREATOR and never runs wide. Bolde is compact ("FULL CREATOR" = 4.23em,
-   "CREATOR" = 2.77em), so 14vw would sit on one small 231px line at 390; 24vw stacks it and the
-   longer line, CREATOR, still fits a 320px phone (213px of 280) */
+   Phones: stacks FULL / CREATOR and never runs wide. Righteous is size-adjusted to the old
+   Bolde Bold width, so 14vw would still sit on one short line; 24vw stacks it and CREATOR
+   still fits a 320px phone. */
 .crash__finale-big {
   display: block;
   margin-top: 0.06em;
@@ -415,6 +416,29 @@
   align-items: center;
 }
 
+.crash__album-tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1rem;
+}
+
+.crash__shuffle {
+  --icon-accent: var(--c-orange);
+}
+
+.crash__shuffle[aria-pressed="true"] {
+  background: var(--c-gold);
+  border-color: var(--c-gold);
+  color: var(--c-void);
+  --icon-accent: var(--c-red);
+}
+
+.crash__shuffle:disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
 .tracklist--album {
   grid-template-columns: 1fr;
 }
@@ -427,6 +451,7 @@
     display: block;
     height: 100svh;
     padding-block: 0;
+    z-index: 1;
   }
 
   .crash__grid {
@@ -456,8 +481,9 @@
   }
 
   .crash__finale-big {
-    /* Sized to the right-hand copy column: "FULL CREATOR" (4.23em) stays on one line in it */
-    font-size: clamp(3rem, min(6.8vw, 13svh), 7.25rem);
+    /* Sized to the right-hand copy column. At size-adjust 70%, "FULL CREATOR" is about 5em,
+       so the cap stays inside the column once that column stops growing (572px). */
+    font-size: clamp(3rem, min(6.8vw, 13svh), 6.9rem);
     text-shadow:
       1px 1px 0 var(--c-orange),
       2px 2px 0 var(--c-orange),
@@ -502,7 +528,7 @@
 
   /* Reduced motion keeps the finale in the copy column: size the word to the column */
   .crash.is-static .crash__finale-big {
-    font-size: clamp(3.5rem, 6.6vw, 7rem);
+    font-size: clamp(3.5rem, 6.6vw, 6.9rem);
   }
 
   .crash__viewport {

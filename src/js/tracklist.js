@@ -22,6 +22,7 @@ export function tracklistHTML(release, { className = "tracklist" } = {}) {
     .map((t, i) => {
       const p = release.playables.find((x) => x.key === `${release.id}:${t.n ?? 1}`);
       const feat = t.features.length ? `<span class="tracklist__feat">ft. ${t.features.join(" & ")}</span>` : "";
+      const note = t.note ? `<span class="tracklist__feat tracklist__note">${t.note}</span>` : ""; // e.g. "Co-produced by Miso"
       const hot = t.popular ? `<span class="tracklist__hot" title="Popular on Spotify">${icon("flame")}</span>` : "";
       return `
         <li>
@@ -32,7 +33,7 @@ export function tracklistHTML(release, { className = "tracklist" } = {}) {
               <span class="tracklist__play">${icon("play")}</span>
               <span class="tracklist__eq"><i></i><i></i><i></i></span>
             </span>
-            <span class="tracklist__title">${t.title}${feat}</span>
+            <span class="tracklist__title">${t.title}${feat}${note}</span>
             ${hot}
             <span class="tracklist__time">${fmt(t.durationMs)}</span>
           </button>

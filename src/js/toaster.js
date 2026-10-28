@@ -1,9 +1,10 @@
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { onChange, state, playQueue, queueFor } from "./audio.js";
+import { onChange, state, playQueue, queueFor, step, lookup } from "./audio.js";
 import { onSignal } from "./signal.js";
-import { crashAlbum } from "./content.js";
+import { heroAlbum, crashAlbum } from "./content.js";
 import { icon } from "./icons.js";
+import { initMiaLetters } from "./mia-letters.js";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -16,8 +17,10 @@ gsap.registerPlugin(ScrollTrigger);
  * Transform ownership (no two systems ever write the same property):
  *   .toaster__rig   GSAP `transform` (entrance, charge, pop, hiccup)  ·  CSS `rotate` (pointer lean)
  *   .toaster__slice GSAP `transform` (poses)                           ·  CSS `translate` (per-frame kick)
- *   letter spans    GSAP yPercent (entrance) + y (landing dips) — separate components
- *   .hero__echo     CSS `translate` (per-frame kick)
+ *   letter spans    GSAP yPercent (entrance) + y (landing dips) — separate components; the CSS
+ *                   `translate` / `scale` / `--lit` on the same spans belong to mia-letters.js
+ *   .hero__banner   JS `--lit` (same lift / scale / glow language as the M.I.A. letters)
+ *   .hero__glow     JS `opacity` (per-frame energy)
  */
 
 /* Toaster geometry, in the sprite's viewBox units (914 × 883, scripts/toaster-sprite.mjs) */
@@ -54,10 +57,10 @@ export function initToaster({ heroApi, reducedMotion = false }) {
   const ding = $(".toaster__ding");
   const shadow = $("[data-toaster-shadow]");
   const sun = $("[data-sun]");
-  const lettersWrap = $("[data-letters]");
-  const letters = [...lettersWrap.children];
-  const under = letters.slice(5); // U R A carry the toaster
-  const echo = $(".hero__echo");
+  const lettersWrap = $("[data-hero-letters]");
+  const letters = [...lettersWrap.children]; // M . I . A .
+  const banner = $(".hero__banner");
+  const glow = $(".hero__glow");
   const listen = $("[data-hero-listen]");
   const listenIcon = listen.querySelector("[data-listen-icon]");
   const listenLabel = listen.querySelector("[data-listen-label]");
@@ -72,8 +75,9 @@ export function initToaster({ heroApi, reducedMotion = false }) {
     bar: $("[data-serve-progress]"),
   };
   const live = document.querySelector("[data-now-status]");
-  const isCrash = (p) => !!p && p.releaseId === crashAlbum?.id;
-  const total = crashAlbum?.playables.length ?? 14;
+  const isHero = (p) => !!p && p.releaseId === heroAlbum?.id; // M.I.A.
+  const total = heroAlbum?.playables.length ?? 14;
+  initMiaLetters(lettersWrap, { reducedMotion });
 
   let mode = "rest"; // rest | charging | popped | warm
   let pose = null; // the one pose timeline — always killed before the next
@@ -81,7 +85,6 @@ export function initToaster({ heroApi, reducedMotion = false }) {
   let chargedAt = 0;
   let heroVisible = true;
   let unit = 1; // CSS px per viewBox unit
-  let wm = 100; // wordmark font-size, px
   let shownKey;
   let failedKey = null;
   let interacted = false;
@@ -93,28 +96,9 @@ export function initToaster({ heroApi, reducedMotion = false }) {
   gsap.set(lever, leverAt(0));
   gsap.set(ding, { autoAlpha: 0, scale: 0 });
 
-  /* ── Geometry JS needs (layout itself is CSS): px per unit, font-size, the sun centre for the rays ── */
-  function offsetIn(el, root) {
-    let x = 0;
-    let y = 0;
-    for (let n = el; n && n !== root; n = n.offsetParent) {
-      x += n.offsetLeft;
-      y += n.offsetTop;
-    }
-    return { x, y };
-  }
-
+  /* ── Geometry JS needs (layout itself is CSS): px per unit ── */
   function fit() {
     unit = stage.offsetWidth / VB_W;
-    wm = parseFloat(getComputedStyle(lettersWrap).fontSize) || wm;
-    const r = sun.offsetWidth / 2;
-    const o = offsetIn(sun, hero); // offsets ignore transforms, so the sunrise tween can't skew this
-    const cx = o.x + r;
-    const cy = o.y + r;
-    hero.style.setProperty("--ox", `${cx}px`);
-    hero.style.setProperty("--oy", `${cy}px`);
-    hero.style.setProperty("--or", `${r}px`);
-    heroApi.setOrigin(cx, cy, r);
   }
   new ResizeObserver(fit).observe(hero);
   document.fonts?.ready.then(fit);
@@ -126,11 +110,6 @@ export function initToaster({ heroApi, reducedMotion = false }) {
     pose = gsap.timeline({ delay, defaults: { overwrite: "auto" } });
     return pose;
   };
-
-  const dip = (t, px, at) =>
-    t
-      .to(under, { y: px, duration: 0.08, ease: "power2.out", stagger: 0.02 }, at)
-      .to(under, { y: 0, duration: 0.55, ease: "elastic.out(1, 0.45)", stagger: 0.02 }, at + 0.08);
 
   function stopRattle() {
     if (!rattle) return;
@@ -183,7 +162,7 @@ export function initToaster({ heroApi, reducedMotion = false }) {
     }
     // Keep the charge on screen long enough to read, even when the preview was already buffered
     const wait = fromCharge ? Math.max(0, 0.35 - (performance.now() - chargedAt) / 1000) : 0;
-    const t = timeline(wait)
+    const t = timeline(wait) // (`t` is used below for the ding)
       .to(rig, { scaleX: 0.96, scaleY: 1.07, duration: 0.1, ease: "power2.out" }, 0)
       .to(rig, { scaleX: 1, scaleY: 1, duration: 0.7, ease: "elastic.out(1, 0.4)" }, 0.1)
       .to(lever, { ...leverAt(0), duration: 0.4, ease: "back.out(3)" }, 0)
@@ -191,7 +170,6 @@ export function initToaster({ heroApi, reducedMotion = false }) {
       .to(front, { ...slot(200), rotation: 6, duration: 0.36, ease: "power2.out" }, 0.04)
       .to(back, { ...slot(POPPED), rotation: 0, duration: 0.5, ease: "bounce.out" }, 0.38)
       .to(front, { ...slot(POPPED), rotation: 0, duration: 0.5, ease: "bounce.out" }, 0.4);
-    dip(t, 0.022 * wm, 0.1);
     if (fromCharge) {
       t.fromTo(ding, { autoAlpha: 1, scale: 0, rotation: -20 }, { autoAlpha: 1, scale: 1, rotation: 8, duration: 0.45, ease: "back.out(3)" }, 0.05).to(
         ding,
@@ -219,10 +197,10 @@ export function initToaster({ heroApi, reducedMotion = false }) {
 
   /* ── State → UI ── */
   function renderListen({ current, playing, buffering, failed, finishedRelease }) {
-    // Listen follows whichever CRASH track is up; once the album run has played out it starts over
-    if (isCrash(current)) listen.dataset.playKey = finishedRelease === crashAlbum.id ? crashAlbum.playables[0].key : current.key;
+    // Listen follows whichever M.I.A. track is up; once the album run has played out it starts over
+    if (isHero(current)) listen.dataset.playKey = finishedRelease === heroAlbum.id ? heroAlbum.playables[0].key : current.key;
     const mine = current?.key === listen.dataset.playKey;
-    let label = "Listen to CRASH";
+    let label = "Listen to M.I.A.";
     let glyph = "play";
     if (mine) {
       if (failed) label = "Try again";
@@ -248,25 +226,33 @@ export function initToaster({ heroApi, reducedMotion = false }) {
     if (!failed) failedKey = null;
   }
 
-  function renderServe({ current, playing }) {
+  function renderServe({ current, playing, shuffled, queue }) {
     serve.root.classList.toggle("is-live", !!current && playing);
     serve.pill.textContent = !current ? "Now serving" : playing ? "Now toasting" : "Keeping warm";
     const key = current?.key ?? null;
-    if (key === shownKey) return;
-    shownKey = key;
-    const src = current ? current.coverSm || current.cover : crashAlbum?.coverSm;
+    const n = current ? trackNo(current) : 0;
+    const sig = `${key}|${shuffled}|${n}|${queue?.nextKey ?? ""}`;
+    if (sig === shownKey) return;
+    shownKey = sig;
+    const src = current ? current.coverSm || current.cover : heroAlbum?.coverSm;
     if (src && serve.cover.dataset.src !== src) {
       serve.cover.dataset.src = src;
       serve.cover.src = src;
     }
     if (!current) {
-      serve.title.textContent = "Crash";
+      serve.title.textContent = "M.I.A.";
+      serve.title.classList.add("is-mia"); // the album name is always in the brush font; track titles aren't
       serve.meta.textContent = `The album · ${total} tracks`;
       serve.bar.style.transform = "scaleX(0)";
       return;
     }
+    serve.title.classList.remove("is-mia");
     serve.title.textContent = current.title;
-    serve.meta.textContent = isCrash(current) ? `Crash · ${pad(trackNo(current))} of ${total} · preview` : `${current.release} · single · preview`;
+    const of = queue?.length || (isHero(current) ? total : current.releaseId === crashAlbum.id ? crashAlbum.playables.length : 0);
+    const mix = shuffled ? " · shuffle" : "";
+    serve.meta.textContent = isHero(current)
+      ? `M.I.A. · ${pad(n)} of ${of || total} · preview${mix}`
+      : `${current.release} · ${of ? `${pad(n)} of ${of}` : "single"} · preview${mix}`;
     // Off the hero the mini-player announces the track (its own live region), so say it once
     if (live && html.classList.contains("hero-controls-visible")) {
       const ft = current.features?.length ? ` featuring ${current.features.join(" and ")}` : "";
@@ -275,13 +261,15 @@ export function initToaster({ heroApi, reducedMotion = false }) {
   }
 
   function syncLever(current) {
-    if (isCrash(current)) {
-      const list = crashAlbum.playables;
-      const next = list[(list.findIndex((p) => p.key === current.key) + 1) % list.length];
+    if (isHero(current)) {
+      const list = heroAlbum.playables;
+      const next =
+        (state.queue?.nextKey && lookup(state.queue.nextKey)) ||
+        list[(list.findIndex((p) => p.key === current.key) + 1) % list.length];
       leverBtn.setAttribute("aria-label", `Push the lever: next track, ${next.title}`);
       leverBtn.dataset.cursor = "Next";
     } else {
-      leverBtn.setAttribute("aria-label", "Push the lever: play CRASH");
+      leverBtn.setAttribute("aria-label", "Push the lever: play M.I.A.");
       leverBtn.dataset.cursor = "Push";
     }
   }
@@ -291,8 +279,6 @@ export function initToaster({ heroApi, reducedMotion = false }) {
     renderListen(s);
     renderServe(s);
     syncLever(current);
-    heroApi.setActive(isCrash(current) ? trackNo(current) - 1 : -1);
-
     if (!current || failed) {
       if (mode !== "rest") settle(REST);
     } else if (playing && !buffering) {
@@ -304,7 +290,8 @@ export function initToaster({ heroApi, reducedMotion = false }) {
     }
   });
 
-  /* ── Per frame, only while music plays and the hero is on screen (signal.js) ── */
+  let coverLit = 0;
+  /* Per frame, only while music plays and the hero is on screen (signal.js). */
   onSignal((s, dt) => {
     if (!heroVisible) return;
     serve.bar.style.transform = `scaleX(${state.progress})`; // information, so it runs with reduced motion too
@@ -315,8 +302,12 @@ export function initToaster({ heroApi, reducedMotion = false }) {
     // the front one lags a hair behind, so the pair reads as two bouncing slices, not one block
     const hopFront = (0.12 * s.bass + 0.88 * Math.min(1, s.kick * 0.9)) * 60 * unit;
     front.style.translate = `${hopFront * SLOT_LEAN}px ${-hopFront}px`;
-    const o = (0.03 + s.kick * 0.075) * wm; // CRASH's title trail kicks away from KRAYAURA on the beat
-    echo.style.translate = `${o}px ${o}px`;
+    // Same attack / release as the M.I.A. letters: the cover lifts, grows, and takes the blue glow + red edge.
+    const coverTarget = Math.min(1, s.kick * 0.85 + s.eq[0] * 0.2 + s.eq[1] * 0.15 + s.eq[2] * 0.2);
+    coverLit += (coverTarget - coverLit) * (coverTarget > coverLit ? 0.7 : 0.18);
+    if (coverLit < 0.004 || !s.live) coverLit = 0;
+    banner.style.setProperty("--lit", coverLit.toFixed(3));
+    glow.style.opacity = (0.35 + s.energy * 0.65).toFixed(3);
     heroApi.frame(s, dt);
   });
   window.addEventListener("krayaura:lite", () => heroApi.setLite());
@@ -330,15 +321,64 @@ export function initToaster({ heroApi, reducedMotion = false }) {
     if (!willPause) charge(); // audio.js's delegated handler does the actual play
   });
 
-  // The lever always runs the album: from Listen's track, or (CRASH already up) the next one, wrapping
-  leverBtn.addEventListener("click", () => {
+  const pushLever = () => {
     charge();
-    const keys = queueFor(crashAlbum.id);
-    const at = isCrash(state.current) ? keys.indexOf(state.current.key) : -1;
+    if (isHero(state.current) && state.queue?.length) {
+      if (step(1, { wrap: true })) return;
+    }
+    const keys = queueFor(heroAlbum.id);
+    const at = isHero(state.current) ? keys.indexOf(state.current.key) : -1;
     playQueue(keys, at < 0 ? listen.dataset.playKey : keys[(at + 1) % keys.length]);
+  };
+
+  // The lever always runs the album: from Listen's track, or (M.I.A. already up) the next one, wrapping.
+  // Nested inside the toaster, so every pointer event must stop here or the body click toggles Listen.
+  let pulling = false;
+  let pulled = false;
+  let pullY = 0;
+  leverBtn.addEventListener("pointerdown", (e) => {
+    e.stopPropagation();
+    if (e.button) return;
+    pulling = true;
+    pulled = false;
+    pullY = e.clientY;
+    try {
+      leverBtn.setPointerCapture(e.pointerId);
+    } catch {
+      /* already released */
+    }
+  });
+  leverBtn.addEventListener("pointermove", (e) => {
+    if (!pulling) return;
+    const dy = e.clientY - pullY;
+    if (dy > 22) pulled = true;
+    if (reducedMotion || (mode !== "rest" && mode !== "warm")) return;
+    gsap.set(lever, leverAt(Math.max(0, Math.min(LEVER_DOWN, dy * 0.6))));
+  });
+  const endPull = (e) => {
+    if (!pulling) return;
+    pulling = false;
+    e.stopPropagation();
+    if (pulled) pushLever();
+    else if (!reducedMotion && (mode === "rest" || mode === "warm")) {
+      gsap.to(lever, { ...leverAt(0), duration: 0.3, ease: "back.out(3)", overwrite: "auto" });
+    }
+  };
+  leverBtn.addEventListener("pointerup", endPull);
+  leverBtn.addEventListener("pointercancel", endPull);
+  leverBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    if (pulled) {
+      pulled = false;
+      return;
+    }
+    pushLever();
   });
 
-  toaster.addEventListener("click", () => listen.click()); // pointer shortcut; keyboard users have Listen
+  toaster.addEventListener("click", (e) => {
+    if (e.target.closest("[data-lever-btn]")) return;
+    listen.click();
+  }); // pointer shortcut; keyboard users have Listen
 
   const markInteracted = () => (interacted = true);
   ["pointerdown", "keydown", "wheel", "touchstart"].forEach((t) =>
@@ -361,6 +401,8 @@ export function initToaster({ heroApi, reducedMotion = false }) {
     };
     ["pointerenter", "focus"].forEach((t) => listen.addEventListener(t, () => anticipate(true)));
     ["pointerleave", "blur"].forEach((t) => listen.addEventListener(t, () => anticipate(false)));
+    ["pointerenter", "focus"].forEach((t) => leverBtn.addEventListener(t, () => anticipate(true)));
+    ["pointerleave", "blur"].forEach((t) => leverBtn.addEventListener(t, () => !pulling && anticipate(false)));
 
     // Fine pointers: the toaster leans toward the cursor (CSS `rotate`, so it never fights GSAP)
     if (matchMedia("(pointer: fine)").matches) {
@@ -392,8 +434,15 @@ export function initToaster({ heroApi, reducedMotion = false }) {
     (entries) => {
       heroVisible = entries[entries.length - 1].isIntersecting;
       html.classList.toggle("hero-in-view", heroVisible);
-      if (heroVisible) heroApi.resume();
-      else heroApi.pause();
+      if (heroVisible) {
+        heroApi.resume();
+        // The music may have stopped while the hero was off screen (no frames were written): settle the banner
+        if (!state.playing) {
+          coverLit = 0;
+          banner.style.setProperty("--lit", "0");
+          glow.style.opacity = "0.35";
+        }
+      } else heroApi.pause();
     },
     { threshold: 0.02 }
   ).observe(hero);
@@ -407,7 +456,7 @@ export function initToaster({ heroApi, reducedMotion = false }) {
     if (reducedMotion) return;
     gsap.delayedCall(6, () => {
       if (interacted || mode !== "rest" || !animate()) return;
-      const t = timeline()
+      timeline()
         .to(rig, { y: -14, scaleX: 0.97, scaleY: 1.05, duration: 0.16, ease: "power2.out" })
         .to(rig, { y: 0, scaleX: 1, scaleY: 1, duration: 0.14, ease: "power2.in" })
         .addLabel("land")
@@ -415,7 +464,6 @@ export function initToaster({ heroApi, reducedMotion = false }) {
         .to(rig, { scaleX: 1, scaleY: 1, duration: 0.5, ease: "elastic.out(1, 0.45)" }, "land+=0.07")
         .to(slices, { ...slot(60), duration: 0.16, ease: "power2.out", stagger: 0.03 }, "land")
         .to(slices, { ...slot(REST), duration: 0.45, ease: "bounce.out", stagger: 0.03 }, "land+=0.16");
-      dip(t, 0.016 * wm, t.labels.land);
     });
   }
 
@@ -427,15 +475,15 @@ export function initToaster({ heroApi, reducedMotion = false }) {
       return;
     }
     const nav = document.querySelectorAll(".site-header [data-enter]");
-    const statement = $(".hero__statement").children;
-    const underline = $(".doodle--hot").querySelectorAll("path");
     const t = gsap.timeline({ defaults: { overwrite: "auto" }, onComplete: hiccupOnce });
 
-    gsap.set(lettersWrap, { clipPath: "inset(-0.6em -0.3em 0 -0.3em)" }); // letters rise out of the counter
-    t.fromTo(letters, { yPercent: 110 }, { yPercent: 0, duration: 0.8, ease: "power4.out", stagger: 0.04 }, 0)
-      .set(lettersWrap, { clearProps: "clipPath" }, 1.2)
+    gsap.set(lettersWrap, { clipPath: "inset(-0.3em -0.3em 0 -0.3em)" }); // letters rise out of a line under them
+    t.fromTo($(".hero__title"), { autoAlpha: 1 }, { autoAlpha: 1, duration: 0.01 }, 0)
+      .fromTo(letters, { yPercent: 110 }, { yPercent: 0, duration: 0.8, ease: "power4.out", stagger: 0.05 }, 0)
+      .set(lettersWrap, { clearProps: "clipPath" }, 1.3)
+      .fromTo($(".hero__sub"), { y: 16, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.6, ease: "power3.out" }, 0.1)
+      .fromTo(banner, { autoAlpha: 0 }, { autoAlpha: 1, duration: 1.2, ease: "power2.out" }, 0)
       .fromTo(sun, { yPercent: 55 }, { yPercent: 0, duration: 1.1, ease: "expo.out" }, 0.05)
-      .add(() => heroApi.fan(1.1), 0.1)
       .fromTo(nav, { y: -30, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.5, ease: "back.out(1.6)", stagger: 0.06 }, 0.3)
       .fromTo(rig, { y: () => -window.innerHeight * 1.1, rotation: -12 }, { y: 0, rotation: 0, duration: 0.5, ease: "power3.in" }, 0.35)
       .addLabel("land", 0.85)
@@ -445,11 +493,8 @@ export function initToaster({ heroApi, reducedMotion = false }) {
       .to(slices, { ...slot(70), duration: 0.14, ease: "power2.out", stagger: 0.03 }, "land")
       .to(slices, { ...slot(REST), duration: 0.5, ease: "bounce.out", stagger: 0.03 }, "land+=0.14")
       .fromTo(serve.root, { scale: 1.35, rotation: -12, autoAlpha: 0 }, { scale: 1, rotation: 0, autoAlpha: 1, duration: 0.35, ease: "power4.out" }, "land+=0.1")
-      .fromTo(statement, { y: 24, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.5, ease: "power3.out", stagger: 0.08 }, "land+=0.12")
-      .fromTo(underline, { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.6, ease: "power2.inOut", stagger: 0.15 }, "land+=0.3")
       .fromTo($(".hero__roles"), { y: 12, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.4, ease: "power3.out" }, "land+=0.25")
       .fromTo(listen.parentElement.children, { scale: 0.8, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: 0.5, ease: "back.out(2)", stagger: 0.08 }, "land+=0.3");
-    dip(t, 0.03 * wm, t.labels.land);
     if (hint && getComputedStyle(hint).display !== "none") {
       t.fromTo(hint.firstElementChild, { autoAlpha: 0, x: -8 }, { autoAlpha: 1, x: 0, duration: 0.4 }, "land+=0.5").fromTo(
         hint.querySelectorAll("path"),

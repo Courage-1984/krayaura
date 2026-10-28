@@ -18,7 +18,7 @@
   box-shadow:
     5px 5px 0 color-mix(in srgb, var(--c-orange) 85%, transparent),
     0 20px 50px color-mix(in srgb, #000 45%, transparent);
-  overflow: hidden;
+  overflow: visible;
   transform: translateY(calc(100% + 2rem)) rotate(-2deg);
   opacity: 0;
   /* Closing: slide + fade, THEN leave the tab order / accessibility tree */
@@ -145,6 +145,7 @@ html:not(.hero-controls-visible) .mini-player.is-open {
 
 .mini-player__btn,
 .mini-player__next,
+.mini-player__shuffle,
 .mini-player__close,
 .mini-player__links a {
   flex: none;
@@ -157,6 +158,7 @@ html:not(.hero-controls-visible) .mini-player.is-open {
 }
 
 .mini-player__next[hidden],
+.mini-player__shuffle[hidden],
 .mini-player__full[hidden] {
   display: none;
 }
@@ -180,6 +182,7 @@ html:not(.hero-controls-visible) .mini-player.is-open {
 }
 
 .mini-player__next,
+.mini-player__shuffle,
 .mini-player__links a,
 .mini-player__close {
   width: 2.25rem;
@@ -187,6 +190,7 @@ html:not(.hero-controls-visible) .mini-player.is-open {
 }
 
 .mini-player__next:hover,
+.mini-player__shuffle:hover,
 .mini-player__links a:hover,
 .mini-player__close:hover {
   background: color-mix(in srgb, var(--c-cream) 10%, transparent);
@@ -397,4 +401,93 @@ html.has-player .site-footer {
   .mini-player.is-playing .mini-player__art {
     animation: none;
   }
+}
+
+.mini-player__shuffle[aria-pressed="true"] {
+  background: var(--c-gold);
+  color: var(--c-void);
+  --icon-accent: var(--c-red);
+}
+
+.mini-player__shuffle:disabled {
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+/* Sticky album Play: under the header for the whole #mia / #crash section.
+   Height-0 slot so showing/hiding the chip never shoves the pin. */
+.album-sticky-play-slot {
+  position: sticky;
+  top: calc(var(--nav-h) + 12px);
+  z-index: 80;
+  height: 0;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+  isolation: isolate;
+}
+
+.album-sticky-play-cluster {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.45rem;
+  width: fit-content;
+  margin: 0.75rem auto 0;
+  pointer-events: none;
+}
+
+.album-sticky-play {
+  width: fit-content;
+  margin: 0;
+  pointer-events: auto;
+  box-shadow: 4px 4px 0 var(--c-orange);
+}
+
+.album-sticky-shuffle[aria-pressed="true"].album-sticky-play--mia {
+  background: var(--mia-blue);
+  color: #000;
+  --icon-accent: #000;
+}
+
+.album-sticky-shuffle[aria-pressed="true"].album-sticky-play--crash {
+  background: var(--c-gold);
+  color: var(--c-void);
+  --icon-accent: var(--c-red);
+}
+
+.album-sticky-play[hidden] {
+  display: none;
+}
+
+.album-sticky-play__icon {
+  display: inline-flex;
+}
+
+.album-sticky-play--mia {
+  --icon-accent: var(--mia-blue);
+  border: 2px solid var(--mia-blue);
+  color: var(--mia-white);
+  background: color-mix(in srgb, var(--mia-black) 82%, transparent);
+  box-shadow: 4px 4px 0 var(--mia-blue);
+}
+
+.album-sticky-play--mia.is-playing {
+  background: var(--mia-blue);
+  color: #000;
+  --icon-accent: #000;
+}
+
+.album-sticky-play--crash {
+  --icon-accent: var(--c-orange);
+  border: 2px solid var(--c-gold);
+  color: var(--c-gold);
+  background: color-mix(in srgb, var(--c-void) 82%, transparent);
+  box-shadow: 4px 4px 0 var(--c-orange);
+}
+
+.album-sticky-play--crash.is-playing {
+  background: var(--c-gold);
+  color: var(--c-void);
+  --icon-accent: var(--c-red);
 }

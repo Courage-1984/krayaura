@@ -100,3 +100,42 @@
 .track-rail.is-dragging .record {
   pointer-events: none;
 }
+
+/* ─── "Welcome to my world": the story under the heading ─── */
+
+.music__story {
+  display: grid;
+  gap: 0.9rem;
+  max-width: 54ch;
+}
+
+.music__lead {
+  font-family: var(--font-heading);
+  font-size: clamp(1.4rem, 3.4vw, 2rem);
+  line-height: 1.1;
+  text-transform: uppercase;
+  color: var(--c-cream);
+}
+
+.music__story .section-lede {
+  max-width: 54ch;
+}
+
+/* ─── Visuals: the YouTube carousel's own section ─── */
+
+.visuals {
+  background: linear-gradient(180deg, var(--c-void), color-mix(in srgb, var(--c-royal) 40%, var(--c-void)) 50%, var(--c-void));
+  overflow-x: clip;
+}
+
+.visuals .yt-block {
+  margin-top: 0;
+}
+
+.visuals .yt-block__head .section-title {
+  max-width: 14ch;
+}
+
+.visuals .yt-block__head .section-lede {
+  max-width: 54ch;
+}
