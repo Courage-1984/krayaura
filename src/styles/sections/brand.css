@@ -123,8 +123,8 @@
   background:
     repeating-linear-gradient(
       90deg,
-      var(--c-orange) 0 18px,
-      color-mix(in srgb, var(--c-orange-bright) 80%, var(--c-orange)) 18px 20px
+      var(--c-red) 0 18px,
+      color-mix(in srgb, var(--mia-red) 80%, var(--c-red)) 18px 20px
     );
   color: var(--c-void);
   transform: rotate(-1.4deg) scale(1.03);
@@ -214,6 +214,24 @@
 
 .btn--primary:hover {
   box-shadow: 5px 5px 0 var(--c-orange);
+}
+
+.btn--mia-stream {
+  background: var(--mia-blue);
+  color: var(--mia-white);
+  border-color: var(--mia-blue);
+  box-shadow: 4px 4px 0 var(--mia-blue-deep);
+}
+
+.btn--mia-stream:hover,
+.btn--mia-stream:focus-visible {
+  background: color-mix(in srgb, var(--mia-blue) 88%, var(--mia-white));
+  box-shadow: 6px 6px 0 var(--mia-blue-deep);
+}
+
+.btn--mia-stream:disabled {
+  cursor: not-allowed;
+  opacity: 0.9;
 }
 
 .btn--ghost:hover {

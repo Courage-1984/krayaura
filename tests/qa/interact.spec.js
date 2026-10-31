@@ -14,7 +14,7 @@ test.describe("phase 2 — interact", () => {
     });
     expect(hit, "lever is the hit target").toBeTruthy();
 
-    const listen = page.locator("[data-hero-listen]");
+    const listen = page.locator("[data-hero-preview]");
     await listen.click({ force: true });
     await expect(page.locator(".mini-player")).toHaveClass(/is-open/);
     await expect(listen).toHaveClass(/is-current/);
@@ -165,7 +165,7 @@ test.describe("phase 2 — interact", () => {
     test.skip(!hasHover(page), "touch viewport");
     await boot(page);
 
-    const btn = page.locator("[data-hero-listen]");
+    const btn = page.locator("[data-hero-preview]");
     const beforeShadow = await btn.evaluate((el) => getComputedStyle(el).boxShadow);
     await btn.hover();
     await settle(page, 280);

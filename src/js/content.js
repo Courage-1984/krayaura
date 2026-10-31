@@ -15,6 +15,36 @@ const APPLE_ARTIST = discography.artist.apple;
 const YOUTUBE = "https://www.youtube.com/@Krayaura";
 const BEHANCE = "https://www.behance.net/koketsoramogale1";
 
+/**
+ * M.I.A. album links — fill as they arrive (launch week). Artist pages are the fallback until album URLs land.
+ * Set `presave` for Thursday preview day; when set, the hero preview CTA becomes “Pre-save the album”.
+ */
+export const miaStreaming = {
+  spotify: null,
+  apple: null,
+  youtubeMusic: null,
+  presave: null,
+};
+
+/** @returns {{ id: string, label: string, href: string, icon: string }[]} */
+export function miaStreamOptions() {
+  const opts = [];
+  if (miaStreaming.spotify) opts.push({ id: "spotify", label: "Spotify", href: miaStreaming.spotify, icon: "spotify" });
+  if (miaStreaming.youtubeMusic) {
+    opts.push({ id: "youtube", label: "YouTube Music", href: miaStreaming.youtubeMusic, icon: "youtube" });
+  }
+  if (miaStreaming.apple) opts.push({ id: "apple", label: "Apple Music", href: miaStreaming.apple, icon: "apple" });
+  return opts;
+}
+
+export function hasMiaAlbumLinks() {
+  return !!(miaStreaming.spotify || miaStreaming.apple || miaStreaming.youtubeMusic);
+}
+
+export function heroPreviewLabel() {
+  return miaStreaming.presave && !hasMiaAlbumLinks() ? "Pre-save the album" : "Preview the album";
+}
+
 export const site = {
   name: "Krayaura",
   tagline: "Nostalgia, fun, and confidence — music and visual worlds.",
@@ -82,13 +112,18 @@ export const site = {
   },
 };
 
-/** About carousel: five shots, portrait, shipped at two sizes (scripts/build-update-assets.py) */
+/** About carousel: portrait shots at two sizes (scripts/build-update-assets.py + pre-launch pack) */
 export const aboutPhotos = [
   { n: 1, pos: "50% 58%", alt: "Krayaura in a black hoodie leaning on a brick wall beside a South African flag mural, looking up" },
   { n: 2, pos: "50% 50%", alt: "Krayaura in a black jacket on a lawn at golden hour, with a camera held up in front of him" },
   { n: 3, pos: "50% 60%", alt: "Krayaura and two friends checking a shot on a camera between takes" },
   { n: 4, pos: "50% 55%", alt: "Close portrait of Krayaura in a black jacket against old brick buildings" },
   { n: 5, pos: "50% 62%", alt: "Krayaura and friends laughing together on a stone wall" },
+  { n: 6, pos: "50% 50%", alt: "Krayaura posing for a portrait in casual streetwear" },
+  { n: 7, pos: "50% 52%", alt: "Krayaura outdoors in natural light, mid-laugh" },
+  { n: 8, pos: "50% 48%", alt: "Krayaura in a relaxed group photo with friends" },
+  { n: 9, pos: "50% 55%", alt: "Krayaura in a candid moment, smiling at the camera" },
+  { n: 10, pos: "50% 50%", alt: "Krayaura in a styled portrait against an urban backdrop" },
 ].map((p) => ({ ...p, src: `${MEDIA}/about/a${p.n}.jpg`, srcSm: `${MEDIA}/about/a${p.n}-sm.jpg` }));
 
 /** About cassettes: number (or year), label — the client's own figures */
@@ -158,8 +193,8 @@ const miaRelease = {
   date: mia.date,
   year: Number(mia.date.slice(0, 4)),
   trackCount: mia.tracks.length,
-  apple: null,
-  spotify: null,
+  apple: miaStreaming.apple,
+  spotify: miaStreaming.spotify,
   cover: mia.cover,
   popular: false,
   upcoming: true,
@@ -194,10 +229,10 @@ export const miaAlbum = releaseById.mia;
 /** The album the hero, the toaster and the nav chip serve */
 export const heroAlbum = miaAlbum;
 
-/** "5 November 2026" */
+/** Long-form release date from mia.json (e.g. "6 November 2026") */
 export const miaDate = new Date(miaAlbum.date).toLocaleDateString("en-ZA", { day: "numeric", month: "long", year: "numeric" });
 
-/** "5 Nov 2026" — the case-file tab; the long form stays on the date pill */
+/** Short tab date (e.g. "6 Nov 2026") */
 export const miaDateShort = new Date(miaAlbum.date).toLocaleDateString("en-GB", {
   day: "numeric",
   month: "short",

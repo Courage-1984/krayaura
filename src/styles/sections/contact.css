@@ -245,3 +245,115 @@
     transition: none;
   }
 }
+
+/* Streaming platforms — bottom-left FAB (desktop checklist) */
+.stream-fab {
+  position: fixed;
+  z-index: 140;
+  left: max(1rem, env(safe-area-inset-left));
+  bottom: max(1.1rem, env(safe-area-inset-bottom));
+  display: block;
+  rotate: 2deg;
+  transition:
+    opacity 0.35s var(--ease-out),
+    transform 0.4s var(--ease-out),
+    visibility 0s linear 0s;
+}
+
+.stream-fab.is-hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(1.15rem) rotate(6deg);
+  transition:
+    opacity 0.3s,
+    transform 0.35s var(--ease-out),
+    visibility 0s linear 0.35s;
+}
+
+.stream-fab__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  min-height: 3rem;
+  padding: 0.7rem 1rem 0.7rem 1.15rem;
+  border: 3px solid var(--c-void);
+  border-radius: var(--radius-pill);
+  background: var(--mia-blue);
+  color: var(--mia-white);
+  font-family: var(--font-subhead);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  box-shadow: 5px 5px 0 var(--mia-blue-deep);
+  transition:
+    transform 0.3s var(--ease-out),
+    box-shadow 0.3s var(--ease-out),
+    background 0.25s;
+}
+
+.stream-fab__btn:hover,
+.stream-fab.is-open .stream-fab__btn {
+  background: color-mix(in srgb, var(--mia-blue) 85%, var(--mia-white));
+  box-shadow: 7px 7px 0 var(--mia-blue-deep);
+}
+
+.stream-fab__switch {
+  position: relative;
+  flex: none;
+  width: 1.85rem;
+  height: 1rem;
+  border-radius: 999px;
+  background: rgb(0 0 0 / 0.35);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--mia-white) 25%, transparent);
+}
+
+.stream-fab__switch i {
+  position: absolute;
+  top: 0.12rem;
+  left: 0.12rem;
+  width: 0.76rem;
+  height: 0.76rem;
+  border-radius: 50%;
+  background: var(--mia-white);
+  transition: translate 0.28s var(--ease-out);
+}
+
+.stream-fab.is-open .stream-fab__switch i {
+  translate: 0.85rem 0;
+}
+
+.stream-fab .contact__panel {
+  left: 0;
+  right: auto;
+  top: auto;
+  bottom: calc(100% + 0.75rem);
+  transform-origin: bottom left;
+}
+
+.stream__soon {
+  margin: 0;
+  padding: 0.65rem 0.75rem;
+  font-family: var(--font-subhead);
+  font-size: 0.72rem;
+  line-height: 1.45;
+  color: var(--c-cream);
+  max-width: 16rem;
+}
+
+.mia__actions .stream {
+  flex: 1 1 100%;
+}
+
+@media (max-width: 900px) {
+  .stream-fab {
+    display: none;
+  }
+}
+
+@media (max-width: 720px) {
+  html:has(.mini-player.is-open) .stream-fab:not(.is-hidden) {
+    bottom: calc(5.4rem + env(safe-area-inset-bottom, 0px));
+  }
+}

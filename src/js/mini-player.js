@@ -176,7 +176,7 @@ export function initMiniPlayer() {
       : [current.features?.length ? `ft. ${current.features.join(" & ")}` : "", current.subtitle].filter(Boolean).join(" · ");
     // Unreleased music (M.I.A.) has no full-song links yet: don't send people looking for them
     const doneFrom = (isDone && finishedRelease ? releaseById[finishedRelease] : null) || current;
-    const doneText = doneFrom.spotify || doneFrom.apple ? "Preview's done — hear the full song" : "Preview's done — out 5 November";
+    const doneText = doneFrom.spotify || doneFrom.apple ? "Preview's done — hear the full song" : "Preview's done — out 6 November";
     if (isDone !== wasDone || !kicker.childNodes.length) {
       // (the " · preview" tail drops on phones, where the row is full)
       kicker.innerHTML = isDone ? doneText : `Now playing<span class="mini-player__kicker-x"> · preview</span>`;

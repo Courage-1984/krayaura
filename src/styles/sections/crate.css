@@ -356,7 +356,8 @@
 /* ─── Timeline ───────────────────────────────────────────────────────────── */
 
 .crate__timeline {
-  margin-top: 2rem;
+  margin-top: 1.25rem;
+  margin-bottom: 0.5rem;
 }
 
 /* --lanes (0–2, set by music.js) makes room above the line for stacked, clustered dots */

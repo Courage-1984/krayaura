@@ -17,6 +17,7 @@ import "./styles/sections/contact.css";
 import { site, socials, releaseById, aboutStats } from "./js/content.js";
 import { markMia } from "./js/mia-letters.js";
 import { initContactMenus } from "./js/contact-menu.js";
+import { initStreamMenus } from "./js/stream-menu.js";
 import { icon } from "./js/icons.js";
 import { initHeroWebGL } from "./js/hero-webgl.js";
 import { initScroll, initMagneticButtons } from "./js/scroll.js";
@@ -175,6 +176,7 @@ async function boot() {
   initMiniPlayer();
   refreshPlayState();
   initContactMenus();
+  initStreamMenus();
 
   // The hero is now the M.I.A. cover banner (CSS) lit by the music, so the old WebGL shader is no longer drawn
   const heroApi = initHeroWebGL(null, { reducedMotion });

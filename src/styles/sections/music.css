@@ -2,6 +2,7 @@
   background:
     linear-gradient(180deg, var(--c-void), var(--c-midnight) 40%, var(--c-void));
   overflow: hidden;
+  padding-bottom: var(--space-xl);
 }
 
 .music__head {
@@ -126,6 +127,7 @@
 .visuals {
   background: linear-gradient(180deg, var(--c-void), color-mix(in srgb, var(--c-royal) 40%, var(--c-void)) 50%, var(--c-void));
   overflow-x: clip;
+  padding-top: var(--space-lg);
 }
 
 .visuals .yt-block {

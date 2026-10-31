@@ -266,6 +266,7 @@ html.is-audio-playing .hero__banner {
 
 .hero__sub {
   display: flex;
+  order: 2;
   align-items: center;
   gap: 0.7rem;
   font-family: var(--font-subhead);
@@ -287,7 +288,8 @@ html.is-audio-playing .hero__banner {
 
 .hero__title {
   display: block;
-  margin: 0 0 24px -0.04em;
+  order: 1;
+  margin: 0 0 8px -0.04em;
   /* room for the blue drop-shadow; the M leans in a touch */
   font-family: var(--font-mia);
   font-weight: 400;
@@ -309,18 +311,44 @@ html.is-audio-playing .hero__banner {
 
 .hero__cta {
   display: flex;
+  flex-wrap: wrap;
   gap: var(--cta-gap);
   margin-top: 32px;
 }
 
+.hero__cta .stream {
+  flex: 1 1 100%;
+}
+
 .hero__cta .btn {
-  flex: 1 1 0;
+  flex: 1 1 calc(50% - var(--cta-gap) / 2);
+  min-width: min(100%, 9.5rem);
   min-height: 0;
-  padding: 12px 24px;
+  padding: 12px 16px;
+}
+
+.hero__cta .btn--mia-stream {
+  flex: 1 1 100%;
+  min-height: 2.85rem;
+  background: var(--mia-blue);
+  color: var(--mia-white);
+  border-color: var(--mia-blue);
+  box-shadow: 4px 4px 0 var(--mia-blue-deep);
+}
+
+.hero__cta .btn--mia-stream:hover,
+.hero__cta .btn--mia-stream:focus-visible {
+  background: color-mix(in srgb, var(--mia-blue) 88%, var(--mia-white));
+}
+
+.hero__cta .btn--mia-stream:disabled {
+  opacity: 0.92;
+  cursor: not-allowed;
+  box-shadow: 3px 3px 0 color-mix(in srgb, var(--mia-blue-deep) 70%, transparent);
 }
 
 .hero__cta .btn--listen {
-  flex-grow: 1.3;
+  flex-grow: 1;
 }
 
 .btn--listen.is-toasting .btn__icon {
@@ -563,7 +591,7 @@ html.is-audio-playing .toaster__slice {
   }
 
   .hero__sub {
-    font-size: clamp(0.9rem, 1.5cqi, 1.25rem);
+    font-size: clamp(0.85rem, 1.65cqi, 1.35rem);
   }
 
   .hero__roles {
@@ -642,12 +670,27 @@ html.is-audio-playing .toaster__slice {
   .hero {
     --hero-pad-bottom: clamp(24px, 4svh, 44px);
     --hero-gap: clamp(10px, 2.5svh, 18px);
-    --hero-pad-top: clamp(36px, 4.5vw, 56px);
-    --mia: min(calc(var(--inner) * 0.54), 19svh);
+    --hero-pad-top: 0;
+    --mia: min(calc(var(--inner) * 0.52), 17svh);
+  }
+
+  .hero__inner {
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    /* Content-height stack; toaster clearance stays in padding-bottom */
+    min-height: auto;
+    /* Match fixed header: 10px pad + 52px bar (+ small gap), not full --nav-h (4.5rem) */
+    padding-top: calc(10px + 52px + 6px);
+    padding-bottom: calc(var(--hero-pad-bottom) + min(38vw, 11rem));
+  }
+
+  .hero__banner {
+    display: none;
   }
 
   .hero__visual {
-    grid-template-columns: minmax(0, min(100%, var(--cover-max), 30svh));
+    display: none;
   }
 
   .serve {
@@ -656,6 +699,8 @@ html.is-audio-playing .toaster__slice {
 
   .hero__roles {
     font-size: 0.68rem;
+    line-height: 1.45;
+    max-width: 28rem;
   }
 
   .hero__cta .btn {
@@ -663,24 +708,27 @@ html.is-audio-playing .toaster__slice {
     padding-block: 0.6rem;
     font-size: 0.72rem;
   }
+
+  .hero__title {
+    margin-bottom: 4px;
+  }
+
+  .hero__heading {
+    gap: 10px;
+  }
 }
 
 @media (max-width: 859px) and (max-height: 620px) {
   .hero {
-    --mia: min(calc(var(--inner) * 0.4), 12svh);
+    --mia: min(calc(var(--inner) * 0.38), 11svh);
     --tw: min(28cqi, 14svh, 108px);
     --hero-pad-bottom: clamp(10px, 2svh, 20px);
     --hero-gap: clamp(4px, 1svh, 8px);
-    --hero-pad-top: clamp(24px, 3.5vw, 40px);
   }
 
-  .hero__visual {
-    grid-template-columns: minmax(0, min(100%, var(--cover-max), 16svh));
-  }
-
-  .hero__roles,
-  .hero__sub {
-    display: none;
+  .hero__inner {
+    padding-top: calc(10px + 52px + 4px);
+    padding-bottom: calc(var(--hero-pad-bottom) + min(32vw, 9rem));
   }
 
   .serve {

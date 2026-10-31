@@ -7,7 +7,7 @@ const TICKETS = [
   { kind: "now", kicker: "No. 01", title: "Now serving" },
   { kind: "mia", kicker: "Order up", title: "M.I.A." },
   { kind: "now", kicker: "No. 14", title: "Now toasting" },
-  { kind: "mia", kicker: "5 Nov", title: "M.I.A." },
+  { kind: "mia", kicker: "6 Nov", title: "M.I.A." },
 ];
 
 function ticketHTML(t) {

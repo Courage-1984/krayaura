@@ -739,7 +739,7 @@ html.is-audio-playing .cassette__reel {
 .connect__end {
   display: flex;
   justify-content: flex-end;
-  margin: 0 0 var(--space-md);
+  margin: 0;
 }
 
 .connect__toaster {
@@ -832,7 +832,7 @@ html.is-audio-playing .cassette__reel {
   /* 1% of the screen this finale has to fit: the whole screen, minus the mini player while it's open */
   --player-room: 0rem;
   --h: calc((100svh - var(--player-room)) / 100);
-  --v-gap: clamp(0.75rem, calc(var(--h) * 3.2), var(--space-lg));
+  --v-gap: clamp(0.5rem, calc(var(--h) * 2.2), var(--space-md));
   display: flex;
   flex-direction: column;
   min-height: 100svh;

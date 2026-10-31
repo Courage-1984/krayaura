@@ -165,19 +165,48 @@ for n, (title, features, note) in enumerate(TRACKS, start=1):
 
 (root / "src" / "data").mkdir(parents=True, exist_ok=True)
 (root / "src" / "data" / "mia.json").write_text(
-    json.dumps({"date": "2026-11-05", "cover": "covers/mia.jpg", "tracks": tracks}, indent=2) + "\n",
+    json.dumps({"date": "2026-11-06", "cover": "covers/mia.jpg", "tracks": tracks}, indent=2) + "\n",
     encoding="utf-8",
 )
 
 # ── About carousel photos ────────────────────────────────────────────────────────────────────────────
 about_out = pub / "about"
-if about_out.exists():
-    shutil.rmtree(about_out)
-for f in sorted((src / "About Section Pictures").glob("A*.jpg")):
-    name = f.stem.lower()
-    im = Image.open(f).convert("RGB")
-    export_raster(fit_long_side(im, 1600), about_out / f"{name}.jpg")
-    export_raster(fit_long_side(im, 900), about_out / f"{name}-sm.jpg", jpeg_q=80)
+about_out.mkdir(parents=True, exist_ok=True)
+legacy = sorted((src / "About Section Pictures").glob("A*.jpg"))
+if legacy:
+    for f in legacy:
+        name = f.stem.lower()
+        im = Image.open(f).convert("RGB")
+        export_raster(fit_long_side(im, 1600), about_out / f"{name}.jpg")
+        export_raster(fit_long_side(im, 900), about_out / f"{name}-sm.jpg", jpeg_q=80)
+
+prelaunch = root / "FINAL-PRE-LAUNCH-UPDATES" / "About us Pictures"
+PRELAUNCH_MAP = [
+    ("A5.jpg", "a6"),
+    ("A6.jpg", "a7"),
+    ("A8.jpg", "a8"),
+    ("A9.JPG", "a9"),
+    ("A10.CR3", "a10"),
+]
+if prelaunch.is_dir():
+    for src_name, dest in PRELAUNCH_MAP:
+        f = prelaunch / src_name
+        if not f.exists():
+            continue
+        if f.suffix.lower() == ".cr3":
+            try:
+                import rawpy
+
+                with rawpy.imread(str(f)) as raw:
+                    rgb = raw.postprocess(use_camera_wb=True, no_auto_bright=True, output_bps=8)
+                im = Image.fromarray(rgb)
+            except ImportError:
+                print(f"Skip {f.name}: install rawpy for CR3 conversion", file=sys.stderr)
+                continue
+        else:
+            im = Image.open(f).convert("RGB")
+        export_raster(fit_long_side(im, 1600), about_out / f"{dest}.jpg")
+        export_raster(fit_long_side(im, 900), about_out / f"{dest}-sm.jpg", jpeg_q=80)
 
 # ── Professional Portfolio (PDF) → page images + compressed PDF ─────────────────────────────────────
 pdf_path = src / "Design Portfolio's" / "Professional Portfolio.pdf"

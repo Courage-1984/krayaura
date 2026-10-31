@@ -1,5 +1,5 @@
 import gsap from "gsap";
-import { releaseById } from "./content.js";
+import { releaseById, miaDate } from "./content.js";
 import { coverPicture } from "./media-picture.js";
 import { icon } from "./icons.js";
 import { tracklistHTML, releaseLinksHTML } from "./tracklist.js";
@@ -124,7 +124,7 @@ export function openRecordSheet(id, trigger, { deepLink = false } = {}) {
       ${needle}
       <div class="sheet__links">${releaseLinksHTML(r, { big: true })}</div>
       ${tracklistHTML(r, { className: "tracklist sheet__tracks" })}
-      <p class="sheet__note">${r.upcoming ? "30-second previews · the full album is out 5 November 2026" : "30-second previews · full songs on Spotify &amp; Apple Music"}</p>
+      <p class="sheet__note">${r.upcoming ? `30-second previews · the full album is out ${miaDate}` : "30-second previews · full songs on Spotify &amp; Apple Music"}</p>
     </div>
   `;
   refreshPlayState(); // the fresh rows show what's already playing (EQ bars, orange title)

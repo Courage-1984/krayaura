@@ -6,6 +6,7 @@ import { onChange, register } from "./audio.js";
 import { onSignal } from "./signal.js";
 import { icon } from "./icons.js";
 import { initMiaLetters, markMia } from "./mia-letters.js";
+import { mountStreamMenu } from "./stream-menu.js";
 import { installCoverPicture } from "./media-picture.js";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -99,10 +100,13 @@ export function initMia(root, { reducedMotion = false } = {}) {
     .join("");
 
   $("[data-mia-actions]").innerHTML = `
-    <button type="button" class="btn btn--primary btn--listen mia__play magnetic" data-play-key="${leadKey}" data-queue="${miaAlbum.id}" data-cursor="Play">
-      <span class="btn__icon">${icon("play")}</span><span>Play the album</span>
+    <div data-stream-menu data-stream-variant="inline" data-stream-id="mia-album"></div>
+    <button type="button" class="btn btn--ghost btn--listen mia__play magnetic" data-play-key="${leadKey}" data-queue="${miaAlbum.id}" data-cursor="Play">
+      <span class="btn__icon">${icon("play")}</span><span>Preview the album</span>
     </button>
-    <p class="mia__date"><span class="mia__date-dot" aria-hidden="true"></span>Out ${miaDate}</p>`;
+    <p class="mia__date" data-mia-date><span class="mia__date-dot" aria-hidden="true"></span>Out ${miaDate}</p>`;
+
+  mountStreamMenu($("[data-stream-menu][data-stream-id='mia-album']"));
 
   const guests = [...new Set(miaAlbum.tracks.flatMap((t) => t.features))];
   $("[data-mia-meta]").textContent = `${miaAlbum.trackCount} tracks · ${miaDate}${guests.length ? ` · with ${guests.join(", ")}` : ""}`;

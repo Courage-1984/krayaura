@@ -6,12 +6,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Krayaura — Music Artist · Creative Director · Graphic Designer</title>
   <meta name="description"
-    content="Krayaura — breathing through my art. The new album M.I.A. is out 5 November 2026. Music artist, creative director and graphic designer." />
+    content="Krayaura — breathing through my art. The new album M.I.A. is out 6 November 2026. Music artist, creative director and graphic designer." />
   <meta name="theme-color" content="#0B0B21" />
   <link rel="canonical" href="__SITE_URL__" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Krayaura" />
-  <meta property="og:title" content="Krayaura — M.I.A., the album, out 5 November 2026" />
+  <meta property="og:title" content="Krayaura — M.I.A., the album, out 6 November 2026" />
   <meta property="og:description"
     content="Music Artist · Creative Director · Graphic Designer. Dig through every release, hear previews, watch the videos." />
   <meta property="og:url" content="__SITE_URL__" />
@@ -310,24 +310,24 @@
 
           <h1 class="hero__heading" id="hero-title">
             <span class="sr-only">Krayaura. </span>
-            <span class="hero__sub" data-enter>Breathing Through My Art</span>
-            <!-- Animated by mia-letters.js: each glyph dances to its own slice of the music -->
             <span class="hero__title" aria-hidden="true" data-enter><span class="mia-letters" data-mia-letters
                 data-hero-letters><span class="mia-ch" style="--i: 0">M</span><span class="mia-ch mia-ch--dot"
                   style="--i: 1">.</span><span class="mia-ch" style="--i: 2">I</span><span class="mia-ch mia-ch--dot"
                   style="--i: 3">.</span><span class="mia-ch" style="--i: 4">A</span><span class="mia-ch mia-ch--dot"
                   style="--i: 5">.</span></span></span>
+            <span class="hero__sub" data-enter>Breathing Through My Art</span>
             <span class="sr-only"> M.I.A.</span>
           </h1>
 
           <p class="hero__roles" data-enter>Music Artist · Creative Director · Graphic Designer</p>
 
           <div class="hero__cta">
-            <button type="button" class="btn btn--primary btn--listen magnetic" data-play-key="mia:1" data-queue="mia"
-              data-hero-listen data-label-swaps data-enter>
-              <span class="btn__icon" data-listen-icon></span><span data-listen-label>Listen to M.I.A.</span>
+            <div data-stream-menu data-stream-variant="hero" data-stream-id="hero"></div>
+            <button type="button" class="btn btn--ghost btn--listen magnetic" data-play-key="mia:1" data-queue="mia"
+              data-hero-preview data-label-swaps data-enter>
+              <span class="btn__icon" data-listen-icon></span><span data-preview-label>Preview the album</span>
             </button>
-            <a class="btn btn--ghost magnetic" href="#design" data-enter>See the work</a>
+            <a class="btn btn--ghost magnetic" href="#design" data-hero-design data-enter>Design portfolio</a>
           </div>
         </div>
 
@@ -412,7 +412,7 @@
             What began with making beats grew into songwriting, producing, mixing vocals, rapping, singing, and creating
             worlds. Each release captures a moment in my journey and tells the story of the artist I am becoming.
           </p>
-          <p class="section-lede">Let's run it back and rediscover the journey behind Kray Aura.</p>
+          <p class="section-lede">Let's run it back and rediscover the journey behind Krayaura.</p>
         </div>
         <div class="music__platforms" data-platforms></div>
       </div>
@@ -522,7 +522,7 @@
               <p class="mia__album-meta" data-mia-meta></p>
             </div>
             <div class="mia__album-tools">
-              <p class="mia__preview-note">30-second previews · the full album lands on streaming 5 November</p>
+              <p class="mia__preview-note">30-second previews · the full album lands on streaming 6 November</p>
               <button type="button" class="chip mia__shuffle" data-shuffle data-shuffle-queue="mia" aria-pressed="false"
                 aria-label="Shuffle M.I.A.">
                 <span data-shuffle-icon></span><span>Shuffle</span>
@@ -717,6 +717,7 @@
   </div>
 
   <div data-contact-menu data-contact-variant="fab" data-contact-id="fab"></div>
+  <div data-stream-menu data-stream-variant="fab-left" data-stream-id="stream-fab"></div>
 
   <script type="module" src="/src/main.js"></script>
 </body>

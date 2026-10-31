@@ -61,9 +61,9 @@ export function initToaster({ heroApi, reducedMotion = false }) {
   const letters = [...lettersWrap.children]; // M . I . A .
   const banner = $(".hero__banner");
   const glow = $(".hero__glow");
-  const listen = $("[data-hero-listen]");
-  const listenIcon = listen.querySelector("[data-listen-icon]");
-  const listenLabel = listen.querySelector("[data-listen-label]");
+  const listen = $("[data-hero-preview]");
+  const listenIcon = listen?.querySelector("[data-listen-icon]");
+  const listenLabel = listen?.querySelector("[data-preview-label]");
   const leverBtn = $("[data-lever-btn]");
   const hint = $("[data-hint]");
   const serve = {
@@ -90,6 +90,7 @@ export function initToaster({ heroApi, reducedMotion = false }) {
   let interacted = false;
   const animate = () => heroVisible && !reducedMotion && !document.hidden;
 
+  if (!listen) return { playEntrance() {} };
   listenIcon.innerHTML = icon("play");
   listen.dataset.glyph = "play";
   gsap.set(slices, { ...slot(REST), rotation: 0 });
@@ -200,7 +201,7 @@ export function initToaster({ heroApi, reducedMotion = false }) {
     // Listen follows whichever M.I.A. track is up; once the album run has played out it starts over
     if (isHero(current)) listen.dataset.playKey = finishedRelease === heroAlbum.id ? heroAlbum.playables[0].key : current.key;
     const mine = current?.key === listen.dataset.playKey;
-    let label = "Listen to M.I.A.";
+    let label = "Preview the album";
     let glyph = "play";
     if (mine) {
       if (failed) label = "Try again";
@@ -478,10 +479,10 @@ export function initToaster({ heroApi, reducedMotion = false }) {
     const t = gsap.timeline({ defaults: { overwrite: "auto" }, onComplete: hiccupOnce });
 
     gsap.set(lettersWrap, { clipPath: "inset(-0.3em -0.3em 0 -0.3em)" }); // letters rise out of a line under them
-    t.fromTo($(".hero__title"), { autoAlpha: 1 }, { autoAlpha: 1, duration: 0.01 }, 0)
+    t      .fromTo($(".hero__title"), { autoAlpha: 1 }, { autoAlpha: 1, duration: 0.01 }, 0)
       .fromTo(letters, { yPercent: 110 }, { yPercent: 0, duration: 0.8, ease: "power4.out", stagger: 0.05 }, 0)
       .set(lettersWrap, { clearProps: "clipPath" }, 1.3)
-      .fromTo($(".hero__sub"), { y: 16, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.6, ease: "power3.out" }, 0.1)
+      .fromTo($(".hero__sub"), { y: 16, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.6, ease: "power3.out" }, 0.45)
       .fromTo(banner, { autoAlpha: 0 }, { autoAlpha: 1, duration: 1.2, ease: "power2.out" }, 0)
       .fromTo(sun, { yPercent: 55 }, { yPercent: 0, duration: 1.1, ease: "expo.out" }, 0.05)
       .fromTo(nav, { y: -30, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.5, ease: "back.out(1.6)", stagger: 0.06 }, 0.3)

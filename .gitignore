@@ -7,20 +7,4 @@ dist-live
 .vite
 playwright-report/
 test-results/
-# Generated share stubs (scripts/build-share-stubs.mjs)
-public/r/
-# Generated per SITE target (scripts/build-site.mjs)
-public/robots.txt
-public/sitemap.xml
-public/404.html
 
-# Raw Behance page captures dropped for processing (one is 71 MB) - copy-media.py turns project
-# folders into public/media/behance; the raw captures stay local
-assets/behance/*.png
-assets/behance/*.jpg
-# The client's raw update pack (PSDs, full-length album MP3s, 34 MB PDFs): scripts/build-update-assets.py reads it
-# locally and ships only the web-sized copies in public/media. Never commit the raw pack (unreleased audio).
-Krayaura Website Update/
-
-# Fontspring DEMO fonts: not licensed for use or redistribution - never commit or deploy
-assets/fonts/proxima-nova-demo/

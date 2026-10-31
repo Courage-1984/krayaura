@@ -39,7 +39,7 @@ export async function boot(page) {
   // Listen + lever stay GSAP-hidden until the toaster lands (~1.2s after boot).
   await page.waitForFunction(() => {
     if (document.documentElement.classList.contains("hero-pending")) return false;
-    const listen = document.querySelector("[data-hero-listen]");
+    const listen = document.querySelector("[data-hero-preview]");
     if (listen) {
       const s = getComputedStyle(listen);
       if (s.visibility === "hidden" || Number(s.opacity) < 0.95) return false;
@@ -268,7 +268,7 @@ export async function auditPrimaryCTAs(page, opts = {}) {
     };
 
     if (doHero) {
-      check(document.querySelector("[data-hero-listen]"), "hero-listen");
+      check(document.querySelector("[data-hero-preview]"), "hero-preview");
       check(document.querySelector("[data-lever-btn]"), "hero-lever");
     }
 

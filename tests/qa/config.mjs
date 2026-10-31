@@ -26,7 +26,7 @@ export const OVERLAYS = [
 /** Clipped hover screenshots — pointer:fine viewports only. */
 export const HOVERS = [
   { id: "toaster", selector: ".brand-mark" },
-  { id: "listen", selector: "[data-hero-listen]" },
+  { id: "listen", selector: "[data-hero-preview]" },
   { id: "crate", selector: ".record" },
   { id: "mia-cover", selector: ".mia__cover" },
   { id: "design-scrub", selector: "[data-scrub]" },

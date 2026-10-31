@@ -71,8 +71,10 @@ Everything in `public/media` and `src/data` is generated — edit the sources, t
 | `python scripts/build-update-assets.py` | the git-ignored `Krayaura Website Update/` folder (M.I.A. cover, tracklist, MP3s, About photos, Professional Portfolio PDF) | `public/media/mia/**` (cover, 30s clips), `public/media/about/**`, `public/media/portfolio/**` (page images + PDF), `src/data/mia.json`, `src/data/portfolio.json`, `share-mia.jpg` |
 | `node scripts/build-share-stubs.mjs` | `src/data/*.json` + `scripts/site.mjs` | per-release link-preview stubs (runs as part of `npm run build` / `build:live`) |
 
-The M.I.A. album (due 5 Nov 2026) is driven by `src/data/mia.json`: the hero, Albums block, crate, timeline and mini player all read it.
-To make it a normal release later, add its Spotify + Apple links as below and drop the "Out 5 November 2026" pill.
+The M.I.A. album (due 6 Nov 2026) is driven by `src/data/mia.json`: the hero, Albums block, crate, timeline and mini player all read it.
+To make it a normal release later, add album URLs to `miaStreaming` in [`src/js/content.js`](src/js/content.js) (and the discography pipeline if you prefer). Drop the “Out …” pill when it’s fully live.
+
+Launch week: paste new YouTube IDs at the **top** of the `videos` array in `content.js` when a music video drops. Update `miaStreaming.spotify`, `.apple`, `.youtubeMusic`, and optional `.presave` as links arrive, then `npm run build:live`.
 
 New release out? Add its Spotify + Apple links to `assets/spotify_&_apple_music_links.md`, then run
 `fetch-discography.py` and `copy-media.py`. The crate, timeline, tracklists and previews update themselves.
